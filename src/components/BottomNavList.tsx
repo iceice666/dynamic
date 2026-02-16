@@ -187,7 +187,14 @@ export default function BottomNavList({ currentPath }: BottomNavListProps) {
       {/* Bottom nav bar */}
       <div
         ref={barRef}
-        style={{ position: 'relative', zIndex: 12, display: 'flex', alignItems: 'center', height: '100%', background: 'var(--color-background)' }}
+        style={{
+          position: 'relative',
+          zIndex: 12,
+          display: 'flex',
+          alignItems: 'center',
+          height: '100%',
+          background: 'var(--color-background)',
+        }}
       >
         {/* Indicator */}
         <div
@@ -235,9 +242,7 @@ export default function BottomNavList({ currentPath }: BottomNavListProps) {
               }}
             >
               <Icon size={20} aria-hidden="true" />
-              <span className="sr-only">
-                {ui.en[item.labelKey]}
-              </span>
+              <span className="sr-only">{ui.en[item.labelKey]}</span>
             </a>
           );
         })}

@@ -159,10 +159,7 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
           transition: indicatorTransition,
         }}
       />
-      <ul
-        ref={listRef}
-        className="left-nav-list m-0 flex list-none flex-col gap-1 p-0"
-      >
+      <ul ref={listRef} className="left-nav-list m-0 flex list-none flex-col gap-1 p-0">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const isActive = activeHref === item.href;

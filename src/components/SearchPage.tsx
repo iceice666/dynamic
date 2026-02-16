@@ -234,8 +234,7 @@ export default function SearchPage() {
                   onClick={() => setQuery(`#${tag}`)}
                   className="bg-muted-bg text-muted hover:text-foreground hover:bg-accent/10 rounded-full px-3 py-1 text-xs transition-colors duration-150"
                 >
-                  #{tag}{' '}
-                  <span className="opacity-60">({count})</span>
+                  #{tag} <span className="opacity-60">({count})</span>
                 </button>
               ))}
               {tagCounts.length === 0 && (
@@ -266,11 +265,14 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
         </a>
       </h2>
       {item.description && (
-        <p className="text-muted m-0 overflow-hidden text-sm leading-normal" style={{
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
-        }}>
+        <p
+          className="text-muted m-0 overflow-hidden text-sm leading-normal"
+          style={{
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
           {item.description}
         </p>
       )}
