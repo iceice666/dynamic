@@ -1,15 +1,22 @@
-import { memo, useEffect, useRef, useState } from 'react';
-import { Archive, Folder, Rss, Tag, Users } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Archive, Folder, Home, Tag, Users, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '../i18n/ui';
 
-export interface NavSwitcherItem {
+type NavItem = {
   labelKey: UIKey;
   href: string;
-  icon: 'rss' | 'folder' | 'tag' | 'users' | 'archive';
-}
+  icon: LucideIcon;
+};
 
-interface NavSwitcherProps {
-  items: NavSwitcherItem[];
+const NAV_ITEMS: NavItem[] = [
+  { labelKey: 'nav_feed', href: '/', icon: Home },
+  { labelKey: 'nav_categories', href: '/categories', icon: Folder },
+  { labelKey: 'nav_tags', href: '/tags', icon: Tag },
+  { labelKey: 'nav_friends', href: '/friends', icon: Users },
+  { labelKey: 'nav_archive', href: '/archive', icon: Archive },
+];
+
+interface LeftNavListProps {
   currentPath: string;
 }
 
@@ -20,14 +27,6 @@ interface IndicatorStyles {
   height: number;
   opacity: number;
 }
-
-const navIcons = {
-  rss: Rss,
-  folder: Folder,
-  tag: Tag,
-  users: Users,
-  archive: Archive,
-} as const;
 
 function normalizePath(path: string): string {
   if (!path) return '/';
@@ -42,13 +41,13 @@ function isActivePath(pathname: string, href: string): boolean {
   return path === target || path.startsWith(`${target}/`);
 }
 
-function findActiveIndex(pathname: string, items: NavSwitcherItem[]): number {
-  const index = items.findIndex((item) => isActivePath(pathname, item.href));
-  return index >= 0 ? index : 0;
+function findActiveHref(pathname: string): string {
+  const found = NAV_ITEMS.find((item) => isActivePath(pathname, item.href));
+  return found?.href ?? NAV_ITEMS[0]?.href ?? '/';
 }
 
-function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
-  const [activeIndex, setActiveIndex] = useState(() => findActiveIndex(currentPath, items));
+export default function LeftNavList({ currentPath }: LeftNavListProps) {
+  const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const [indicator, setIndicator] = useState<IndicatorStyles>({
     x: 0,
     y: 0,
@@ -57,12 +56,12 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
     opacity: 0,
   });
 
-  const listRef = useRef<HTMLDivElement>(null);
-  const buttonRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const listRef = useRef<HTMLUListElement>(null);
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
 
-  const updateIndicator = () => {
+  const updateIndicator = useCallback(() => {
     const list = listRef.current;
-    const activeEl = buttonRefs.current[activeIndex];
+    const activeEl = linkRefs.current[activeHref];
 
     if (!list || !activeEl) {
       setIndicator((prev) => ({ ...prev, opacity: 0 }));
@@ -99,18 +98,17 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
       height,
       opacity: 1,
     });
-  };
+  }, [activeHref]);
 
   useEffect(() => {
     const handlePageLoad = () => {
-      const nextIndex = findActiveIndex(window.location.pathname, items);
-      setActiveIndex(nextIndex);
+      setActiveHref(findActiveHref(window.location.pathname));
     };
 
     handlePageLoad();
     document.addEventListener('astro:page-load', handlePageLoad);
     return () => document.removeEventListener('astro:page-load', handlePageLoad);
-  }, [items]);
+  }, []);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(updateIndicator);
@@ -121,32 +119,17 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
       window.cancelAnimationFrame(frame);
       window.removeEventListener('resize', handleResize);
     };
-  }, [activeIndex, items]);
+  }, [updateIndicator]);
 
-  const performSelectionSideEffect = (item: NavSwitcherItem, index: number) => {
-    document.documentElement.dataset.activeNav = item.href;
-    window.dispatchEvent(
-      new CustomEvent('dynamic:nav-switch', {
-        detail: {
-          href: item.href,
-          index,
-        },
-      })
-    );
-  };
-
-  const handleSelect = (item: NavSwitcherItem, index: number) => {
-    setActiveIndex(index);
-    performSelectionSideEffect(item, index);
+  const handleSelect = (href: string) => {
+    setActiveHref(href);
   };
 
   return (
-    <div
-      ref={listRef}
-      className="relative m-0 flex list-none flex-col gap-1 p-0 max-sm:flex-row max-sm:justify-around max-sm:gap-1"
-    >
+    <div className="relative m-0 flex list-none flex-col gap-1 p-0 max-sm:flex-row max-sm:justify-around max-sm:gap-1">
       <div
         aria-hidden="true"
+        data-nav-indicator
         style={{
           position: 'absolute',
           borderRadius: '999px',
@@ -160,36 +143,40 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
             'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease',
         }}
       />
+      <ul
+        ref={listRef}
+        className="left-nav-list m-0 flex list-none flex-col gap-1 p-0 max-sm:flex-row max-sm:justify-around max-sm:gap-1"
+      >
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const isActive = activeHref === item.href;
 
-      {items.map((item, index) => {
-        const Icon = navIcons[item.icon];
-        const isActive = activeIndex === index;
-        const isCurrentPath = isActivePath(currentPath, item.href);
-
-        return (
-          <a
-            key={item.href}
-            ref={(el) => {
-              buttonRefs.current[index] = el;
-            }}
-            href={item.href}
-            onClick={() => handleSelect(item, index)}
-            className={`text-muted relative z-[1] flex items-center gap-2.5 rounded-md p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150 hover:text-[var(--color-foreground)] max-sm:justify-center max-sm:px-2.5 max-sm:py-1.5${isActive ? 'font-semibold text-[var(--color-foreground)]' : ''}`}
-            aria-current={isCurrentPath ? 'page' : undefined}
-            data-nav-href={item.href}
-          >
-            <Icon size={18} className="shrink-0" aria-hidden="true" />
-            <span className="left-nav-label max-sm:hidden" data-i18n-en>
-              {ui.en[item.labelKey]}
-            </span>
-            <span className="left-nav-label max-sm:hidden" data-i18n-zh-tw>
-              {ui['zh-tw'][item.labelKey]}
-            </span>
-          </a>
-        );
-      })}
+          return (
+            <li key={item.href}>
+              <a
+                ref={(el) => {
+                  linkRefs.current[item.href] = el;
+                }}
+                href={item.href}
+                data-nav-href={item.href}
+                onClick={() => handleSelect(item.href)}
+                className={`text-muted relative z-1 flex items-center gap-2.5 rounded-md p-2 text-[0.9rem] no-underline transition-colors duration-150 hover:text-foreground${
+                  isActive ? 'text-foreground font-semibold' : ''
+                }`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <Icon size={18} className="shrink-0" aria-hidden="true" />
+                <span className="left-nav-label max-sm:hidden" data-i18n-en>
+                  {ui.en[item.labelKey]}
+                </span>
+                <span className="left-nav-label max-sm:hidden" data-i18n-zh-tw>
+                  {ui['zh-tw'][item.labelKey]}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
-
-export default memo(NavSwitcher);

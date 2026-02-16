@@ -1,26 +1,18 @@
 ---
 import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle';
-import NavSwitcher, { type NavSwitcherItem } from './NavSwitcher';
+import LeftNavList from './LeftNavList';
 
 interface Props {
   currentPath: string;
 }
 
 const { currentPath } = Astro.props;
-
-const navItems: NavSwitcherItem[] = [
-  { labelKey: 'nav_feed', href: '/', icon: 'rss' },
-  { labelKey: 'nav_categories', href: '/categories', icon: 'folder' },
-  { labelKey: 'nav_tags', href: '/tags', icon: 'tag' },
-  { labelKey: 'nav_friends', href: '/friends', icon: 'users' },
-  { labelKey: 'nav_archive', href: '/archive', icon: 'archive' },
-];
 ---
 
 <nav class="left-nav flex h-full flex-col justify-between gap-4 px-4 py-6">
   <div class="left-nav-primary flex flex-col gap-6">
-    <NavSwitcher client:load items={navItems} currentPath={currentPath} />
+    <LeftNavList client:load currentPath={currentPath} />
   </div>
 
   <div class="left-nav-controls flex flex-col gap-2">
