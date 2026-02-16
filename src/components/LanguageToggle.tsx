@@ -1,53 +1,141 @@
-import { useState, useEffect, memo } from 'react';
-import { Globe } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState, memo } from 'react';
+import { Languages } from 'lucide-react';
 import type { Locale } from '../i18n/ui';
 
 const STORAGE_KEY = 'dynamic:lang';
 
 function LanguageToggle() {
   const [locale, setLocaleState] = useState<Locale>('en');
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'zh-tw') setLocaleState('zh-tw');
   }, []);
 
-  function toggle() {
-    const next: Locale = locale === 'en' ? 'zh-tw' : 'en';
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(event: PointerEvent) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('pointerdown', handleOutside);
+    return () => document.removeEventListener('pointerdown', handleOutside);
+  }, [open]);
+
+  function setLocale(next: Locale) {
     setLocaleState(next);
     localStorage.setItem(STORAGE_KEY, next);
     document.documentElement.dataset.lang = next;
     document.documentElement.lang = next === 'zh-tw' ? 'zh-TW' : 'en';
+    setOpen(false);
   }
 
-  const label = locale === 'en' ? '中文' : 'English';
+  const options = useMemo(
+    () => [
+      { value: 'en' as const, label: 'English' },
+      { value: 'zh-tw' as const, label: '中文' },
+    ],
+    []
+  );
+
+  const currentLabel = locale === 'en' ? 'English' : '中文';
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={`Switch language to ${locale === 'en' ? 'Chinese' : 'English'}`}
-      lang={locale === 'en' ? 'zh-TW' : 'en'}
-      style={{
-        display: 'flex',
-        width: '100%',
-        alignItems: 'center',
-        gap: '0.5rem',
-        borderRadius: '0.375rem',
-        border: 'none',
-        background: 'transparent',
-        padding: '0.5rem',
-        fontSize: '0.875rem',
-        color: 'var(--color-muted)',
-        cursor: 'pointer',
-        transition: 'color 0.15s ease',
-      }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-foreground)')}
-      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-muted)')}
-    >
-      <Globe size={18} aria-hidden="true" />
-      <span>{label}</span>
-    </button>
+    <div ref={menuRef} style={{ position: 'relative', width: '100%' }}>
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`Language: ${currentLabel}`}
+        style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          gap: '0.5rem',
+          borderRadius: '0.375rem',
+          border: 'none',
+          background: 'transparent',
+          padding: '0.5rem',
+          fontSize: '0.875rem',
+          color: 'var(--color-muted)',
+          cursor: 'pointer',
+          transition: 'color 0.15s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-foreground)')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-muted)')}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setOpen(false);
+        }}
+      >
+        <Languages size={18} aria-hidden="true" />
+        <span>{currentLabel}</span>
+      </button>
+
+      {open ? (
+        <div
+          role="menu"
+          aria-label="Select language"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.25rem',
+            padding: '0.5rem',
+            borderRadius: '0.5rem',
+            background: 'var(--color-background)',
+            border: '1px solid var(--color-border)',
+            boxShadow: '0 12px 30px rgba(0, 0, 0, 0.2)',
+            zIndex: 60,
+          }}
+        >
+          {options.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="menuitemradio"
+              aria-checked={locale === option.value}
+              onClick={() => setLocale(option.value)}
+              lang={option.value === 'zh-tw' ? 'zh-TW' : 'en'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.5rem',
+                width: '100%',
+                border: 'none',
+                background: 'transparent',
+                padding: '0.5rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.85rem',
+                color: locale === option.value ? 'var(--color-foreground)' : 'var(--color-muted)',
+                cursor: 'pointer',
+                transition: 'color 0.15s ease, background 0.15s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--color-foreground)';
+                e.currentTarget.style.background = 'rgba(127,127,127,0.12)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color =
+                  locale === option.value ? 'var(--color-foreground)' : 'var(--color-muted)';
+                e.currentTarget.style.background = 'transparent';
+              }}
+            >
+              <span>{option.label}</span>
+              {locale === option.value ? <span aria-hidden="true">•</span> : null}
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
 
