@@ -26,7 +26,9 @@ const categories = Array.from(categoryMap.entries())
 
 <BaseLayout title={ui.en.page_categories_heading}>
   <div class="flex flex-col gap-4">
-    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold"><I18nText k="page_categories_heading" /></h1>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">
+      <I18nText k="page_categories_heading" />
+    </h1>
     <div class="flex flex-col gap-2">
       {
         categories.map((cat) => (

@@ -92,7 +92,7 @@ function LanguageToggle() {
             borderRadius: '0.5rem',
             background: 'var(--color-background)',
             border: '1px solid var(--color-border)',
-            boxShadow: '0 12px 30px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0 12px 30px oklch(0% 0 0 / 20%)',
             zIndex: 60,
           }}
         >

@@ -78,7 +78,7 @@ html.rainbow-active {
 }
 
 html[data-lang='en'] [data-i18n-en],
-html:not([data-lang='zh-tw']) [data-i18n-en] {
+html:not([data-lang]) [data-i18n-en] {
   display: contents;
 }
 

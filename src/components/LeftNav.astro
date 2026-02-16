@@ -62,8 +62,12 @@ function isActive(href: string) {
                   class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
                 >
                   <Icon size={18} className="shrink-0" aria-hidden="true" />
-                  <span class="left-nav-label" data-i18n-en>{item.labelEn}</span>
-                  <span class="left-nav-label" data-i18n-zh-tw>{item.labelZh}</span>
+                  <span class="left-nav-label" data-i18n-en>
+                    {item.labelEn}
+                  </span>
+                  <span class="left-nav-label" data-i18n-zh-tw>
+                    {item.labelZh}
+                  </span>
                 </a>
               );
             })()}
@@ -71,7 +75,6 @@ function isActive(href: string) {
         ))
       }
     </ul>
-
   </div>
 
   <div class="left-nav-controls flex flex-col gap-2">

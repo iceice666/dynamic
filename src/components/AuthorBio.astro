@@ -4,7 +4,7 @@ import I18nText from './I18nText.astro';
 import type { SocialLink } from '../types';
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import Image from 'astro/components/Image.astro';
+import { Image } from 'astro:assets';
 
 function socialHref(link: SocialLink): string {
   if (link.kind === 'email') return `mailto:${link.address}`;
