@@ -13,7 +13,7 @@ interface Props {
 const { locale, currentPath } = Astro.props;
 const t = useTranslations(locale);
 
-const navItems = [
+const navItems: { label: string; href: string; icon: keyof typeof navIcons }[] = [
   {
     label: t('nav_feed'),
     href: localePath('/', locale),

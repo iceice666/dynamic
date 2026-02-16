@@ -3,7 +3,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import PostCard from '../../components/PostCard.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations } from '../../i18n/index';
 import { entrySlug } from '../../utils';
 
 export async function getStaticPaths() {
@@ -20,7 +19,6 @@ export async function getStaticPaths() {
 
 const { tag } = Astro.params;
 const locale = 'en' as const;
-const t = useTranslations(locale);
 
 const [articles, posts] = await Promise.all([
   getCollection('articles', ({ data }) => !data.draft && data.tags.includes(tag!)),

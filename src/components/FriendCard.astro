@@ -2,21 +2,7 @@
 import type { Friend, SocialLink } from '../types';
 import { useTranslations } from '../i18n/index';
 import type { Locale } from '../i18n/ui';
-import {
-  ExternalLink,
-  Github,
-  Gitlab,
-  Twitter,
-  Linkedin,
-  Rss,
-  Instagram,
-  Facebook,
-  Youtube,
-  Mail,
-  Globe,
-  GitBranch,
-  MessageCircle,
-} from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface Props {
@@ -52,18 +38,18 @@ function socialHref(link: SocialLink): string {
 
 function socialIcon(link: SocialLink): LucideIcon {
   const icons: Record<SocialLink['kind'], LucideIcon> = {
-    website: Globe,
-    github: Github,
-    gitlab: Gitlab,
-    git: GitBranch,
-    twitter: Twitter,
-    linkedin: Linkedin,
-    rss: Rss,
-    facebook: Facebook,
-    instagram: Instagram,
-    threads: MessageCircle,
-    youtube: Youtube,
-    email: Mail,
+    website: LucideIcons['Globe'],
+    github: LucideIcons['Github'],
+    gitlab: LucideIcons['Gitlab'],
+    git: LucideIcons['GitBranch'],
+    twitter: LucideIcons['Twitter'],
+    linkedin: LucideIcons['Linkedin'],
+    rss: LucideIcons['Rss'],
+    facebook: LucideIcons['Facebook'],
+    instagram: LucideIcons['Instagram'],
+    threads: LucideIcons['MessageCircle'],
+    youtube: LucideIcons['Youtube'],
+    email: LucideIcons['Mail'],
   };
 
   return icons[link.kind];
@@ -91,7 +77,7 @@ function socialIcon(link: SocialLink): LucideIcon {
         class="text-foreground hover:text-accent flex items-center gap-1 text-[0.9375rem] font-semibold no-underline transition-colors duration-150"
       >
         {friend.name}
-        <ExternalLink size={14} className="shrink-0" aria-hidden="true" />
+        <LucideIcons.ExternalLink size={14} className="shrink-0" aria-hidden="true" />
       </a>
       <p class="text-muted m-0 text-sm leading-relaxed">
         {friend.desc}

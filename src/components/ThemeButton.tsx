@@ -89,7 +89,7 @@ function ThemeButton({
       root.classList.remove('rainbow-active');
       root.style.setProperty('--accent-hue', String(hue));
     }
-  }, [rainbow, speed]);
+  }, [rainbow, speed, hue]);
 
   function setTheme(t: Theme) {
     setThemeState(t);

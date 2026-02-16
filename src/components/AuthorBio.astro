@@ -3,20 +3,7 @@ import { author } from '../config';
 import { useTranslations } from '../i18n/index';
 import type { Locale } from '../i18n/ui';
 import type { SocialLink } from '../types';
-import {
-  Github,
-  Gitlab,
-  Twitter,
-  Linkedin,
-  Rss,
-  Instagram,
-  Facebook,
-  Youtube,
-  Mail,
-  Globe,
-  GitBranch,
-  MessageCircle,
-} from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface Props {
@@ -51,18 +38,18 @@ function socialLabel(link: SocialLink): string {
 
 function socialIcon(link: SocialLink): LucideIcon {
   const icons: Record<SocialLink['kind'], LucideIcon> = {
-    website: Globe,
-    github: Github,
-    gitlab: Gitlab,
-    git: GitBranch,
-    twitter: Twitter,
-    linkedin: Linkedin,
-    rss: Rss,
-    facebook: Facebook,
-    instagram: Instagram,
-    threads: MessageCircle,
-    youtube: Youtube,
-    email: Mail,
+    website: LucideIcons['Globe'],
+    github: LucideIcons['Github'],
+    gitlab: LucideIcons['Gitlab'],
+    git: LucideIcons['GitBranch'],
+    twitter: LucideIcons['Twitter'],
+    linkedin: LucideIcons['Linkedin'],
+    rss: LucideIcons['Rss'],
+    facebook: LucideIcons['Facebook'],
+    instagram: LucideIcons['Instagram'],
+    threads: LucideIcons['MessageCircle'],
+    youtube: LucideIcons['Youtube'],
+    email: LucideIcons['Mail'],
   };
 
   return icons[link.kind];

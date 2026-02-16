@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleCard from '../../components/ArticleCard.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations } from '../../i18n/index';
 import { entrySlug } from '../../utils';
 
 export async function getStaticPaths() {
@@ -19,14 +18,13 @@ export async function getStaticPaths() {
 
 const { category, categoryName } = Astro.props;
 const locale = 'en' as const;
-const t = useTranslations(locale);
 
 const articles = (
   await getCollection('articles', ({ data }) => !data.draft && data.category === category)
 ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 ---
 
-<BaseLayout title={categoryName} locale={locale}>
+<BaseLayout title={categoryName ?? ''} locale={locale}>
   <div class="flex flex-col gap-4">
     <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{categoryName}</h1>
     {
