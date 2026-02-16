@@ -1,15 +1,13 @@
 ---
 import TOCObserver from './TOCObserver';
-import { useTranslations } from '../i18n/index';
-import type { Locale } from '../i18n/ui';
+import I18nText from './I18nText.astro';
+import { ui } from '../i18n/ui';
 
 interface Props {
   headings: { depth: number; slug: string; text: string }[];
-  locale: Locale;
 }
 
-const { headings, locale } = Astro.props;
-const t = useTranslations(locale);
+const { headings } = Astro.props;
 
 // Only show h2 and h3
 const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
@@ -17,9 +15,9 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 {
   filteredHeadings.length > 0 && (
-    <nav class="p-4" aria-label={t('widget_toc_aria')}>
+    <nav class="p-4" aria-label={ui.en.widget_toc_aria}>
       <div class="text-muted mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
-        {t('widget_toc_label')}
+        <I18nText k="widget_toc_label" />
       </div>
       <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" id="toc-list">
         {filteredHeadings.map((h) => (

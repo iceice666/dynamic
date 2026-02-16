@@ -2,12 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import PostCard from '../components/PostCard.astro';
+import I18nText from '../components/I18nText.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations } from '../i18n/index';
 import { entrySlug } from '../utils';
-
-const locale = 'en' as const;
-const t = useTranslations(locale);
 
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({
   type: 'article' as const,
@@ -32,9 +29,9 @@ const feed = [...articles, ...posts].sort(
 );
 ---
 
-<BaseLayout title="Feed" locale={locale}>
+<BaseLayout title="Feed">
   <div class="flex flex-col gap-4">
-    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t('nav_feed')}</h1>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold"><I18nText k="nav_feed" /></h1>
     {
       feed.map((item) =>
         item.type === 'article' ? (
@@ -46,7 +43,6 @@ const feed = [...articles, ...posts].sort(
             tags={item.data.tags}
             category={item.data.category}
             categoryName={item.data.categoryName}
-            locale={locale}
           />
         ) : (
           <PostCard
@@ -54,7 +50,6 @@ const feed = [...articles, ...posts].sort(
             body={item.body}
             publishedAt={item.publishedAt}
             tags={item.data.tags}
-            locale={locale}
           >
             <p>{item.body}</p>
           </PostCard>

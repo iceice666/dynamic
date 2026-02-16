@@ -1,7 +1,8 @@
+import { glob } from 'astro/loaders';
 import { defineCollection, z } from 'astro:content';
 
 const articles = defineCollection({
-  type: 'content',
+  loader: glob({ base: './content/articles', pattern: '**/*.md' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -10,15 +11,19 @@ const articles = defineCollection({
     tags: z.array(z.string()).default([]),
     publishedAt: z.date(),
     draft: z.boolean().default(false),
+    lang: z.enum(['en', 'zh-tw']).default('en'),
+    translationOf: z.string().optional(),
   }),
 });
 
 const posts = defineCollection({
-  type: 'content',
+  loader: glob({ base: './content/posts', pattern: '**/*.md' }),
   schema: z.object({
     tags: z.array(z.string()).default([]),
     publishedAt: z.date(),
     draft: z.boolean().default(false),
+    lang: z.enum(['en', 'zh-tw']).default('en'),
+    translationOf: z.string().optional(),
   }),
 });
 

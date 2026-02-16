@@ -1,40 +1,32 @@
 ---
 import ThemeButton from './ThemeButton';
-import LanguageToggle from './LanguageToggle.astro';
-import { useTranslations, localePath } from '../i18n/index';
-import type { Locale } from '../i18n/ui';
+import LanguageToggle from './LanguageToggle';
+import { ui } from '../i18n/ui';
 import { Rss, Folder, Tag, Users } from 'lucide-react';
 
 interface Props {
-  locale: Locale;
   currentPath: string;
 }
 
-const { locale, currentPath } = Astro.props;
-const t = useTranslations(locale);
+const { currentPath } = Astro.props;
 
-const navItems: { label: string; href: string; icon: keyof typeof navIcons }[] = [
-  {
-    label: t('nav_feed'),
-    href: localePath('/', locale),
-    icon: 'rss',
-  },
-  {
-    label: t('nav_categories'),
-    href: localePath('/categories', locale),
-    icon: 'folder',
-  },
-  {
-    label: t('nav_tags'),
-    href: localePath('/tags', locale),
-    icon: 'tag',
-  },
-  {
-    label: t('nav_friends'),
-    href: localePath('/friends', locale),
-    icon: 'users',
-  },
-];
+const navItems: { labelEn: string; labelZh: string; href: string; icon: keyof typeof navIcons }[] =
+  [
+    { labelEn: ui.en.nav_feed, labelZh: ui['zh-tw'].nav_feed, href: '/', icon: 'rss' },
+    {
+      labelEn: ui.en.nav_categories,
+      labelZh: ui['zh-tw'].nav_categories,
+      href: '/categories',
+      icon: 'folder',
+    },
+    { labelEn: ui.en.nav_tags, labelZh: ui['zh-tw'].nav_tags, href: '/tags', icon: 'tag' },
+    {
+      labelEn: ui.en.nav_friends,
+      labelZh: ui['zh-tw'].nav_friends,
+      href: '/friends',
+      icon: 'users',
+    },
+  ];
 
 const navIcons = {
   rss: Rss,
@@ -44,8 +36,7 @@ const navIcons = {
 } as const;
 
 function isActive(href: string) {
-  if (href === '/' || href === '/zh-tw/')
-    return currentPath === href || currentPath === href.replace(/\/$/, '');
+  if (href === '/') return currentPath === '/' || currentPath === '';
   return currentPath.startsWith(href);
 }
 ---
@@ -64,7 +55,8 @@ function isActive(href: string) {
                   class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
                 >
                   <Icon size={18} className="shrink-0" aria-hidden="true" />
-                  <span>{item.label}</span>
+                  <span data-i18n-en>{item.labelEn}</span>
+                  <span data-i18n-zh-tw>{item.labelZh}</span>
                 </a>
               );
             })()}
@@ -75,17 +67,8 @@ function isActive(href: string) {
   </div>
 
   <div class="flex flex-col gap-2">
-    <ThemeButton
-      client:load
-      lightLabel={t('nav_theme_light')}
-      darkLabel={t('nav_theme_dark')}
-      systemLabel={t('nav_theme_system')}
-      modeLabel={t('theme_mode_label')}
-      accentLabel={t('theme_accent_label')}
-      rainbowLabel={t('theme_rainbow_label')}
-      speedLabel={t('theme_speed_label')}
-    />
-    <LanguageToggle currentPath={currentPath} />
+    <ThemeButton client:load />
+    <LanguageToggle client:load />
   </div>
 </nav>
 

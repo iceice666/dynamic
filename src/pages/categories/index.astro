@@ -1,10 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import I18nText from '../../components/I18nText.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations, localePath } from '../../i18n/index';
-
-const locale = 'en' as const;
-const t = useTranslations(locale);
+import { ui } from '../../i18n/ui';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
 
@@ -26,14 +24,14 @@ const categories = Array.from(categoryMap.entries())
   .sort((a, b) => b.count - a.count);
 ---
 
-<BaseLayout title={t('page_categories_heading')} locale={locale}>
+<BaseLayout title={ui.en.page_categories_heading}>
   <div class="flex flex-col gap-4">
-    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t('page_categories_heading')}</h1>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold"><I18nText k="page_categories_heading" /></h1>
     <div class="flex flex-col gap-2">
       {
         categories.map((cat) => (
           <a
-            href={localePath(`/categories/${cat.slug}`, locale)}
+            href={`/categories/${cat.slug}`}
             class="border-border bg-background hover:bg-muted-bg flex items-center justify-between rounded-lg border p-4 no-underline transition-colors duration-150"
           >
             <span class="text-foreground font-medium">{cat.name}</span>

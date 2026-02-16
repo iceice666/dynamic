@@ -1,17 +1,14 @@
 ---
-import { localePath, useTranslations } from '../i18n/index';
-import type { Locale } from '../i18n/ui';
+import I18nText from './I18nText.astro';
 
 interface Props {
   id: string;
   body: string;
   publishedAt: Date;
   tags: string[];
-  locale: Locale;
 }
 
-const { publishedAt, tags, locale } = Astro.props;
-const t = useTranslations(locale);
+const { publishedAt, tags } = Astro.props;
 
 function formatDate(date: Date) {
   const yyyy = date.getFullYear();
@@ -25,7 +22,7 @@ function formatDate(date: Date) {
   class="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150"
 >
   <div class="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
-    {t('post_label')}
+    <I18nText k="post_label" />
   </div>
 
   <details>
@@ -41,7 +38,7 @@ function formatDate(date: Date) {
       {
         tags.map((tag) => (
           <a
-            href={localePath(`/tags/${tag}`, locale)}
+            href={`/tags/${tag}`}
             class="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
           >
             #{tag}

@@ -1,35 +1,13 @@
 ---
 import type { Friend, SocialLink } from '../types';
-import { useTranslations } from '../i18n/index';
-import type { Locale } from '../i18n/ui';
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 interface Props {
   friend: Friend;
-  locale: Locale;
 }
 
-const { friend, locale } = Astro.props;
-const t = useTranslations(locale);
-
-function socialLabel(link: SocialLink): string {
-  const labels: Record<string, string> = {
-    website: t('social_website'),
-    github: t('social_github'),
-    gitlab: t('social_gitlab'),
-    git: t('social_git'),
-    twitter: t('social_twitter'),
-    linkedin: t('social_linkedin'),
-    rss: t('social_rss'),
-    facebook: t('social_facebook'),
-    instagram: t('social_instagram'),
-    threads: t('social_threads'),
-    youtube: t('social_youtube'),
-    email: t('social_email'),
-  };
-  return labels[link.kind] ?? link.kind;
-}
+const { friend } = Astro.props;
 
 function socialHref(link: SocialLink): string {
   if (link.kind === 'email') return `mailto:${link.address}`;
@@ -88,7 +66,7 @@ function socialIcon(link: SocialLink): LucideIcon {
             <a
               href={socialHref(link)}
               class="text-muted hover:text-accent flex items-center transition-colors duration-150"
-              aria-label={socialLabel(link)}
+              aria-label={link.kind}
               target={link.kind === 'email' ? undefined : '_blank'}
               rel={link.kind === 'email' ? undefined : 'noopener noreferrer'}
             >

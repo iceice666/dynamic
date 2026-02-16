@@ -1,5 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
+import { ui, type Locale } from '../i18n/ui';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -12,31 +13,14 @@ function getRainbowDuration(speed: number): number {
   return 60 - (speed / 100) * 58;
 }
 
-interface Props {
-  lightLabel?: string;
-  darkLabel?: string;
-  systemLabel?: string;
-  modeLabel?: string;
-  accentLabel?: string;
-  rainbowLabel?: string;
-  speedLabel?: string;
-}
-
-function ThemeButton({
-  lightLabel = 'Light',
-  darkLabel = 'Dark',
-  systemLabel = 'System',
-  modeLabel = 'Theme Mode',
-  accentLabel = 'Accent Color',
-  rainbowLabel = 'Rainbow Mode',
-  speedLabel = 'Speed',
-}: Props) {
+function ThemeButton() {
   const [open, setOpen] = useState(false);
   const [theme, setThemeState] = useState<Theme>('system');
   const [hue, setHueState] = useState(255);
   const [rainbow, setRainbowState] = useState(false);
   const [speed, setSpeedState] = useState(20);
   const [systemDark, setSystemDark] = useState(false);
+  const [locale, setLocale] = useState<Locale>('en');
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -57,6 +41,19 @@ function ThemeButton({
       if (!isNaN(parsed)) setSpeedState(parsed);
     }
     setSystemDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }, []);
+
+  // Observe data-lang changes for reactive translation
+  useEffect(() => {
+    const lang = document.documentElement.dataset.lang as Locale | undefined;
+    setLocale(lang === 'zh-tw' ? 'zh-tw' : 'en');
+
+    const obs = new MutationObserver(() => {
+      const updated = document.documentElement.dataset.lang as Locale | undefined;
+      setLocale(updated === 'zh-tw' ? 'zh-tw' : 'en');
+    });
+    obs.observe(document.documentElement, { attributeFilter: ['data-lang'] });
+    return () => obs.disconnect();
   }, []);
 
   // Listen for system preference changes
@@ -112,6 +109,15 @@ function ThemeButton({
     setSpeedState(clamped);
     localStorage.setItem(RAINBOW_SPEED_KEY, String(clamped));
   }
+
+  const t = ui[locale];
+  const lightLabel = t.nav_theme_light;
+  const darkLabel = t.nav_theme_dark;
+  const systemLabel = t.nav_theme_system;
+  const modeLabel = t.theme_mode_label;
+  const accentLabel = t.theme_accent_label;
+  const rainbowLabel = t.theme_rainbow_label;
+  const speedLabel = t.theme_speed_label;
 
   const currentIcon =
     theme === 'light' ? (

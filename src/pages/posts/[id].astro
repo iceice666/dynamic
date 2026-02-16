@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import I18nText from '../../components/I18nText.astro';
 import { getCollection, render } from 'astro:content';
-import { useTranslations } from '../../i18n/index';
+import { ui } from '../../i18n/ui';
 import { entrySlug } from '../../utils';
 
 export async function getStaticPaths() {
@@ -14,16 +15,14 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const locale = 'en' as const;
-const t = useTranslations(locale);
 ---
 
-<BaseLayout title={t('post_label')} locale={locale}>
+<BaseLayout title={ui.en.post_label}>
   <article class="prose prose-lg max-w-none">
     <div
       class="not-prose text-muted mb-4 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase"
     >
-      {t('post_label')}
+      <I18nText k="post_label" />
     </div>
     <Content />
     <div class="not-prose mt-4 flex flex-wrap gap-1.5">

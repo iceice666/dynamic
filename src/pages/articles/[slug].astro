@@ -14,11 +14,36 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content, headings } = await render(entry);
-const locale = 'en' as const;
+
+// Look up translation partner
+let translationEntry = null;
+if (entry.data.translationOf) {
+  const all = await getCollection('articles', ({ data }) => !data.draft);
+  translationEntry = all.find((a) => entrySlug(a.id) === entry.data.translationOf) ?? null;
+}
+
+const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
 ---
 
-<BaseLayout title={entry.data.title} locale={locale} toc={headings}>
+<BaseLayout title={entry.data.title} toc={headings} contentLang={contentLang}>
   <article class="prose prose-lg max-w-none">
+    {
+      translationEntry && (
+        <div class="not-prose border-accent/20 bg-accent/5 mb-6 rounded-lg border p-3">
+          <a
+            href={`/articles/${entrySlug(translationEntry.id)}`}
+            class="text-accent text-sm no-underline hover:opacity-75"
+          >
+            <span data-i18n-en>
+              Read in {translationEntry.data.lang === 'zh-tw' ? 'Chinese' : 'English'} →
+            </span>
+            <span data-i18n-zh-tw>
+              閱讀{translationEntry.data.lang === 'zh-tw' ? '中文' : '英文'}版本 →
+            </span>
+          </a>
+        </div>
+      )
+    }
     <h1>{entry.data.title}</h1>
     {entry.data.description && <p class="lead">{entry.data.description}</p>}
     <div class="not-prose mb-6 flex flex-wrap gap-1.5">
@@ -33,5 +58,5 @@ const locale = 'en' as const;
     <Content />
   </article>
 
-  <TOCWidget slot="right-panel" headings={headings} locale={locale} />
+  <TOCWidget slot="right-panel" headings={headings} />
 </BaseLayout>

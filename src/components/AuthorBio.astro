@@ -1,39 +1,13 @@
 ---
 import { author } from '../config';
-import { useTranslations } from '../i18n/index';
-import type { Locale } from '../i18n/ui';
+import I18nText from './I18nText.astro';
 import type { SocialLink } from '../types';
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-interface Props {
-  locale: Locale;
-}
-
-const { locale } = Astro.props;
-const t = useTranslations(locale);
-
 function socialHref(link: SocialLink): string {
   if (link.kind === 'email') return `mailto:${link.address}`;
   return link.url;
-}
-
-function socialLabel(link: SocialLink): string {
-  const labels: Record<string, string> = {
-    website: t('social_website'),
-    github: t('social_github'),
-    gitlab: t('social_gitlab'),
-    git: t('social_git'),
-    twitter: t('social_twitter'),
-    linkedin: t('social_linkedin'),
-    rss: t('social_rss'),
-    facebook: t('social_facebook'),
-    instagram: t('social_instagram'),
-    threads: t('social_threads'),
-    youtube: t('social_youtube'),
-    email: t('social_email'),
-  };
-  return labels[link.kind] ?? link.kind;
 }
 
 function socialIcon(link: SocialLink): LucideIcon {
@@ -58,7 +32,7 @@ function socialIcon(link: SocialLink): LucideIcon {
 
 <div class="flex flex-col gap-2 p-4">
   <div class="flex flex-col gap-0.5">
-    <span class="text-muted text-xs leading-[1.4]">{t('author_bio_heading')}</span>
+    <span class="text-muted text-xs leading-[1.4]"><I18nText k="author_bio_heading" /></span>
   </div>
   <img
     class="border-border h-12 w-12 rounded-full border-2 object-cover"
@@ -77,7 +51,7 @@ function socialIcon(link: SocialLink): LucideIcon {
         <a
           href={socialHref(link)}
           class="social-icon text-muted hover:text-accent flex items-center transition-colors duration-150"
-          aria-label={socialLabel(link)}
+          aria-label={link.kind}
           target={link.kind === 'email' ? undefined : '_blank'}
           rel={link.kind === 'email' ? undefined : 'noopener'}
         >

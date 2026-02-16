@@ -2,19 +2,18 @@
 import '../styles/global.css';
 import LeftNav from '../components/LeftNav.astro';
 import AuthorBio from '../components/AuthorBio.astro';
-import type { Locale } from '../i18n/ui';
 
 interface Props {
   title: string;
-  locale: Locale;
+  contentLang?: string;
   toc?: { depth: number; slug: string; text: string }[];
 }
 
-const { title, locale } = Astro.props;
+const { title, contentLang } = Astro.props;
 ---
 
 <!doctype html>
-<html lang={locale === 'zh-tw' ? 'zh-TW' : 'en'}>
+<html lang={contentLang || 'en'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -42,6 +41,11 @@ const { title, locale } = Astro.props;
           document.documentElement.style.setProperty('--rainbow-duration', duration + 's');
           document.documentElement.classList.add('rainbow-active');
         }
+        const lang = localStorage.getItem('dynamic:lang') || 'en';
+        document.documentElement.dataset.lang = lang;
+        if (!document.documentElement.getAttribute('data-content-lang')) {
+          document.documentElement.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
+        }
       })();
     </script>
   </head>
@@ -50,7 +54,7 @@ const { title, locale } = Astro.props;
       <!-- Left: Nav -->
       <aside class="left-col">
         <div class="left-col-inner">
-          <LeftNav locale={locale} currentPath={Astro.url.pathname} />
+          <LeftNav currentPath={Astro.url.pathname} />
         </div>
       </aside>
 
@@ -64,7 +68,7 @@ const { title, locale } = Astro.props;
         <div class="right-col-inner">
           <slot name="right-panel" />
           <div class="author-bio-wrapper">
-            <AuthorBio locale={locale} />
+            <AuthorBio />
           </div>
         </div>
       </aside>
