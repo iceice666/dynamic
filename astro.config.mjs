@@ -3,6 +3,11 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
+import remarkMath from 'remark-math';
+import remarkDirective from 'remark-directive';
+import rehypeKatex from 'rehype-katex';
+import { rehypeAccessibleEmojis } from 'rehype-accessible-emojis';
+import { remarkAdmonitions } from './src/utils/admonitions.ts';
 
 export default defineConfig({
   output: 'server',
@@ -24,6 +29,8 @@ export default defineConfig({
     routing: { prefixDefaultLocale: false },
   },
   markdown: {
+    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonitions],
+    rehypePlugins: [rehypeKatex, rehypeAccessibleEmojis],
     shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },
   },
 });
