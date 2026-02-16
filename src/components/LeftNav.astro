@@ -48,9 +48,9 @@ function isActive(href: string) {
 }
 ---
 
-<nav class="flex h-full flex-col justify-between gap-4 px-4 py-6">
-  <div class="flex flex-col gap-6">
-    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+<nav class="left-nav flex h-full flex-col justify-between gap-4 px-4 py-6">
+  <div class="left-nav-primary flex flex-col gap-6">
+    <ul class="left-nav-list m-0 flex list-none flex-col gap-1 p-0">
       {
         navItems.map((item) => (
           <li>
@@ -62,8 +62,8 @@ function isActive(href: string) {
                   class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
                 >
                   <Icon size={18} className="shrink-0" aria-hidden="true" />
-                  <span data-i18n-en>{item.labelEn}</span>
-                  <span data-i18n-zh-tw>{item.labelZh}</span>
+                  <span class="left-nav-label" data-i18n-en>{item.labelEn}</span>
+                  <span class="left-nav-label" data-i18n-zh-tw>{item.labelZh}</span>
                 </a>
               );
             })()}
@@ -74,7 +74,7 @@ function isActive(href: string) {
 
   </div>
 
-  <div class="flex flex-col gap-2">
+  <div class="left-nav-controls flex flex-col gap-2">
     <ThemeButton client:load transition:persist />
     <LanguageToggle client:load transition:persist />
   </div>
@@ -89,5 +89,45 @@ function isActive(href: string) {
     color: var(--color-foreground);
     font-weight: 600;
     border-left-color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .left-nav {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .left-nav-primary {
+      flex: 1;
+    }
+
+    .left-nav-list {
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 0.25rem;
+    }
+
+    .left-nav-label {
+      display: none !important;
+    }
+
+    .left-nav-controls {
+      display: none;
+    }
+
+    a.nav-link {
+      border-left: none;
+      border-bottom: 2px solid transparent;
+      padding: 0.4rem 0.6rem;
+      border-radius: 0.5rem;
+    }
+
+    a.active {
+      border-left-color: transparent;
+      border-bottom-color: var(--color-accent);
+    }
   }
 </style>
