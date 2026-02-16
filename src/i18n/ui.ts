@@ -53,6 +53,11 @@ export const ui = {
     search_no_results_hint: 'Try different keywords or check spelling.',
     search_empty_hint: 'Type to search articles and posts.',
     search_tag_hint: 'Tip: use #tag to filter by tag, @category to filter by category.',
+    // 404
+    page_404_title: 'Page Not Found',
+    page_404_heading: '404',
+    page_404_message: "The page you're looking for doesn't exist.",
+    page_404_back_home: 'Back to Home',
     // Date
     date_format: 'en-US',
   },
@@ -110,6 +115,11 @@ export const ui = {
     search_no_results_hint: '試試其他關鍵字或檢查拼寫。',
     search_empty_hint: '輸入關鍵字搜尋文章與貼文。',
     search_tag_hint: '提示：使用 #標籤 篩選標籤，@分類 篩選分類。',
+    // 404
+    page_404_title: '找不到頁面',
+    page_404_heading: '404',
+    page_404_message: '您尋找的頁面不存在。',
+    page_404_back_home: '返回首頁',
     // Date
     date_format: 'zh-TW',
   },
