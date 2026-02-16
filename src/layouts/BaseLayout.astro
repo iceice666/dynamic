@@ -63,7 +63,9 @@ const { title, locale, toc } = Astro.props;
       <aside class="right-col">
         <div class="right-col-inner">
           <slot name="right-panel" />
-          <AuthorBio locale={locale} />
+          <div class="author-bio-wrapper">
+            <AuthorBio locale={locale} />
+          </div>
         </div>
       </aside>
     </div>
@@ -111,6 +113,11 @@ const { title, locale, toc } = Astro.props;
   .right-col-inner {
     display: flex;
     flex-direction: column;
+    min-height: 100%;
+  }
+
+  .author-bio-wrapper {
+    margin-top: auto;
   }
 
   @media (max-width: 1024px) {

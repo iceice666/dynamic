@@ -3,6 +3,7 @@ import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle.astro';
 import { useTranslations, localePath } from '../i18n/index';
 import type { Locale } from '../i18n/ui';
+import { Rss, Folder, Tag, Users } from 'lucide-react';
 
 interface Props {
   locale: Locale;
@@ -13,11 +14,34 @@ const { locale, currentPath } = Astro.props;
 const t = useTranslations(locale);
 
 const navItems = [
-  { label: t('nav_feed'), href: localePath('/', locale) },
-  { label: t('nav_categories'), href: localePath('/categories', locale) },
-  { label: t('nav_tags'), href: localePath('/tags', locale) },
-  { label: t('nav_friends'), href: localePath('/friends', locale) },
+  {
+    label: t('nav_feed'),
+    href: localePath('/', locale),
+    icon: 'rss',
+  },
+  {
+    label: t('nav_categories'),
+    href: localePath('/categories', locale),
+    icon: 'folder',
+  },
+  {
+    label: t('nav_tags'),
+    href: localePath('/tags', locale),
+    icon: 'tag',
+  },
+  {
+    label: t('nav_friends'),
+    href: localePath('/friends', locale),
+    icon: 'users',
+  },
 ];
+
+const navIcons = {
+  rss: Rss,
+  folder: Folder,
+  tag: Tag,
+  users: Users,
+} as const;
 
 function isActive(href: string) {
   if (href === '/' || href === '/zh-tw/')
@@ -32,12 +56,18 @@ function isActive(href: string) {
       {
         navItems.map((item) => (
           <li>
-            <a
-              href={item.href}
-              class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
-            >
-              <span>{item.label}</span>
-            </a>
+            {(() => {
+              const Icon = navIcons[item.icon];
+              return (
+                <a
+                  href={item.href}
+                  class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
+                >
+                  <Icon size={18} className="shrink-0" aria-hidden="true" />
+                  <span>{item.label}</span>
+                </a>
+              );
+            })()}
           </li>
         ))
       }

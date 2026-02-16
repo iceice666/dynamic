@@ -11,9 +11,10 @@
     "lint:fix": "eslint . --ext .js,.ts,.tsx,.astro --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "astro check && npm run lint && npm run format:check"
+    "check": "astro check && pnpm run lint && pnpm run format:check"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/react": "^4.4.2",
     "@tailwindcss/typography": "^0.5.19",
@@ -25,12 +26,12 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@eslint/js": "^9.0.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.0.0",
     "eslint-plugin-astro": "^1.6.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",

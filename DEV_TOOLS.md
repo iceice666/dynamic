@@ -29,15 +29,15 @@ This project uses ESLint, Prettier, and other development tools to maintain code
 
 ```bash
 # Linting
-npm run lint          # Check for linting errors
-npm run lint:fix      # Auto-fix linting errors
+pnpm lint          # Check for linting errors
+pnpm lint:fix      # Auto-fix linting errors
 
 # Formatting
-npm run format        # Format all files with Prettier
-npm run format:check  # Check if files are formatted
+pnpm format        # Format all files with Prettier
+pnpm format:check  # Check if files are formatted
 
 # Combined check
-npm run check         # Run Astro check, ESLint, and Prettier check
+pnpm check         # Run Astro check, ESLint, and Prettier check
 ```
 
 ## Editor Integration
@@ -105,8 +105,8 @@ If auto-format doesn't work:
 To automatically lint and format before commits, you can set up Husky and lint-staged:
 
 ```bash
-npm install -D husky lint-staged
-npx husky init
+pnpm add -D husky lint-staged
+pnpm husky init
 ```
 
 Add to `package.json`:
@@ -123,7 +123,7 @@ Add to `package.json`:
 Create `.husky/pre-commit`:
 
 ```bash
-npx lint-staged
+pnpm lint-staged
 ```
 
 ## Troubleshooting
@@ -131,7 +131,7 @@ npx lint-staged
 ### ESLint errors in editor
 
 - Restart VS Code
-- Run `npm install` to ensure all packages are installed
+- Run `pnpm install` to ensure all packages are installed
 - Check that the ESLint extension is enabled
 
 ### Prettier not formatting

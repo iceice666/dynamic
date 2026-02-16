@@ -5,11 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev        # Start dev server at localhost:4321 (hot reload)
-npm run build      # Build static site to ./dist/
-npm run preview    # Preview production build locally
-npm run astro add  # Add integrations (React, Tailwind, etc.)
-npm run astro check # Type-check .astro files
+pnpm dev        # Start dev server at localhost:4321 (hot reload)
+pnpm build      # Build static site to ./dist/
+pnpm preview    # Preview production build locally
+pnpm astro add  # Add integrations (React, Tailwind, etc.)
+pnpm astro check # Type-check .astro files
 ```
 
 No linting or testing frameworks are configured.

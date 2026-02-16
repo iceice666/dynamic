@@ -1,6 +1,7 @@
 ---
 import { getAlternateLocaleURL, getLocaleFromURL } from '../i18n/index';
 import { useTranslations } from '../i18n/index';
+import { Globe } from 'lucide-react';
 
 interface Props {
   currentPath: string;
@@ -18,20 +19,6 @@ const isZhTW = locale === 'zh-tw';
   class="lang-toggle text-muted hover:text-foreground flex w-full items-center gap-2 rounded-md p-2 text-sm no-underline transition-colors duration-150"
   lang={isZhTW ? 'en' : 'zh-TW'}
 >
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  >
-    <circle cx="12" cy="12" r="10"></circle>
-    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-    <path d="M2 12h20"></path>
-  </svg>
+  <Globe size={18} aria-hidden="true" />
   <span>{isZhTW ? t('nav_lang_toggle_zh') : t('nav_lang_toggle')}</span>
 </a>
