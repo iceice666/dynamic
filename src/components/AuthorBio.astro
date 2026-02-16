@@ -4,6 +4,7 @@ import I18nText from './I18nText.astro';
 import type { SocialLink } from '../types';
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import Image from 'astro/components/Image.astro';
 
 function socialHref(link: SocialLink): string {
   if (link.kind === 'email') return `mailto:${link.address}`;
@@ -34,12 +35,13 @@ function socialIcon(link: SocialLink): LucideIcon {
   <div class="flex flex-col gap-0.5">
     <span class="text-muted text-xs leading-[1.4]"><I18nText k="author_bio_heading" /></span>
   </div>
-  <img
+  <Image
     class="border-border h-12 w-12 rounded-full border-2 object-cover"
     src={author.avatar}
     alt="Author avatar"
     width="48"
     height="48"
+    loading="eager"
   />
   <div class="flex flex-col gap-0.5">
     <span class="text-foreground text-sm font-semibold">{author.name}</span>
