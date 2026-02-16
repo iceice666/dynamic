@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import LeftNav from '../components/LeftNav.astro';
 import AuthorBio from '../components/AuthorBio.astro';
@@ -15,6 +16,7 @@ const { title, contentLang } = Astro.props;
 <!doctype html>
 <html lang={contentLang || 'en'}>
   <head>
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -67,7 +69,7 @@ const { title, contentLang } = Astro.props;
       <aside class="right-col">
         <div class="right-col-inner">
           <slot name="right-panel" />
-          <div class="author-bio-wrapper">
+          <div class="author-bio-wrapper" transition:persist>
             <AuthorBio />
           </div>
         </div>
@@ -92,7 +94,6 @@ const { title, contentLang } = Astro.props;
     position: sticky;
     top: 0;
     height: 100vh;
-    overflow-y: auto;
   }
 
   .left-col-inner {
