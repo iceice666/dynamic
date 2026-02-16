@@ -2,8 +2,6 @@ export const ui = {
   en: {
     // Nav
     nav_feed: 'Feed',
-    nav_categories: 'Categories',
-    nav_tags: 'Tags',
     nav_friends: 'Friends',
     nav_archive: 'Archive',
     // Theme
@@ -54,15 +52,13 @@ export const ui = {
     search_no_results: 'No results for',
     search_no_results_hint: 'Try different keywords or check spelling.',
     search_empty_hint: 'Type to search articles and posts.',
-    search_tag_hint: 'Tip: use #tag to filter by tag.',
+    search_tag_hint: 'Tip: use #tag to filter by tag, @category to filter by category.',
     // Date
     date_format: 'en-US',
   },
   'zh-tw': {
     // Nav
     nav_feed: '動態',
-    nav_categories: '分類',
-    nav_tags: '標籤',
     nav_friends: '友站',
     nav_archive: '歸檔',
     // Theme
@@ -113,7 +109,7 @@ export const ui = {
     search_no_results: '找不到結果：',
     search_no_results_hint: '試試其他關鍵字或檢查拼寫。',
     search_empty_hint: '輸入關鍵字搜尋文章與貼文。',
-    search_tag_hint: '提示：使用 #標籤 篩選標籤。',
+    search_tag_hint: '提示：使用 #標籤 篩選標籤，@分類 篩選分類。',
     // Date
     date_format: 'zh-TW',
   },

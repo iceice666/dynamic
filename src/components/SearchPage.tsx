@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ui } from '../i18n/ui';
 import { useLocale } from '../i18n/useLocale';
 
@@ -30,6 +30,8 @@ function getInitialQuery(): string {
   return new URLSearchParams(window.location.search).get('q') ?? '';
 }
 
+type Tab = 'categories' | 'tags';
+
 export default function SearchPage() {
   const locale = useLocale();
   const t = (key: keyof (typeof ui)['en']) => ui[locale][key];
@@ -37,6 +39,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState(getInitialQuery);
   const [index, setIndex] = useState<SearchItem[]>(cachedIndex ?? []);
   const [loading, setLoading] = useState(!cachedIndex);
+  const [activeTab, setActiveTab] = useState<Tab>('categories');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Fetch index on mount
@@ -77,6 +80,36 @@ export default function SearchPage() {
     inputRef.current?.focus();
   }, []);
 
+  // Derive category counts from index (language-agnostic)
+  const categoryCounts = useMemo(() => {
+    const map = new Map<string, { name: string; count: number }>();
+    for (const item of index) {
+      if (!item.category) continue;
+      const existing = map.get(item.category);
+      if (existing) {
+        existing.count++;
+      } else {
+        map.set(item.category, { name: item.categoryName, count: 1 });
+      }
+    }
+    return Array.from(map.entries())
+      .map(([slug, { name, count }]) => ({ slug, name, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [index]);
+
+  // Derive tag counts from index (language-agnostic)
+  const tagCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const item of index) {
+      for (const tag of item.tags) {
+        map.set(tag, (map.get(tag) ?? 0) + 1);
+      }
+    }
+    return Array.from(map.entries())
+      .map(([tag, count]) => ({ tag, count }))
+      .sort((a, b) => b.count - a.count);
+  }, [index]);
+
   // Filter results
   const trimmed = query.trim();
   const results = trimmed
@@ -85,6 +118,10 @@ export default function SearchPage() {
         if (trimmed.startsWith('#')) {
           const tagQuery = trimmed.slice(1).toLowerCase();
           return item.tags.some((t) => t.toLowerCase() === tagQuery);
+        }
+        if (trimmed.startsWith('@')) {
+          const catQuery = trimmed.slice(1).toLowerCase();
+          return item.category.toLowerCase() === catQuery;
         }
         const q = trimmed.toLowerCase();
         return (
@@ -125,9 +162,9 @@ export default function SearchPage() {
             <div className="flex flex-col gap-4">
               {results.map((item) =>
                 item.type === 'article' ? (
-                  <ArticleResult key={`article-${item.slug}`} item={item} />
+                  <ArticleResult key={`article-${item.slug}`} item={item} setQuery={setQuery} />
                 ) : (
-                  <PostResult key={`post-${item.slug}`} item={item} />
+                  <PostResult key={`post-${item.slug}`} item={item} setQuery={setQuery} />
                 )
               )}
             </div>
@@ -141,22 +178,84 @@ export default function SearchPage() {
           </div>
         )
       ) : (
-        <div className="text-muted mt-4 text-center text-sm">
-          <p>{t('search_empty_hint')}</p>
-          <p>{t('search_tag_hint')}</p>
+        <div className="flex flex-col gap-4">
+          <p className="text-muted m-0 text-center text-sm">{t('search_tag_hint')}</p>
+
+          {/* Tab buttons */}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setActiveTab('categories')}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                activeTab === 'categories'
+                  ? 'bg-accent text-white'
+                  : 'bg-muted-bg text-muted hover:text-foreground'
+              }`}
+            >
+              {t('page_categories_heading')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('tags')}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150 ${
+                activeTab === 'tags'
+                  ? 'bg-accent text-white'
+                  : 'bg-muted-bg text-muted hover:text-foreground'
+              }`}
+            >
+              {t('page_tags_heading')}
+            </button>
+          </div>
+
+          {/* Tab content */}
+          {activeTab === 'categories' ? (
+            <div className="flex flex-col gap-2">
+              {categoryCounts.map(({ slug, name, count }) => (
+                <button
+                  key={slug}
+                  type="button"
+                  onClick={() => setQuery(`@${slug}`)}
+                  className="border-border bg-background hover:bg-muted-bg flex items-center justify-between rounded-lg border p-3 text-left transition-colors duration-150"
+                >
+                  <span className="text-foreground text-sm font-medium">{name}</span>
+                  <span className="text-muted text-xs">{count}</span>
+                </button>
+              ))}
+              {categoryCounts.length === 0 && (
+                <p className="text-muted text-center text-sm">No categories yet.</p>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {tagCounts.map(({ tag, count }) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() => setQuery(`#${tag}`)}
+                  className="bg-muted-bg text-muted hover:text-foreground hover:bg-accent/10 rounded-full px-3 py-1 text-xs transition-colors duration-150"
+                >
+                  #{tag}{' '}
+                  <span className="opacity-60">({count})</span>
+                </button>
+              ))}
+              {tagCounts.length === 0 && (
+                <p className="text-muted text-center text-sm">No tags yet.</p>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
 
-function ArticleResult({ item }: { item: SearchItem }) {
+function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   return (
     <article className="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150">
       <div className="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
         <span data-i18n-en>{ui.en.article_label}</span>
         <span data-i18n-zh-tw>{ui['zh-tw'].article_label}</span>
-        {item.categoryName && ` · ${item.categoryName}`}
+        {item.categoryName && ` \u00b7 ${item.categoryName}`}
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
         <a
@@ -178,13 +277,14 @@ function ArticleResult({ item }: { item: SearchItem }) {
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">
           {item.tags.map((tag) => (
-            <a
+            <button
               key={tag}
-              href={`/tags/${tag}`}
-              className="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
+              type="button"
+              onClick={() => setQuery(`#${tag}`)}
+              className="text-accent cursor-pointer border-none bg-transparent p-0 text-xs transition-opacity duration-150 hover:opacity-75"
             >
               #{tag}
-            </a>
+            </button>
           ))}
         </div>
         <div className="flex-1" />
@@ -196,7 +296,7 @@ function ArticleResult({ item }: { item: SearchItem }) {
   );
 }
 
-function PostResult({ item }: { item: SearchItem }) {
+function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   return (
     <article className="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150">
       <div className="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
@@ -209,13 +309,14 @@ function PostResult({ item }: { item: SearchItem }) {
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">
           {item.tags.map((tag) => (
-            <a
+            <button
               key={tag}
-              href={`/tags/${tag}`}
-              className="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
+              type="button"
+              onClick={() => setQuery(`#${tag}`)}
+              className="text-accent cursor-pointer border-none bg-transparent p-0 text-xs transition-opacity duration-150 hover:opacity-75"
             >
               #{tag}
-            </a>
+            </button>
           ))}
         </div>
         <div className="flex-1" />

@@ -55,7 +55,7 @@ const articlePath = `/articles/${slug}`;
       {
         tags.map((tag) => (
           <a
-            href={`/tags/${tag}`}
+            href={`/search?q=%23${tag}`}
             class="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
           >
             #{tag}

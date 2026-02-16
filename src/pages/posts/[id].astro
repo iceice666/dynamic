@@ -28,7 +28,7 @@ const { Content } = await render(entry);
     <div class="not-prose mt-4 flex flex-wrap gap-1.5">
       {
         entry.data.tags.map((tag) => (
-          <a href={`/tags/${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
+          <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
             #{tag}
           </a>
         ))
