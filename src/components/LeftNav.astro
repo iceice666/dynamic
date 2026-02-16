@@ -12,7 +12,7 @@ const { currentPath } = Astro.props;
 
 <nav class="left-nav flex h-full flex-col justify-between gap-4 px-4 py-6">
   <div class="left-nav-primary flex flex-col gap-6">
-    <LeftNavList client:load currentPath={currentPath} />
+    <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
 
   <div class="left-nav-controls flex flex-col gap-2">

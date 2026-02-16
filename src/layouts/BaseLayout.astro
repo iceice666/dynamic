@@ -1,5 +1,5 @@
 ---
-import { ClientRouter } from 'astro:transitions';
+import { ClientRouter, fade } from 'astro:transitions';
 import '../styles/global.css';
 import LeftNav from '../components/LeftNav.astro';
 import AuthorBio from '../components/AuthorBio.astro';
@@ -14,7 +14,7 @@ const { title, contentLang } = Astro.props;
 ---
 
 <!doctype html>
-<html lang={contentLang || 'en'}>
+<html lang={contentLang || 'en'} transition:animate="none">
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
@@ -26,44 +26,53 @@ const { title, contentLang } = Astro.props;
 
     <!-- Blocking script: apply dark class + accent hue before paint (no FOUC) -->
     <script is:inline>
-      const THEME_HANDLER_KEY = '__dynamicApplyThemeSettingsHandler__';
+      var THEME_HANDLER_KEY = '__dynamicApplyThemeSettingsHandler__';
 
-      function applyThemeSettings() {
+      function resolveTargetDocument(input) {
+        if (input && input.documentElement) return input;
+        if (input && input.newDocument && input.newDocument.documentElement)
+          return input.newDocument;
+        return document;
+      }
+
+      function applyThemeSettings(target) {
+        const targetDocument = resolveTargetDocument(target);
+        const root = targetDocument.documentElement;
         const theme = localStorage.getItem('dynamic:theme') || 'system';
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (theme === 'dark' || (theme === 'system' && prefersDark)) {
-          document.documentElement.classList.add('dark');
+          root.classList.add('dark');
         } else {
-          document.documentElement.classList.remove('dark');
+          root.classList.remove('dark');
         }
 
         // Always set accent-hue to a valid value first (even if rainbow is active)
         const hue = localStorage.getItem('dynamic:accent-hue') || '255';
-        document.documentElement.style.setProperty('--accent-hue', hue);
+        root.style.setProperty('--accent-hue', hue);
 
         const rainbow = localStorage.getItem('dynamic:rainbow-mode') === 'true';
         if (rainbow) {
           const rawSpeed = parseInt(localStorage.getItem('dynamic:rainbow-speed') || '20', 10);
           const speed = Number.isFinite(rawSpeed) ? rawSpeed : 20;
           const duration = 60 - (speed / 100) * 58;
-          document.documentElement.style.setProperty('--rainbow-duration', duration + 's');
+          root.style.setProperty('--rainbow-duration', duration + 's');
           // Use requestAnimationFrame to ensure hue is set before animation starts
           requestAnimationFrame(() => {
-            document.documentElement.classList.add('rainbow-active');
+            root.classList.add('rainbow-active');
           });
         } else {
-          document.documentElement.classList.remove('rainbow-active');
+          root.classList.remove('rainbow-active');
         }
 
         const lang = localStorage.getItem('dynamic:lang') || 'en';
-        document.documentElement.dataset.lang = lang;
-        if (!document.documentElement.getAttribute('data-content-lang')) {
-          document.documentElement.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
+        root.dataset.lang = lang;
+        if (!root.getAttribute('data-content-lang')) {
+          root.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
         }
 
         // Update i18n aria-label attributes
         const ariaAttr = 'data-aria-' + lang;
-        document.querySelectorAll('[' + ariaAttr + ']').forEach(function (el) {
+        targetDocument.querySelectorAll('[' + ariaAttr + ']').forEach(function (el) {
           el.setAttribute('aria-label', el.getAttribute(ariaAttr));
         });
       }
@@ -77,7 +86,8 @@ const { title, contentLang } = Astro.props;
         document.removeEventListener('astro:page-load', previousThemeHandler);
       }
       window[THEME_HANDLER_KEY] = applyThemeSettings;
-      document.addEventListener('astro:page-load', applyThemeSettings);
+      document.addEventListener('astro:page-load', () => applyThemeSettings());
+      document.addEventListener('astro:before-swap', (event) => applyThemeSettings(event));
     </script>
   </head>
   <body>
@@ -90,7 +100,7 @@ const { title, contentLang } = Astro.props;
       </aside>
 
       <!-- Center: Content -->
-      <main class="center-col">
+      <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
         <slot />
       </main>
 
