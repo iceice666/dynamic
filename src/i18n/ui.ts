@@ -5,6 +5,7 @@ export const ui = {
     nav_categories: 'Categories',
     nav_tags: 'Tags',
     nav_friends: 'Friends',
+    nav_archive: 'Archive',
     // Theme
     nav_theme_light: 'Light',
     nav_theme_dark: 'Dark',
@@ -38,6 +39,9 @@ export const ui = {
     page_friends_heading: 'Friends',
     page_categories_heading: 'Categories',
     page_tags_heading: 'Tags',
+    page_archive_heading: 'Archive',
+    archive_article_singular: 'article',
+    archive_article_plural: 'articles',
     // Article card
     article_label: 'ARTICLE',
     post_label: 'POST',
@@ -50,6 +54,7 @@ export const ui = {
     nav_categories: '分類',
     nav_tags: '標籤',
     nav_friends: '友站',
+    nav_archive: '歸檔',
     // Theme
     nav_theme_light: '亮色',
     nav_theme_dark: '暗色',
@@ -83,6 +88,9 @@ export const ui = {
     page_friends_heading: '友站',
     page_categories_heading: '分類',
     page_tags_heading: '標籤',
+    page_archive_heading: '歸檔',
+    archive_article_singular: '篇文章',
+    archive_article_plural: '篇文章',
     // Article card
     article_label: '文章',
     post_label: '貼文',

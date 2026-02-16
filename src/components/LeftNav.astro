@@ -2,7 +2,7 @@
 import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle';
 import { ui } from '../i18n/ui';
-import { Rss, Folder, Tag, Users } from 'lucide-react';
+import { Rss, Folder, Tag, Users, Archive } from 'lucide-react';
 
 interface Props {
   currentPath: string;
@@ -26,6 +26,12 @@ const navItems: { labelEn: string; labelZh: string; href: string; icon: keyof ty
       href: '/friends',
       icon: 'users',
     },
+    {
+      labelEn: ui.en.nav_archive,
+      labelZh: ui['zh-tw'].nav_archive,
+      href: '/archive',
+      icon: 'archive',
+    },
   ];
 
 const navIcons = {
@@ -33,6 +39,7 @@ const navIcons = {
   folder: Folder,
   tag: Tag,
   users: Users,
+  archive: Archive,
 } as const;
 
 function isActive(href: string) {
@@ -64,6 +71,7 @@ function isActive(href: string) {
         ))
       }
     </ul>
+
   </div>
 
   <div class="flex flex-col gap-2">

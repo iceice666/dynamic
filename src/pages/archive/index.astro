@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import I18nText from '../../components/I18nText.astro';
+import { getCollection } from 'astro:content';
+import { entrySlug } from '../../utils';
+import { ui } from '../../i18n/ui';
+
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const archiveEntries = articles
+  .map((entry) => ({
+    title: entry.data.title,
+    slug: entrySlug(entry.id),
+    publishedAt: entry.data.publishedAt,
+  }))
+  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+
+const archiveGroups = new Map<number, typeof archiveEntries>();
+for (const entry of archiveEntries) {
+  const year = entry.publishedAt.getFullYear();
+  const existing = archiveGroups.get(year);
+  if (existing) {
+    existing.push(entry);
+  } else {
+    archiveGroups.set(year, [entry]);
+  }
+}
+const archiveYears = Array.from(archiveGroups.entries())
+  .sort((a, b) => b[0] - a[0])
+  .map(([year, items]) => ({ year, items }));
+
+function formatFullDate(date: Date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+---
+
+<BaseLayout title={ui.en.page_archive_heading}>
+  <div class="flex flex-col gap-6">
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold"><I18nText k="page_archive_heading" /></h1>
+    {
+      archiveYears.map(({ year, items }) => (
+        <section class="flex flex-col gap-3">
+          <div class="flex items-baseline justify-between gap-4">
+            <h2 class="text-foreground m-0 text-xl font-bold">{year}</h2>
+            <div class="text-muted text-sm">
+              <span data-i18n-en>
+                {items.length}{' '}
+                {items.length === 1 ? ui.en.archive_article_singular : ui.en.archive_article_plural}
+              </span>
+              <span data-i18n-zh-tw>
+                {items.length} {ui['zh-tw'].archive_article_plural}
+              </span>
+            </div>
+          </div>
+          <ul class="m-0 flex list-none flex-col gap-2 p-0">
+            {
+              items.map((entry) => (
+                <li>
+                  <a
+                    href={`/articles/${entry.slug}`}
+                    class="border-border bg-background hover:bg-muted-bg flex items-center gap-3 rounded-lg border px-4 py-3 no-underline transition-colors duration-150"
+                  >
+                    <time class="text-muted text-xs font-mono" datetime={entry.publishedAt.toISOString()}>
+                      {formatFullDate(entry.publishedAt)}
+                    </time>
+                    <span class="text-foreground font-medium">{entry.title}</span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      ))
+    }
+    {archiveYears.length === 0 && <p class="text-muted">No articles yet.</p>}
+  </div>
+</BaseLayout>
