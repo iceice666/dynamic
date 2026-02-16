@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Archive, Folder, Home, Tag, Users, type LucideIcon } from 'lucide-react';
+import { Archive, Folder, Home, Search, Tag, Users, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '../i18n/ui';
 
 type NavItem = {
@@ -14,6 +14,7 @@ const NAV_ITEMS: NavItem[] = [
   { labelKey: 'nav_tags', href: '/tags', icon: Tag },
   { labelKey: 'nav_friends', href: '/friends', icon: Users },
   { labelKey: 'nav_archive', href: '/archive', icon: Archive },
+  { labelKey: 'nav_search', href: '/search', icon: Search },
 ];
 
 interface LeftNavListProps {

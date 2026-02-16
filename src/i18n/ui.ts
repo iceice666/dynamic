@@ -45,6 +45,16 @@ export const ui = {
     // Article card
     article_label: 'ARTICLE',
     post_label: 'POST',
+    // Search
+    nav_search: 'Search',
+    page_search_heading: 'Search',
+    search_placeholder: 'Search articles and posts...',
+    search_aria: 'Search articles and posts',
+    search_results_count: 'results for',
+    search_no_results: 'No results for',
+    search_no_results_hint: 'Try different keywords or check spelling.',
+    search_empty_hint: 'Type to search articles and posts.',
+    search_tag_hint: 'Tip: use #tag to filter by tag.',
     // Date
     date_format: 'en-US',
   },
@@ -94,6 +104,16 @@ export const ui = {
     // Article card
     article_label: '文章',
     post_label: '貼文',
+    // Search
+    nav_search: '搜尋',
+    page_search_heading: '搜尋',
+    search_placeholder: '搜尋文章與貼文...',
+    search_aria: '搜尋文章與貼文',
+    search_results_count: '筆結果，關鍵字：',
+    search_no_results: '找不到結果：',
+    search_no_results_hint: '試試其他關鍵字或檢查拼寫。',
+    search_empty_hint: '輸入關鍵字搜尋文章與貼文。',
+    search_tag_hint: '提示：使用 #標籤 篩選標籤。',
     // Date
     date_format: 'zh-TW',
   },

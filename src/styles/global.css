@@ -86,6 +86,30 @@ html[data-lang='zh-tw'] [data-i18n-zh-tw] {
   display: contents;
 }
 
+/* Search input styles (global because scoped styles don't pierce React islands) */
+.search-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 0.9375rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: var(--color-muted);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px oklch(from var(--color-accent) l c h / 25%);
+}
+
 /* ThemeButton slider styles */
 .hue-slider {
   -webkit-appearance: none;
