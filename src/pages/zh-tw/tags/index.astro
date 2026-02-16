@@ -24,20 +24,20 @@ const tags = Array.from(tagCounts.entries())
 
 <BaseLayout title={t('page_tags_heading')} locale={locale}>
   <div class="flex flex-col gap-4">
-    <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">{t('page_tags_heading')}</h1>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t('page_tags_heading')}</h1>
     <div class="flex flex-wrap gap-2">
-      {tags.map(({ tag, count }) => (
-        <a
-          href={localePath(`/tags/${tag}`, locale)}
-          class="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-sm text-muted no-underline transition-colors duration-150 hover:border-accent hover:text-accent"
-        >
-          <span>#{tag}</span>
-          <span class="text-xs text-muted">({count})</span>
-        </a>
-      ))}
-      {tags.length === 0 && (
-        <p class="text-muted">No tags yet.</p>
-      )}
+      {
+        tags.map(({ tag, count }) => (
+          <a
+            href={localePath(`/tags/${tag}`, locale)}
+            class="border-border text-muted hover:border-accent hover:text-accent inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm no-underline transition-colors duration-150"
+          >
+            <span>#{tag}</span>
+            <span class="text-muted text-xs">({count})</span>
+          </a>
+        ))
+      }
+      {tags.length === 0 && <p class="text-muted">No tags yet.</p>}
     </div>
   </div>
 </BaseLayout>

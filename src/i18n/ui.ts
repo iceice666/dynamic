@@ -92,4 +92,4 @@ export const ui = {
 } as const;
 
 export type Locale = keyof typeof ui;
-export type UIKey = keyof typeof ui['en'];
+export type UIKey = keyof (typeof ui)['en'];

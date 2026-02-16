@@ -15,21 +15,23 @@ const t = useTranslations(locale);
 const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 
-{filteredHeadings.length > 0 && (
-  <nav class="p-4" aria-label={t('widget_toc_aria')}>
-    <div class="mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted uppercase">
-      {t('widget_toc_label')}
-    </div>
-    <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" id="toc-list">
-      {filteredHeadings.map((h) => (
-        <li class={h.depth === 3 ? 'h3' : ''} data-toc-id={h.slug}>
-          <a href={`#${h.slug}`}>{h.text}</a>
-        </li>
-      ))}
-    </ul>
-    <TOCObserver client:idle headingSlugs={filteredHeadings.map((h) => h.slug)} />
-  </nav>
-)}
+{
+  filteredHeadings.length > 0 && (
+    <nav class="p-4" aria-label={t('widget_toc_aria')}>
+      <div class="text-muted mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+        {t('widget_toc_label')}
+      </div>
+      <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" id="toc-list">
+        {filteredHeadings.map((h) => (
+          <li class={h.depth === 3 ? 'h3' : ''} data-toc-id={h.slug}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
+      <TOCObserver client:idle headingSlugs={filteredHeadings.map((h) => h.slug)} />
+    </nav>
+  )
+}
 
 <style>
   .toc-list li a {

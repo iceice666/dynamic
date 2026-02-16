@@ -21,10 +21,14 @@ const locale = 'zh-tw' as const;
   <article class="prose prose-lg max-w-none">
     <h1>{entry.data.title}</h1>
     {entry.data.description && <p class="lead">{entry.data.description}</p>}
-    <div class="flex flex-wrap gap-1.5 not-prose mb-6">
-      {entry.data.tags.map((tag) => (
-        <a href={`/zh-tw/tags/${tag}`} class="text-xs text-accent no-underline hover:opacity-75">#{tag}</a>
-      ))}
+    <div class="not-prose mb-6 flex flex-wrap gap-1.5">
+      {
+        entry.data.tags.map((tag) => (
+          <a href={`/zh-tw/tags/${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
+            #{tag}
+          </a>
+        ))
+      }
     </div>
     <Content />
   </article>

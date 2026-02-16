@@ -10,11 +10,9 @@ const t = useTranslations(locale);
 
 <BaseLayout title={t('page_friends_heading')} locale={locale}>
   <div class="flex flex-col gap-4">
-    <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">{t('page_friends_heading')}</h1>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t('page_friends_heading')}</h1>
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {friends.map((friend) => (
-        <FriendCard friend={friend} locale={locale} />
-      ))}
+      {friends.map((friend) => <FriendCard friend={friend} locale={locale} />)}
     </div>
   </div>
 </BaseLayout>

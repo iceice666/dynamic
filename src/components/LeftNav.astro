@@ -20,7 +20,8 @@ const navItems = [
 ];
 
 function isActive(href: string) {
-  if (href === '/' || href === '/zh-tw/') return currentPath === href || currentPath === href.replace(/\/$/, '');
+  if (href === '/' || href === '/zh-tw/')
+    return currentPath === href || currentPath === href.replace(/\/$/, '');
   return currentPath.startsWith(href);
 }
 ---
@@ -28,16 +29,18 @@ function isActive(href: string) {
 <nav class="flex h-full flex-col justify-between gap-4 px-4 py-6">
   <div class="flex flex-col gap-6">
     <ul class="m-0 flex list-none flex-col gap-1 p-0">
-      {navItems.map((item) => (
-        <li>
-          <a
-            href={item.href}
-            class={`nav-link flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal text-muted no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
-          >
-            <span>{item.label}</span>
-          </a>
-        </li>
-      ))}
+      {
+        navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class={`nav-link text-muted flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
+            >
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))
+      }
     </ul>
   </div>
 

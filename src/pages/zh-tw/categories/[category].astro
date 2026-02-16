@@ -21,24 +21,27 @@ const { category, categoryName } = Astro.props;
 const locale = 'zh-tw' as const;
 const t = useTranslations(locale);
 
-const articles = (await getCollection('articles', ({ data }) => !data.draft && data.category === category))
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+const articles = (
+  await getCollection('articles', ({ data }) => !data.draft && data.category === category)
+).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 ---
 
 <BaseLayout title={categoryName} locale={locale}>
   <div class="flex flex-col gap-4">
-    <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">{categoryName}</h1>
-    {articles.map((entry) => (
-      <ArticleCard
-        title={entry.data.title}
-        description={entry.data.description}
-        slug={entrySlug(entry.id)}
-        publishedAt={entry.data.publishedAt}
-        tags={entry.data.tags}
-        category={entry.data.category}
-        categoryName={entry.data.categoryName}
-        locale={locale}
-      />
-    ))}
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{categoryName}</h1>
+    {
+      articles.map((entry) => (
+        <ArticleCard
+          title={entry.data.title}
+          description={entry.data.description}
+          slug={entrySlug(entry.id)}
+          publishedAt={entry.data.publishedAt}
+          tags={entry.data.tags}
+          category={entry.data.category}
+          categoryName={entry.data.categoryName}
+          locale={locale}
+        />
+      ))
+    }
   </div>
 </BaseLayout>

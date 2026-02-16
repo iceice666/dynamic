@@ -9,25 +9,23 @@ import { entrySlug } from '../utils';
 const locale = 'en' as const;
 const t = useTranslations(locale);
 
-const articles = (await getCollection('articles', ({ data }) => !data.draft))
-  .map((entry) => ({
-    type: 'article' as const,
-    id: entrySlug(entry.id),
-    slug: entrySlug(entry.id),
-    publishedAt: entry.data.publishedAt,
-    data: entry.data,
-    body: entry.body ?? '',
-  }));
+const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({
+  type: 'article' as const,
+  id: entrySlug(entry.id),
+  slug: entrySlug(entry.id),
+  publishedAt: entry.data.publishedAt,
+  data: entry.data,
+  body: entry.body ?? '',
+}));
 
-const posts = (await getCollection('posts', ({ data }) => !data.draft))
-  .map((entry) => ({
-    type: 'post' as const,
-    id: entrySlug(entry.id),
-    slug: entrySlug(entry.id),
-    publishedAt: entry.data.publishedAt,
-    data: entry.data,
-    body: entry.body ?? '',
-  }));
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
+  type: 'post' as const,
+  id: entrySlug(entry.id),
+  slug: entrySlug(entry.id),
+  publishedAt: entry.data.publishedAt,
+  data: entry.data,
+  body: entry.body ?? '',
+}));
 
 const feed = [...articles, ...posts].sort(
   (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()
@@ -36,30 +34,32 @@ const feed = [...articles, ...posts].sort(
 
 <BaseLayout title="Feed" locale={locale}>
   <div class="flex flex-col gap-4">
-    <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">{t('nav_feed')}</h1>
-    {feed.map((item) =>
-      item.type === 'article' ? (
-        <ArticleCard
-          title={item.data.title}
-          description={item.data.description}
-          slug={item.slug}
-          publishedAt={item.publishedAt}
-          tags={item.data.tags}
-          category={item.data.category}
-          categoryName={item.data.categoryName}
-          locale={locale}
-        />
-      ) : (
-        <PostCard
-          id={item.id}
-          body={item.body}
-          publishedAt={item.publishedAt}
-          tags={item.data.tags}
-          locale={locale}
-        >
-          <p>{item.body}</p>
-        </PostCard>
+    <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t('nav_feed')}</h1>
+    {
+      feed.map((item) =>
+        item.type === 'article' ? (
+          <ArticleCard
+            title={item.data.title}
+            description={item.data.description}
+            slug={item.slug}
+            publishedAt={item.publishedAt}
+            tags={item.data.tags}
+            category={item.data.category}
+            categoryName={item.data.categoryName}
+            locale={locale}
+          />
+        ) : (
+          <PostCard
+            id={item.id}
+            body={item.body}
+            publishedAt={item.publishedAt}
+            tags={item.data.tags}
+            locale={locale}
+          >
+            <p>{item.body}</p>
+          </PostCard>
+        )
       )
-    )}
+    }
   </div>
 </BaseLayout>

@@ -26,30 +26,41 @@ function formatDate(date: Date) {
 const articlePath = localePath(`/articles/${slug}`, locale);
 ---
 
-<article class="flex flex-col gap-2 rounded-lg border border-border bg-background p-4 transition-colors duration-150 hover:bg-muted-bg">
-  <div class="text-[0.6875rem] font-semibold tracking-[0.08em] text-muted uppercase">
+<article
+  class="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150"
+>
+  <div class="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
     {categoryName ? `${t('article_label')} · ${categoryName}` : t('article_label')}
   </div>
   <h2 class="m-0 text-[1.0625rem] leading-[1.3] font-bold">
     <a
       href={articlePath}
-      class="text-foreground no-underline transition-colors duration-150 hover:text-accent"
-    >{title}</a>
+      class="text-foreground hover:text-accent no-underline transition-colors duration-150"
+      >{title}</a
+    >
   </h2>
-  {description && (
-    <p class="excerpt m-0 overflow-hidden text-sm leading-normal text-muted">{description}</p>
-  )}
+  {
+    description && (
+      <p class="excerpt text-muted m-0 overflow-hidden text-sm leading-normal">{description}</p>
+    )
+  }
   <div class="flex flex-wrap items-center gap-2">
     <div class="flex flex-wrap gap-1.5">
-      {tags.map((tag) => (
-        <a
-          href={localePath(`/tags/${tag}`, locale)}
-          class="text-xs text-accent no-underline transition-opacity duration-150 hover:opacity-75"
-        >#{tag}</a>
-      ))}
+      {
+        tags.map((tag) => (
+          <a
+            href={localePath(`/tags/${tag}`, locale)}
+            class="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
+          >
+            #{tag}
+          </a>
+        ))
+      }
     </div>
     <div class="flex-1"></div>
-    <time class="text-xs text-muted" datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+    <time class="text-muted text-xs" datetime={publishedAt.toISOString()}
+      >{formatDate(publishedAt)}</time
+    >
   </div>
 </article>
 

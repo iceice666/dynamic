@@ -114,7 +114,13 @@ function ThemeButton({
   }
 
   const currentIcon =
-    theme === 'light' ? <Sun size={18} /> : theme === 'dark' ? <Moon size={18} /> : <Monitor size={18} />;
+    theme === 'light' ? (
+      <Sun size={18} />
+    ) : theme === 'dark' ? (
+      <Moon size={18} />
+    ) : (
+      <Monitor size={18} />
+    );
   const currentLabel = theme === 'light' ? lightLabel : theme === 'dark' ? darkLabel : systemLabel;
 
   const modes: { value: Theme; label: string; icon: React.ReactNode }[] = [
@@ -153,10 +159,7 @@ function ThemeButton({
       {open && (
         <>
           {/* Backdrop */}
-          <div
-            style={{ position: 'fixed', inset: 0, zIndex: 40 }}
-            onClick={() => setOpen(false)}
-          />
+          <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setOpen(false)} />
           {/* Popover */}
           <div
             style={{
@@ -203,7 +206,8 @@ function ThemeButton({
                       border: 'none',
                       cursor: 'pointer',
                       background: theme === mode.value ? 'var(--color-muted-bg)' : 'transparent',
-                      color: theme === mode.value ? 'var(--color-foreground)' : 'var(--color-muted)',
+                      color:
+                        theme === mode.value ? 'var(--color-foreground)' : 'var(--color-muted)',
                       transition: 'background 0.15s, color 0.15s',
                     }}
                   >
@@ -215,7 +219,13 @@ function ThemeButton({
               </div>
             </div>
 
-            <hr style={{ margin: '0.75rem 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
+            <hr
+              style={{
+                margin: '0.75rem 0',
+                border: 'none',
+                borderTop: '1px solid var(--color-border)',
+              }}
+            />
 
             {/* Accent Color */}
             {!rainbow && (
@@ -246,7 +256,13 @@ function ThemeButton({
                     />
                   </div>
                 </div>
-                <hr style={{ margin: '0.75rem 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
+                <hr
+                  style={{
+                    margin: '0.75rem 0',
+                    border: 'none',
+                    borderTop: '1px solid var(--color-border)',
+                  }}
+                />
               </>
             )}
 
@@ -334,7 +350,6 @@ function ThemeButton({
           </div>
         </>
       )}
-
     </div>
   );
 }
