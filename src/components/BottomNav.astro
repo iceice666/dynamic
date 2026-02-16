@@ -1,0 +1,33 @@
+---
+import BottomNavList from './BottomNavList';
+
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+---
+
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <BottomNavList client:load transition:persist currentPath={currentPath} />
+</nav>
+
+<style>
+  .bottom-nav {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .bottom-nav {
+      display: block;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: var(--color-background);
+      border-top: 1px solid var(--color-border);
+      z-index: 10;
+    }
+  }
+</style>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Archive, Folder, Home, Search, Tag, Users, type LucideIcon } from 'lucide-react';
+import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '../i18n/ui';
 
 type NavItem = {
@@ -10,8 +10,6 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { labelKey: 'nav_feed', href: '/', icon: Home },
-  { labelKey: 'nav_categories', href: '/categories', icon: Folder },
-  { labelKey: 'nav_tags', href: '/tags', icon: Tag },
   { labelKey: 'nav_friends', href: '/friends', icon: Users },
   { labelKey: 'nav_archive', href: '/archive', icon: Archive },
   { labelKey: 'nav_search', href: '/search', icon: Search },
@@ -66,19 +64,6 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
 
       const listRect = list.getBoundingClientRect();
       const activeRect = activeEl.getBoundingClientRect();
-      const isMobile = window.matchMedia('(max-width: 640px)').matches;
-
-      if (isMobile) {
-        const width = Math.max(18, activeRect.width * 0.56);
-        const x = activeRect.left - listRect.left + (activeRect.width - width) / 2;
-        const y = activeRect.bottom - listRect.top - 3;
-
-        indicator.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-        indicator.style.width = `${width}px`;
-        indicator.style.height = '3px';
-        indicator.style.opacity = '1';
-        return;
-      }
 
       const height = Math.max(16, activeRect.height * 0.72);
       const x = activeRect.left - listRect.left - 2;
@@ -138,16 +123,8 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
   useEffect(() => {
     const handleResize = () => {
       requestAnimationFrame(() => updateIndicatorPosition());
-      requestAnimationFrame(() => updateIndicatorPosition());
     };
     window.addEventListener('resize', handleResize);
-
-    const media = window.matchMedia('(max-width: 640px)');
-    const handleMediaChange = () => {
-      requestAnimationFrame(() => updateIndicatorPosition());
-      requestAnimationFrame(() => updateIndicatorPosition());
-    };
-    media.addEventListener('change', handleMediaChange);
 
     let resizeObserver: ResizeObserver | null = null;
     if (listRef.current && typeof ResizeObserver !== 'undefined') {
@@ -159,13 +136,12 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      media.removeEventListener('change', handleMediaChange);
       resizeObserver?.disconnect();
     };
   }, [updateIndicatorPosition]);
 
   return (
-    <div className="relative m-0 flex list-none flex-col gap-1 p-0 max-sm:flex-row max-sm:justify-around max-sm:gap-1">
+    <div className="relative m-0 flex list-none flex-col gap-1 p-0">
       <div
         ref={indicatorRef}
         aria-hidden="true"
@@ -185,7 +161,7 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
       />
       <ul
         ref={listRef}
-        className="left-nav-list m-0 flex list-none flex-col gap-1 p-0 max-sm:flex-row max-sm:justify-around max-sm:gap-1"
+        className="left-nav-list m-0 flex list-none flex-col gap-1 p-0"
       >
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
@@ -205,10 +181,10 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon size={18} className="shrink-0" aria-hidden="true" />
-                <span className="left-nav-label max-sm:hidden" data-i18n-en>
+                <span className="left-nav-label" data-i18n-en>
                   {ui.en[item.labelKey]}
                 </span>
-                <span className="left-nav-label max-sm:hidden" data-i18n-zh-tw>
+                <span className="left-nav-label" data-i18n-zh-tw>
                   {ui['zh-tw'][item.labelKey]}
                 </span>
               </a>
