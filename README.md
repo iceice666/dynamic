@@ -41,6 +41,37 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm astro ...`    | Run CLI commands like `astro add`, `astro check` |
 | `pnpm astro --help` | Get help using the Astro CLI                     |
 
+## 🚀 Deployment (Cloudflare Workers)
+
+This project is configured for **Cloudflare Workers (SSR)** via the Astro Cloudflare adapter.
+
+### GitHub Actions
+
+Two workflows are provided:
+
+- `.github/workflows/ci.yml`: runs `pnpm check` and `pnpm build` on pushes and PRs
+- `.github/workflows/deploy.yml`: deploys to Cloudflare Workers on `publish` branch and creates PR previews
+
+### Required GitHub Secrets
+
+Add the following secrets in your GitHub repo:
+
+- `CLOUDFLARE_API_TOKEN`
+- `CLOUDFLARE_ACCOUNT_ID`
+
+### Production branch
+
+Deployment triggers on the `publish` branch. Create and push it once:
+
+```sh
+git checkout -b publish
+git push -u origin publish
+```
+
+### Preview URLs
+
+PR previews deploy to worker names like `dynamic-pr-<PR number>`.
+
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
