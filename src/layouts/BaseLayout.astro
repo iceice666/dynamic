@@ -26,29 +26,52 @@ const { title, contentLang } = Astro.props;
 
     <!-- Blocking script: apply dark class + accent hue before paint (no FOUC) -->
     <script is:inline>
-      (function () {
+      const THEME_HANDLER_KEY = '__dynamicApplyThemeSettingsHandler__';
+
+      function applyThemeSettings() {
         const theme = localStorage.getItem('dynamic:theme') || 'system';
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         if (theme === 'dark' || (theme === 'system' && prefersDark)) {
           document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
-        const hue = localStorage.getItem('dynamic:accent-hue');
-        if (hue) {
-          document.documentElement.style.setProperty('--accent-hue', hue);
-        }
+
+        // Always set accent-hue to a valid value first (even if rainbow is active)
+        const hue = localStorage.getItem('dynamic:accent-hue') || '255';
+        document.documentElement.style.setProperty('--accent-hue', hue);
+
         const rainbow = localStorage.getItem('dynamic:rainbow-mode') === 'true';
         if (rainbow) {
-          const speed = parseInt(localStorage.getItem('dynamic:rainbow-speed') || '20', 10);
+          const rawSpeed = parseInt(localStorage.getItem('dynamic:rainbow-speed') || '20', 10);
+          const speed = Number.isFinite(rawSpeed) ? rawSpeed : 20;
           const duration = 60 - (speed / 100) * 58;
           document.documentElement.style.setProperty('--rainbow-duration', duration + 's');
-          document.documentElement.classList.add('rainbow-active');
+          // Use requestAnimationFrame to ensure hue is set before animation starts
+          requestAnimationFrame(() => {
+            document.documentElement.classList.add('rainbow-active');
+          });
+        } else {
+          document.documentElement.classList.remove('rainbow-active');
         }
+
         const lang = localStorage.getItem('dynamic:lang') || 'en';
         document.documentElement.dataset.lang = lang;
         if (!document.documentElement.getAttribute('data-content-lang')) {
           document.documentElement.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
         }
-      })();
+      }
+
+      // Apply on initial load
+      applyThemeSettings();
+
+      // Reapply on View Transitions navigation
+      const previousThemeHandler = window[THEME_HANDLER_KEY];
+      if (typeof previousThemeHandler === 'function') {
+        document.removeEventListener('astro:page-load', previousThemeHandler);
+      }
+      window[THEME_HANDLER_KEY] = applyThemeSettings;
+      document.addEventListener('astro:page-load', applyThemeSettings);
     </script>
   </head>
   <body>
