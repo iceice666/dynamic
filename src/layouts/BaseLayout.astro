@@ -60,6 +60,12 @@ const { title, contentLang } = Astro.props;
         if (!document.documentElement.getAttribute('data-content-lang')) {
           document.documentElement.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
         }
+
+        // Update i18n aria-label attributes
+        const ariaAttr = 'data-aria-' + lang;
+        document.querySelectorAll('[' + ariaAttr + ']').forEach(function (el) {
+          el.setAttribute('aria-label', el.getAttribute(ariaAttr));
+        });
       }
 
       // Apply on initial load

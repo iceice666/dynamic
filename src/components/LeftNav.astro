@@ -2,7 +2,6 @@
 import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle';
 import NavSwitcher, { type NavSwitcherItem } from './NavSwitcher';
-import { ui } from '../i18n/ui';
 
 interface Props {
   currentPath: string;
@@ -11,26 +10,11 @@ interface Props {
 const { currentPath } = Astro.props;
 
 const navItems: NavSwitcherItem[] = [
-  { labelEn: ui.en.nav_feed, labelZh: ui['zh-tw'].nav_feed, href: '/', icon: 'rss' },
-  {
-    labelEn: ui.en.nav_categories,
-    labelZh: ui['zh-tw'].nav_categories,
-    href: '/categories',
-    icon: 'folder',
-  },
-  { labelEn: ui.en.nav_tags, labelZh: ui['zh-tw'].nav_tags, href: '/tags', icon: 'tag' },
-  {
-    labelEn: ui.en.nav_friends,
-    labelZh: ui['zh-tw'].nav_friends,
-    href: '/friends',
-    icon: 'users',
-  },
-  {
-    labelEn: ui.en.nav_archive,
-    labelZh: ui['zh-tw'].nav_archive,
-    href: '/archive',
-    icon: 'archive',
-  },
+  { labelKey: 'nav_feed', href: '/', icon: 'rss' },
+  { labelKey: 'nav_categories', href: '/categories', icon: 'folder' },
+  { labelKey: 'nav_tags', href: '/tags', icon: 'tag' },
+  { labelKey: 'nav_friends', href: '/friends', icon: 'users' },
+  { labelKey: 'nav_archive', href: '/archive', icon: 'archive' },
 ];
 ---
 

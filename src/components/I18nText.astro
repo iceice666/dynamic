@@ -1,11 +1,11 @@
 ---
-import { ui, type UIKey } from '../i18n/ui';
+import { t, type UIKey } from '../i18n';
 
 interface Props {
   k: UIKey;
 }
 
-const { k } = Astro.props;
+const vals = t(Astro.props.k);
 ---
 
-<span data-i18n-en>{ui.en[k]}</span><span data-i18n-zh-tw>{ui['zh-tw'][k]}</span>
+<span data-i18n-en>{vals.en}</span><span data-i18n-zh-tw>{vals['zh-tw']}</span>

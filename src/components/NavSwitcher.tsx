@@ -1,9 +1,9 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { Archive, Folder, Rss, Tag, Users } from 'lucide-react';
+import { ui, type UIKey } from '../i18n/ui';
 
 export interface NavSwitcherItem {
-  labelEn: string;
-  labelZh: string;
+  labelKey: UIKey;
   href: string;
   icon: 'rss' | 'folder' | 'tag' | 'users' | 'archive';
 }
@@ -59,15 +59,6 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
 
   const listRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-
-  const labels = useMemo(
-    () =>
-      items.map((item) => ({
-        en: item.labelEn,
-        zh: item.labelZh,
-      })),
-    [items]
-  );
 
   const updateIndicator = () => {
     const list = listRef.current;
@@ -189,10 +180,10 @@ function NavSwitcher({ items, currentPath }: NavSwitcherProps) {
           >
             <Icon size={18} className="shrink-0" aria-hidden="true" />
             <span className="left-nav-label max-sm:hidden" data-i18n-en>
-              {labels[index].en}
+              {ui.en[item.labelKey]}
             </span>
             <span className="left-nav-label max-sm:hidden" data-i18n-zh-tw>
-              {labels[index].zh}
+              {ui['zh-tw'][item.labelKey]}
             </span>
           </a>
         );

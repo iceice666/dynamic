@@ -1,7 +1,7 @@
 ---
 import TOCObserver from './TOCObserver';
 import I18nText from './I18nText.astro';
-import { ui } from '../i18n/ui';
+import { i18nAriaLabel } from '../i18n';
 
 interface Props {
   headings: { depth: number; slug: string; text: string }[];
@@ -15,7 +15,7 @@ const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 
 {
   filteredHeadings.length > 0 && (
-    <nav class="p-4" aria-label={ui.en.widget_toc_aria}>
+    <nav class="p-4" {...i18nAriaLabel('widget_toc_aria')}>
       <div class="text-muted mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
         <I18nText k="widget_toc_label" />
       </div>

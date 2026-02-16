@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
-import { ui, type Locale } from '../i18n/ui';
+import { useTranslation } from '../i18n/useLocale';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -20,7 +20,7 @@ function ThemeButton() {
   const [rainbow, setRainbowState] = useState(false);
   const [speed, setSpeedState] = useState(20);
   const [systemDark, setSystemDark] = useState(false);
-  const [locale, setLocale] = useState<Locale>('en');
+  const { t } = useTranslation();
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -41,19 +41,6 @@ function ThemeButton() {
       if (!isNaN(parsed)) setSpeedState(parsed);
     }
     setSystemDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
-  }, []);
-
-  // Observe data-lang changes for reactive translation
-  useEffect(() => {
-    const lang = document.documentElement.dataset.lang as Locale | undefined;
-    setLocale(lang === 'zh-tw' ? 'zh-tw' : 'en');
-
-    const obs = new MutationObserver(() => {
-      const updated = document.documentElement.dataset.lang as Locale | undefined;
-      setLocale(updated === 'zh-tw' ? 'zh-tw' : 'en');
-    });
-    obs.observe(document.documentElement, { attributeFilter: ['data-lang'] });
-    return () => obs.disconnect();
   }, []);
 
   // Listen for system preference changes
@@ -110,14 +97,13 @@ function ThemeButton() {
     localStorage.setItem(RAINBOW_SPEED_KEY, String(clamped));
   }
 
-  const t = ui[locale];
-  const lightLabel = t.nav_theme_light;
-  const darkLabel = t.nav_theme_dark;
-  const systemLabel = t.nav_theme_system;
-  const modeLabel = t.theme_mode_label;
-  const accentLabel = t.theme_accent_label;
-  const rainbowLabel = t.theme_rainbow_label;
-  const speedLabel = t.theme_speed_label;
+  const lightLabel = t('nav_theme_light');
+  const darkLabel = t('nav_theme_dark');
+  const systemLabel = t('nav_theme_system');
+  const modeLabel = t('theme_mode_label');
+  const accentLabel = t('theme_accent_label');
+  const rainbowLabel = t('theme_rainbow_label');
+  const speedLabel = t('theme_speed_label');
 
   const currentIcon =
     theme === 'light' ? (
