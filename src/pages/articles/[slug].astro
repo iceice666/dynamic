@@ -13,6 +13,12 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+
+// Safety check: ensure entry exists
+if (!entry) {
+  return Astro.redirect('/404');
+}
+
 const { Content, headings } = await render(entry);
 
 // Look up translation partner
