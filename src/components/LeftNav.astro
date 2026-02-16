@@ -1,0 +1,69 @@
+---
+import ThemeButton from './ThemeButton';
+import LanguageToggle from './LanguageToggle.astro';
+import { useTranslations, localePath } from '../i18n/index';
+import type { Locale } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+const t = useTranslations(locale);
+
+const navItems = [
+  { label: t('nav_feed'), href: localePath('/', locale) },
+  { label: t('nav_categories'), href: localePath('/categories', locale) },
+  { label: t('nav_tags'), href: localePath('/tags', locale) },
+  { label: t('nav_friends'), href: localePath('/friends', locale) },
+];
+
+function isActive(href: string) {
+  if (href === '/' || href === '/zh-tw/') return currentPath === href || currentPath === href.replace(/\/$/, '');
+  return currentPath.startsWith(href);
+}
+---
+
+<nav class="flex h-full flex-col justify-between gap-4 px-4 py-6">
+  <div class="flex flex-col gap-6">
+    <ul class="m-0 flex list-none flex-col gap-1 p-0">
+      {navItems.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class={`nav-link flex items-center gap-2.5 rounded-md border-l-2 border-transparent p-2 text-[0.9rem] font-normal text-muted no-underline transition-colors duration-150${isActive(item.href) ? ' active' : ''}`}
+          >
+            <span>{item.label}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="flex flex-col gap-2">
+    <ThemeButton
+      client:load
+      lightLabel={t('nav_theme_light')}
+      darkLabel={t('nav_theme_dark')}
+      systemLabel={t('nav_theme_system')}
+      modeLabel={t('theme_mode_label')}
+      accentLabel={t('theme_accent_label')}
+      rainbowLabel={t('theme_rainbow_label')}
+      speedLabel={t('theme_speed_label')}
+    />
+    <LanguageToggle currentPath={currentPath} />
+  </div>
+</nav>
+
+<style>
+  a.nav-link:hover {
+    color: var(--color-foreground);
+  }
+
+  a.active {
+    color: var(--color-foreground);
+    font-weight: 600;
+    border-left-color: var(--color-accent);
+  }
+</style>

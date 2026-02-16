@@ -1,0 +1,152 @@
+---
+import '../styles/global.css';
+import LeftNav from '../components/LeftNav.astro';
+import AuthorBio from '../components/AuthorBio.astro';
+import type { Locale } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  locale: Locale;
+  toc?: { depth: number; slug: string; text: string }[];
+}
+
+const { title, locale, toc } = Astro.props;
+---
+
+<!doctype html>
+<html lang={locale === 'zh-tw' ? 'zh-TW' : 'en'}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <!-- Blocking script: apply dark class + accent hue before paint (no FOUC) -->
+    <script is:inline>
+      (function () {
+        const theme = localStorage.getItem('dynamic:theme') || 'system';
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (theme === 'dark' || (theme === 'system' && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+        const hue = localStorage.getItem('dynamic:accent-hue');
+        if (hue) {
+          document.documentElement.style.setProperty('--accent-hue', hue);
+        }
+        const rainbow = localStorage.getItem('dynamic:rainbow-mode') === 'true';
+        if (rainbow) {
+          const speed = parseInt(localStorage.getItem('dynamic:rainbow-speed') || '20', 10);
+          const duration = 60 - (speed / 100) * 58;
+          document.documentElement.style.setProperty('--rainbow-duration', duration + 's');
+          document.documentElement.classList.add('rainbow-active');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="site-layout">
+      <!-- Left: Nav -->
+      <aside class="left-col">
+        <div class="left-col-inner">
+          <LeftNav locale={locale} currentPath={Astro.url.pathname} />
+        </div>
+      </aside>
+
+      <!-- Center: Content -->
+      <main class="center-col">
+        <slot />
+      </main>
+
+      <!-- Right: Panel -->
+      <aside class="right-col">
+        <div class="right-col-inner">
+          <slot name="right-panel" />
+          <AuthorBio locale={locale} />
+        </div>
+      </aside>
+    </div>
+  </body>
+</html>
+
+<style>
+  .site-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 280px;
+    grid-template-areas: 'left center right';
+    min-height: 100vh;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .left-col {
+    grid-area: left;
+    border-right: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .left-col-inner {
+    height: 100%;
+  }
+
+  .center-col {
+    grid-area: center;
+    min-width: 0;
+    padding: 2rem 1.5rem;
+  }
+
+  .right-col {
+    grid-area: right;
+    border-left: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .right-col-inner {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (max-width: 1024px) {
+    .site-layout {
+      grid-template-columns: 240px 1fr;
+      grid-template-areas:
+        'left center'
+        'left right';
+    }
+
+    .right-col {
+      grid-area: right;
+      position: static;
+      height: auto;
+      border-left: none;
+      border-top: 1px solid var(--color-border);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .site-layout {
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'center'
+        'right';
+    }
+
+    .left-col {
+      display: none;
+    }
+
+    .right-col {
+      position: static;
+      height: auto;
+      border-left: none;
+      border-top: 1px solid var(--color-border);
+    }
+  }
+</style>

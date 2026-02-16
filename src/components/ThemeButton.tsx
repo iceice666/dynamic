@@ -1,0 +1,342 @@
+import React, { useState, useEffect, memo } from 'react';
+import { Sun, Moon, Monitor, Check } from 'lucide-react';
+
+type Theme = 'light' | 'dark' | 'system';
+
+const STORAGE_KEY = 'dynamic:theme';
+const ACCENT_HUE_KEY = 'dynamic:accent-hue';
+const RAINBOW_MODE_KEY = 'dynamic:rainbow-mode';
+const RAINBOW_SPEED_KEY = 'dynamic:rainbow-speed';
+
+function getRainbowDuration(speed: number): number {
+  return 60 - (speed / 100) * 58;
+}
+
+interface Props {
+  lightLabel?: string;
+  darkLabel?: string;
+  systemLabel?: string;
+  modeLabel?: string;
+  accentLabel?: string;
+  rainbowLabel?: string;
+  speedLabel?: string;
+}
+
+function ThemeButton({
+  lightLabel = 'Light',
+  darkLabel = 'Dark',
+  systemLabel = 'System',
+  modeLabel = 'Theme Mode',
+  accentLabel = 'Accent Color',
+  rainbowLabel = 'Rainbow Mode',
+  speedLabel = 'Speed',
+}: Props) {
+  const [open, setOpen] = useState(false);
+  const [theme, setThemeState] = useState<Theme>('system');
+  const [hue, setHueState] = useState(255);
+  const [rainbow, setRainbowState] = useState(false);
+  const [speed, setSpeedState] = useState(20);
+  const [systemDark, setSystemDark] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark' || stored === 'system') {
+      setThemeState(stored);
+    }
+    const storedHue = localStorage.getItem(ACCENT_HUE_KEY);
+    if (storedHue) {
+      const parsed = parseInt(storedHue, 10);
+      if (!isNaN(parsed)) setHueState(parsed);
+    }
+    const storedRainbow = localStorage.getItem(RAINBOW_MODE_KEY) === 'true';
+    setRainbowState(storedRainbow);
+    const storedSpeed = localStorage.getItem(RAINBOW_SPEED_KEY);
+    if (storedSpeed) {
+      const parsed = parseInt(storedSpeed, 10);
+      if (!isNaN(parsed)) setSpeedState(parsed);
+    }
+    setSystemDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
+  }, []);
+
+  // Listen for system preference changes
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  // Apply dark class
+  useEffect(() => {
+    const isDark = theme === 'dark' || (theme === 'system' && systemDark);
+    document.documentElement.classList.toggle('dark', isDark);
+  }, [theme, systemDark]);
+
+  // Apply accent hue
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-hue', String(hue));
+  }, [hue]);
+
+  // Apply rainbow animation
+  useEffect(() => {
+    const root = document.documentElement;
+    if (rainbow) {
+      const duration = getRainbowDuration(speed);
+      root.style.setProperty('--rainbow-duration', `${duration}s`);
+      root.classList.add('rainbow-active');
+    } else {
+      root.classList.remove('rainbow-active');
+      root.style.setProperty('--accent-hue', String(hue));
+    }
+  }, [rainbow, speed]);
+
+  function setTheme(t: Theme) {
+    setThemeState(t);
+    localStorage.setItem(STORAGE_KEY, t);
+  }
+
+  function setHue(h: number) {
+    const clamped = Math.max(0, Math.min(360, h));
+    setHueState(clamped);
+    localStorage.setItem(ACCENT_HUE_KEY, String(clamped));
+  }
+
+  function setRainbow(enabled: boolean) {
+    setRainbowState(enabled);
+    localStorage.setItem(RAINBOW_MODE_KEY, String(enabled));
+  }
+
+  function setSpeed(s: number) {
+    const clamped = Math.max(1, Math.min(100, s));
+    setSpeedState(clamped);
+    localStorage.setItem(RAINBOW_SPEED_KEY, String(clamped));
+  }
+
+  const currentIcon =
+    theme === 'light' ? <Sun size={18} /> : theme === 'dark' ? <Moon size={18} /> : <Monitor size={18} />;
+  const currentLabel = theme === 'light' ? lightLabel : theme === 'dark' ? darkLabel : systemLabel;
+
+  const modes: { value: Theme; label: string; icon: React.ReactNode }[] = [
+    { value: 'light', label: lightLabel, icon: <Sun size={16} /> },
+    { value: 'dark', label: darkLabel, icon: <Moon size={16} /> },
+    { value: 'system', label: systemLabel, icon: <Monitor size={16} /> },
+  ];
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          gap: '0.5rem',
+          borderRadius: '0.375rem',
+          border: 'none',
+          background: 'transparent',
+          padding: '0.5rem',
+          fontSize: '0.875rem',
+          color: 'var(--color-muted)',
+          cursor: 'pointer',
+          transition: 'color 0.15s ease',
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-foreground)')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-muted)')}
+        aria-label={`Theme: ${currentLabel}`}
+      >
+        {currentIcon}
+        <span>{currentLabel}</span>
+      </button>
+
+      {open && (
+        <>
+          {/* Backdrop */}
+          <div
+            style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+            onClick={() => setOpen(false)}
+          />
+          {/* Popover */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '100%',
+              left: 0,
+              zIndex: 50,
+              width: '15rem',
+              borderRadius: '0.5rem',
+              border: '1px solid var(--color-border)',
+              background: 'var(--color-background)',
+              padding: '0.75rem',
+              boxShadow: '0 4px 16px oklch(0% 0 0 / 12%)',
+              marginBottom: '0.25rem',
+            }}
+          >
+            {/* Theme Mode */}
+            <div style={{ marginBottom: '1rem' }}>
+              <div
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.6875rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                  color: 'var(--color-muted)',
+                }}
+              >
+                {modeLabel}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                {modes.map((mode) => (
+                  <button
+                    key={mode.value}
+                    type="button"
+                    onClick={() => setTheme(mode.value)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      borderRadius: '0.375rem',
+                      padding: '0.5rem',
+                      fontSize: '0.875rem',
+                      border: 'none',
+                      cursor: 'pointer',
+                      background: theme === mode.value ? 'var(--color-muted-bg)' : 'transparent',
+                      color: theme === mode.value ? 'var(--color-foreground)' : 'var(--color-muted)',
+                      transition: 'background 0.15s, color 0.15s',
+                    }}
+                  >
+                    {mode.icon}
+                    <span style={{ flex: 1, textAlign: 'left' }}>{mode.label}</span>
+                    {theme === mode.value && <Check size={14} />}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <hr style={{ margin: '0.75rem 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
+
+            {/* Accent Color */}
+            {!rainbow && (
+              <>
+                <div style={{ marginBottom: '1rem' }}>
+                  <div
+                    style={{
+                      marginBottom: '0.5rem',
+                      fontSize: '0.6875rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-muted)',
+                    }}
+                  >
+                    {accentLabel}
+                  </div>
+                  <div style={{ padding: '0 0.25rem' }}>
+                    <input
+                      type="range"
+                      min="0"
+                      max="360"
+                      value={hue}
+                      onChange={(e) => setHue(parseInt(e.target.value))}
+                      className="hue-slider"
+                      style={{ width: '100%' }}
+                      aria-label="Accent hue"
+                    />
+                  </div>
+                </div>
+                <hr style={{ margin: '0.75rem 0', border: 'none', borderTop: '1px solid var(--color-border)' }} />
+              </>
+            )}
+
+            {/* Rainbow Mode */}
+            <div style={{ marginBottom: '0.5rem' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.6875rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--color-muted)',
+                  }}
+                >
+                  {rainbowLabel}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setRainbow(!rainbow)}
+                  style={{
+                    position: 'relative',
+                    width: '2.25rem',
+                    height: '1.25rem',
+                    borderRadius: '9999px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: rainbow ? 'var(--color-accent)' : 'var(--color-muted-bg)',
+                    transition: 'background 0.2s',
+                    padding: 0,
+                  }}
+                  aria-label={rainbow ? 'Disable rainbow mode' : 'Enable rainbow mode'}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '0.125rem',
+                      left: '0.125rem',
+                      width: '1rem',
+                      height: '1rem',
+                      borderRadius: '50%',
+                      background: 'white',
+                      boxShadow: '0 1px 3px oklch(0% 0 0 / 20%)',
+                      transition: 'transform 0.2s',
+                      transform: rainbow ? 'translateX(1rem)' : 'translateX(0)',
+                    }}
+                  />
+                </button>
+              </div>
+
+              {rainbow && (
+                <div style={{ padding: '0 0.25rem' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      fontSize: '0.75rem',
+                      color: 'var(--color-muted)',
+                      marginBottom: '0.25rem',
+                    }}
+                  >
+                    <span>{speedLabel}</span>
+                    <span>{speed}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="1"
+                    max="100"
+                    value={speed}
+                    onChange={(e) => setSpeed(parseInt(e.target.value))}
+                    className="speed-slider"
+                    style={{ width: '100%' }}
+                    aria-label="Rainbow speed"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
+    </div>
+  );
+}
+
+export default memo(ThemeButton);

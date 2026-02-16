@@ -1,0 +1,47 @@
+---
+import { localePath, useTranslations } from '../i18n/index';
+import type { Locale } from '../i18n/ui';
+
+interface Props {
+  id: string;
+  body: string;
+  publishedAt: Date;
+  tags: string[];
+  locale: Locale;
+}
+
+const { publishedAt, tags, locale } = Astro.props;
+const t = useTranslations(locale);
+
+function formatDate(date: Date) {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+  return `${yyyy}/${mm}/${dd}`;
+}
+---
+
+<article class="flex flex-col gap-2 rounded-lg border border-border bg-background p-4 transition-colors duration-150 hover:bg-muted-bg">
+  <div class="text-[0.6875rem] font-semibold tracking-[0.08em] text-muted uppercase">{t('post_label')}</div>
+
+  <details>
+    <summary class="post-summary cursor-pointer list-none">
+      <div class="post-preview prose prose-sm max-w-none text-foreground">
+        <slot />
+      </div>
+    </summary>
+  </details>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <div class="flex flex-wrap gap-1.5">
+      {tags.map((tag) => (
+        <a
+          href={localePath(`/tags/${tag}`, locale)}
+          class="text-xs text-accent no-underline transition-opacity duration-150 hover:opacity-75"
+        >#{tag}</a>
+      ))}
+    </div>
+    <div class="flex-1"></div>
+    <time class="text-xs text-muted" datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+  </div>
+</article>

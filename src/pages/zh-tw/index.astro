@@ -1,12 +1,12 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ArticleCard from '../components/ArticleCard.astro';
-import PostCard from '../components/PostCard.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import PostCard from '../../components/PostCard.astro';
 import { getCollection } from 'astro:content';
-import { useTranslations } from '../i18n/index';
-import { entrySlug } from '../utils';
+import { useTranslations } from '../../i18n/index';
+import { entrySlug } from '../../utils';
 
-const locale = 'en' as const;
+const locale = 'zh-tw' as const;
 const t = useTranslations(locale);
 
 const articles = (await getCollection('articles', ({ data }) => !data.draft))
@@ -34,7 +34,7 @@ const feed = [...articles, ...posts].sort(
 );
 ---
 
-<BaseLayout title="Feed" locale={locale}>
+<BaseLayout title={t('nav_feed')} locale={locale}>
   <div class="flex flex-col gap-4">
     <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">{t('nav_feed')}</h1>
     {feed.map((item) =>

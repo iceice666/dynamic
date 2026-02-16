@@ -1,0 +1,62 @@
+---
+import TOCObserver from './TOCObserver';
+import { useTranslations } from '../i18n/index';
+import type { Locale } from '../i18n/ui';
+
+interface Props {
+  headings: { depth: number; slug: string; text: string }[];
+  locale: Locale;
+}
+
+const { headings, locale } = Astro.props;
+const t = useTranslations(locale);
+
+// Only show h2 and h3
+const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{filteredHeadings.length > 0 && (
+  <nav class="p-4" aria-label={t('widget_toc_aria')}>
+    <div class="mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted uppercase">
+      {t('widget_toc_label')}
+    </div>
+    <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" id="toc-list">
+      {filteredHeadings.map((h) => (
+        <li class={h.depth === 3 ? 'h3' : ''} data-toc-id={h.slug}>
+          <a href={`#${h.slug}`}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+    <TOCObserver client:idle headingSlugs={filteredHeadings.map((h) => h.slug)} />
+  </nav>
+)}
+
+<style>
+  .toc-list li a {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    line-height: 1.4;
+    display: block;
+    padding: 0.1875rem 0.5rem;
+    border-radius: 0.25rem;
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease;
+  }
+
+  .toc-list li a:hover {
+    color: var(--color-foreground);
+    background-color: var(--color-muted-bg);
+  }
+
+  .toc-list li.h3 a {
+    padding-left: 1.25rem;
+    font-size: 0.75rem;
+  }
+
+  .toc-list li.active a {
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+</style>

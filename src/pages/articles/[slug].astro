@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TOCWidget from '../../components/TOCWidget.astro';
+import { getCollection, render } from 'astro:content';
+import { entrySlug } from '../../utils';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+  return articles.map((entry) => ({
+    params: { slug: entrySlug(entry.id) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const locale = 'en' as const;
+---
+
+<BaseLayout title={entry.data.title} locale={locale} toc={headings}>
+  <article class="prose prose-lg max-w-none">
+    <h1>{entry.data.title}</h1>
+    {entry.data.description && <p class="lead">{entry.data.description}</p>}
+    <div class="flex flex-wrap gap-1.5 not-prose mb-6">
+      {entry.data.tags.map((tag) => (
+        <a href={`/tags/${tag}`} class="text-xs text-accent no-underline hover:opacity-75">#{tag}</a>
+      ))}
+    </div>
+    <Content />
+  </article>
+
+  <TOCWidget slot="right-panel" headings={headings} locale={locale} />
+</BaseLayout>

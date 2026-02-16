@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { useTranslations } from '../../i18n/index';
+import { entrySlug } from '../../utils';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((entry) => ({
+    params: { id: entrySlug(entry.id) },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const locale = 'en' as const;
+const t = useTranslations(locale);
+---
+
+<BaseLayout title={t('post_label')} locale={locale}>
+  <article class="prose prose-lg max-w-none">
+    <div class="not-prose mb-4 text-[0.6875rem] font-semibold tracking-[0.08em] text-muted uppercase">{t('post_label')}</div>
+    <Content />
+    <div class="not-prose mt-4 flex flex-wrap gap-1.5">
+      {entry.data.tags.map((tag) => (
+        <a href={`/tags/${tag}`} class="text-xs text-accent no-underline hover:opacity-75">#{tag}</a>
+      ))}
+    </div>
+  </article>
+</BaseLayout>

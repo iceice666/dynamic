@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import ArticleCard from '../../../components/ArticleCard.astro';
+import PostCard from '../../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations } from '../../../i18n/index';
+import { entrySlug } from '../../../utils';
+
+export async function getStaticPaths() {
+  const [articles, posts] = await Promise.all([
+    getCollection('articles', ({ data }) => !data.draft),
+    getCollection('posts', ({ data }) => !data.draft),
+  ]);
+  const tags = new Set([
+    ...articles.flatMap((a) => a.data.tags),
+    ...posts.flatMap((p) => p.data.tags),
+  ]);
+  return Array.from(tags).map((tag) => ({ params: { tag } }));
+}
+
+const { tag } = Astro.params;
+const locale = 'zh-tw' as const;
+const t = useTranslations(locale);
+
+const [articles, posts] = await Promise.all([
+  getCollection('articles', ({ data }) => !data.draft && data.tags.includes(tag!)),
+  getCollection('posts', ({ data }) => !data.draft && data.tags.includes(tag!)),
+]);
+
+const feed = [
+  ...articles.map((e) => ({ type: 'article' as const, id: entrySlug(e.id), slug: entrySlug(e.id), publishedAt: e.data.publishedAt, data: e.data, body: e.body ?? '' })),
+  ...posts.map((e) => ({ type: 'post' as const, id: entrySlug(e.id), slug: entrySlug(e.id), publishedAt: e.data.publishedAt, data: e.data, body: e.body ?? '' })),
+].sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+---
+
+<BaseLayout title={`#${tag}`} locale={locale}>
+  <div class="flex flex-col gap-4">
+    <h1 class="m-0 mb-2 text-2xl font-bold text-foreground">#{tag}</h1>
+    {feed.map((item) =>
+      item.type === 'article' ? (
+        <ArticleCard
+          title={item.data.title}
+          description={item.data.description}
+          slug={item.slug}
+          publishedAt={item.publishedAt}
+          tags={item.data.tags}
+          category={item.data.category}
+          categoryName={item.data.categoryName}
+          locale={locale}
+        />
+      ) : (
+        <PostCard
+          id={item.id}
+          body={item.body}
+          publishedAt={item.publishedAt}
+          tags={item.data.tags}
+          locale={locale}
+        >
+          <p>{item.body}</p>
+        </PostCard>
+      )
+    )}
+  </div>
+</BaseLayout>
