@@ -1,6 +1,4 @@
 ---
-import ThemeButton from '$/components/controls/ThemeButton';
-import LanguageToggle from '$/components/controls/LanguageToggle';
 import LeftNavList from './LeftNavList';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import AuthorBio from '$/components/cards/AuthorBio.astro';
@@ -15,7 +13,7 @@ const hasToc = toc && toc.length > 0;
 ---
 
 <nav class="left-nav flex h-full flex-col gap-4 px-4 py-6">
-  <div class="left-nav-primary flex flex-col gap-6">
+  <div class="left-nav-primary flex flex-col gap-4">
     <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
 
@@ -31,11 +29,6 @@ const hasToc = toc && toc.length > 0;
   }
 
   {!hasToc && <div class="flex-1" />}
-
-  <div class="left-nav-controls flex flex-col gap-2">
-    <ThemeButton client:load transition:persist />
-    <LanguageToggle client:load transition:persist />
-  </div>
 
   <hr class="border-border" />
 
