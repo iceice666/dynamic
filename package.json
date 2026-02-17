@@ -8,10 +8,10 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "eslint . --ext .js,.ts,.tsx,.astro",
-    "lint:fix": "eslint . --ext .js,.ts,.tsx,.astro --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "lint": "eslint src --ext .js,.ts,.tsx,.astro",
+    "lint:fix": "eslint src --ext .js,.ts,.tsx,.astro --fix",
+    "format": "prettier --write src",
+    "format:check": "prettier --check src",
     "check": "astro check && pnpm run lint && pnpm run format:check"
   },
   "dependencies": {
