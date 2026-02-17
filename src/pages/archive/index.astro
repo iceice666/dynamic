@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import I18nText from '../../components/I18nText.astro';
 import { getCollection } from 'astro:content';
-import { entrySlug } from '../../utils';
+import { entrySlug, formatDate } from '../../utils';
 import { ui } from '../../i18n/ui';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
@@ -27,13 +27,6 @@ for (const entry of archiveEntries) {
 const archiveYears = Array.from(archiveGroups.entries())
   .sort((a, b) => b[0] - a[0])
   .map(([year, items]) => ({ year, items }));
-
-function formatFullDate(date: Date) {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd}`;
-}
 ---
 
 <BaseLayout title={ui.en.page_archive_heading}>
@@ -67,7 +60,7 @@ function formatFullDate(date: Date) {
                     class="text-muted font-mono text-xs"
                     datetime={entry.publishedAt.toISOString()}
                   >
-                    {formatFullDate(entry.publishedAt)}
+                    {formatDate(entry.publishedAt)}
                   </time>
                   <span class="text-foreground font-medium">{entry.title}</span>
                 </a>

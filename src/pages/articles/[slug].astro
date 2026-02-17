@@ -54,7 +54,7 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
     {entry.data.description && <p class="lead">{entry.data.description}</p>}
     <div class="not-prose mb-6 flex flex-wrap gap-1.5">
       {
-        entry.data.tags.map((tag) => (
+        entry.data.tags.map((tag: string) => (
           <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
             #{tag}
           </a>

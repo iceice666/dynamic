@@ -3,14 +3,16 @@ import TOCObserver from './TOCObserver';
 import I18nText from './I18nText.astro';
 import { i18nAriaLabel } from '../i18n';
 
+type Heading = { depth: number; slug: string; text: string };
+
 interface Props {
-  headings: { depth: number; slug: string; text: string }[];
+  headings: Heading[];
 }
 
 const { headings } = Astro.props;
 
 // Only show h2 and h3
-const filteredHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const filteredHeadings = headings.filter((h: Heading) => h.depth === 2 || h.depth === 3);
 ---
 
 {

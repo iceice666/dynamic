@@ -8,7 +8,6 @@ import { entrySlug } from '../utils';
 
 const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({
   type: 'article' as const,
-  id: entrySlug(entry.id),
   slug: entrySlug(entry.id),
   publishedAt: entry.data.publishedAt,
   data: entry.data,
@@ -17,7 +16,6 @@ const articles = (await getCollection('articles', ({ data }) => !data.draft)).ma
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
   type: 'post' as const,
-  id: entrySlug(entry.id),
   slug: entrySlug(entry.id),
   publishedAt: entry.data.publishedAt,
   data: entry.data,
@@ -41,16 +39,10 @@ const feed = [...articles, ...posts].sort(
             slug={item.slug}
             publishedAt={item.publishedAt}
             tags={item.data.tags}
-            category={item.data.category}
             categoryName={item.data.categoryName}
           />
         ) : (
-          <PostCard
-            id={item.id}
-            body={item.body}
-            publishedAt={item.publishedAt}
-            tags={item.data.tags}
-          >
+          <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>
             <p>{item.body}</p>
           </PostCard>
         )

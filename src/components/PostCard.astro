@@ -1,21 +1,13 @@
 ---
 import I18nText from './I18nText.astro';
+import { formatDate } from '../utils';
 
 interface Props {
-  id: string;
-  body: string;
   publishedAt: Date;
   tags: string[];
 }
 
 const { publishedAt, tags } = Astro.props;
-
-function formatDate(date: Date) {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const dd = String(date.getDate()).padStart(2, '0');
-  return `${yyyy}/${mm}/${dd}`;
-}
 ---
 
 <article

@@ -1,37 +1,13 @@
 ---
-import type { Friend, SocialLink } from '../types';
+import type { Friend } from '../types';
+import { socialHref, socialIcon } from '../utils/social';
 import * as LucideIcons from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 
 interface Props {
   friend: Friend;
 }
 
 const { friend } = Astro.props;
-
-function socialHref(link: SocialLink): string {
-  if (link.kind === 'email') return `mailto:${link.address}`;
-  return link.url;
-}
-
-function socialIcon(link: SocialLink): LucideIcon {
-  const icons: Record<SocialLink['kind'], LucideIcon> = {
-    website: LucideIcons['Globe'],
-    github: LucideIcons['Github'],
-    gitlab: LucideIcons['Gitlab'],
-    git: LucideIcons['GitBranch'],
-    twitter: LucideIcons['Twitter'],
-    linkedin: LucideIcons['Linkedin'],
-    rss: LucideIcons['Rss'],
-    facebook: LucideIcons['Facebook'],
-    instagram: LucideIcons['Instagram'],
-    threads: LucideIcons['MessageCircle'],
-    youtube: LucideIcons['Youtube'],
-    email: LucideIcons['Mail'],
-  };
-
-  return icons[link.kind];
-}
 ---
 
 <article
