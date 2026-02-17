@@ -5,6 +5,8 @@ import { getCollection, render } from 'astro:content';
 import { ui } from '../../i18n/ui';
 import { entrySlug } from '../../utils';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const posts = await getCollection('posts', ({ data }) => !data.draft);
   return posts.map((entry) => ({

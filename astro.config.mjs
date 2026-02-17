@@ -12,7 +12,7 @@ import { remarkAdmonitions } from './src/utils/admonitions.ts';
 export default defineConfig({
   output: 'server',
   srcDir: './src',
-  adapter: cloudflare(),
+  adapter: cloudflare({ imageService: 'compile' }),
   integrations: [react(), mdx()],
   vite: {
     plugins: [tailwindcss()],
