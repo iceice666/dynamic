@@ -224,9 +224,9 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
         }}
       >
         {toc && <BottomNavTOC toc={toc} onNavigate={() => setPanelOpen(false)} />}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <ThemeButton />
-          <LanguageToggle />
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem' }}>
+          <ThemeButton className="flex-1" compact align="left" />
+          <LanguageToggle className="flex-1" compact align="right" />
         </div>
       </div>
 

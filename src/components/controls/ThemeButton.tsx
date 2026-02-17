@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
 
@@ -13,8 +13,15 @@ function getRainbowDuration(speed: number): number {
   return 60 - (speed / 100) * 58;
 }
 
-function ThemeButton() {
+interface ThemeButtonProps {
+  className?: string;
+  compact?: boolean;
+  align?: 'left' | 'right';
+}
+
+function ThemeButton({ className, compact = false, align = 'left' }: ThemeButtonProps) {
   const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [theme, setThemeState] = useState<Theme>('system');
   const [hue, setHueState] = useState(255);
   const [rainbow, setRainbowState] = useState(false);
@@ -42,6 +49,19 @@ function ThemeButton() {
     }
     setSystemDark(window.matchMedia('(prefers-color-scheme: dark)').matches);
   }, []);
+
+  // Close on click outside
+  useEffect(() => {
+    if (!open) return;
+    function handleOutside(event: PointerEvent) {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener('pointerdown', handleOutside);
+    return () => document.removeEventListener('pointerdown', handleOutside);
+  }, [open]);
 
   // Listen for system preference changes
   useEffect(() => {
@@ -122,7 +142,7 @@ function ThemeButton() {
   ];
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={menuRef} style={{ position: 'relative' }} className={className}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -130,6 +150,7 @@ function ThemeButton() {
           display: 'flex',
           width: '100%',
           alignItems: 'center',
+          justifyContent: compact ? 'center' : 'flex-start',
           gap: '0.5rem',
           borderRadius: '0.375rem',
           border: 'none',
@@ -142,10 +163,13 @@ function ThemeButton() {
         }}
         onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-foreground)')}
         onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-muted)')}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setOpen(false);
+        }}
         aria-label={`Theme: ${currentLabel}`}
       >
         {currentIcon}
-        <span>{currentLabel}</span>
+        {!compact && <span>{currentLabel}</span>}
       </button>
 
       {open && (
@@ -157,7 +181,8 @@ function ThemeButton() {
             style={{
               position: 'absolute',
               bottom: '100%',
-              left: 0,
+              left: align === 'left' ? 0 : 'auto',
+              right: align === 'right' ? 0 : 'auto',
               zIndex: 50,
               width: '15rem',
               borderRadius: '0.5rem',
