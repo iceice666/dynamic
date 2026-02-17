@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { entrySlug } from '../utils';
+import { entrySlug } from '$/utils';
 
 export const GET: APIRoute = async () => {
   const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({

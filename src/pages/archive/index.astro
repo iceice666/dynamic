@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import I18nText from '../../components/I18nText.astro';
+import BaseLayout from '$/layouts/BaseLayout.astro';
+import I18nText from '$/components/I18nText.astro';
 import { getCollection, render } from 'astro:content';
-import { entrySlug, formatDate } from '../../utils';
-import { ui } from '../../i18n/ui';
+import { entrySlug, formatDate } from '$/utils';
+import { ui } from '$/i18n/ui';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
 const archiveEntries = await Promise.all(

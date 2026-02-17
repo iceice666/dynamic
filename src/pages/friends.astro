@@ -1,9 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import FriendCard from '../components/FriendCard.astro';
-import I18nText from '../components/I18nText.astro';
-import { friends } from '../config';
-import { ui } from '../i18n/ui';
+import BaseLayout from '$/layouts/BaseLayout.astro';
+import FriendCard from '$/components/cards/FriendCard.astro';
+import I18nText from '$/components/I18nText.astro';
+import { friends } from '../../dynamic.config';
+import { ui } from '$/i18n/ui';
 ---
 
 <BaseLayout title={ui.en.page_friends_heading}>

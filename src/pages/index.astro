@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import ArticleCard from '../components/ArticleCard.astro';
-import PostCard from '../components/PostCard.astro';
-import I18nText from '../components/I18nText.astro';
+import BaseLayout from '$/layouts/BaseLayout.astro';
+import ArticleCard from '$/components/cards/ArticleCard.astro';
+import PostCard from '$/components/cards/PostCard.astro';
+import I18nText from '$/components/I18nText.astro';
 import { getCollection, render } from 'astro:content';
-import { entrySlug } from '../utils';
+import { entrySlug } from '$/utils';
 
 const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
 const articles = await Promise.all(

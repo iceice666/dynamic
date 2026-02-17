@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
-import { ui, type UIKey } from '../i18n/ui';
-import ThemeButton from './ThemeButton';
-import LanguageToggle from './LanguageToggle';
-import BottomNavTOC from './BottomNavTOC';
+import { ui, type UIKey } from '$/i18n/ui';
+import ThemeButton from '$/components/controls/ThemeButton';
+import LanguageToggle from '$/components/controls/LanguageToggle';
+import BottomNavTOC from '$/components/toc/BottomNavTOC';
 
 type NavItem = {
   labelKey: UIKey;

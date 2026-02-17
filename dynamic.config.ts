@@ -1,4 +1,4 @@
-import type { Author, Friend } from './types';
+import type { Author, Friend } from './src/types';
 
 // --- Author ---
 

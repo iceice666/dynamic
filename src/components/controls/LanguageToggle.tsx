@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, memo } from 'react';
 import { Languages } from 'lucide-react';
-import type { Locale } from '../i18n/ui';
+import type { Locale } from '$/i18n/ui';
 
 const STORAGE_KEY = 'dynamic:lang';
 

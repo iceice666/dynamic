@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ui } from '../i18n/ui';
-import { useLocale } from '../i18n/useLocale';
+import { ui } from '$/i18n/ui';
+import { useLocale } from '$/i18n/useLocale';
 
 interface SearchItem {
   type: 'article' | 'post';

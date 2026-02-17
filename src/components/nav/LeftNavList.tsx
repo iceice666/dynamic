@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
-import { ui, type UIKey } from '../i18n/ui';
+import { ui, type UIKey } from '$/i18n/ui';
 
 type NavItem = {
   labelKey: UIKey;

@@ -19,10 +19,36 @@ pnpm format     # Auto-format with Prettier
 
 **Astro 5 blog** deployed to Cloudflare Pages (`output: 'server'` with `@astrojs/cloudflare` adapter).
 
+### Path Alias
+
+`$` maps to `src/` (configured in `tsconfig.json`). Use `$/…` for all imports within `src/` (e.g., `import { t } from '$/i18n'`). Files outside `src/` (root-level `dynamic.config.ts`, `styles/`, `assets/`) use relative paths.
+
+### Project Structure
+
+```
+├── assets/                  # Static assets (images, SVGs)
+├── styles/                  # Global CSS (Tailwind entry + article styles)
+├── dynamic.config.ts        # Site config (author, friends list)
+├── src/
+│   ├── components/
+│   │   ├── nav/             # LeftNav, LeftNavList, BottomNav, BottomNavList
+│   │   ├── toc/             # TOCWidget, TOCObserver, BottomNavTOC
+│   │   ├── cards/           # ArticleCard, PostCard, AuthorBio, FriendCard
+│   │   ├── controls/        # ThemeButton, LanguageToggle
+│   │   ├── I18nText.astro   # Dual-span i18n text utility
+│   │   └── SearchPage.tsx   # Client-side search page
+│   ├── content/             # Markdown collections (articles/, posts/)
+│   ├── i18n/                # Translation dictionary + hooks
+│   ├── layouts/             # BaseLayout.astro
+│   ├── pages/               # Astro file-based routes
+│   ├── types.ts             # Shared TypeScript types
+│   └── utils.ts             # Shared utilities (entrySlug, formatDate)
+```
+
 ### Styling
 
 - **Tailwind CSS v4** via `@tailwindcss/vite` plugin (NOT `@astrojs/tailwind` — incompatible with v4).
-- Design tokens defined in `src/styles/global.css` using OKLCH colors with a configurable `--accent-hue` CSS custom property.
+- Design tokens defined in `styles/global.css` using OKLCH colors with a configurable `--accent-hue` CSS custom property.
 - Dark mode via `html.dark` class, applied by a blocking inline script in `BaseLayout.astro` to prevent FOUC.
 
 ### React Islands

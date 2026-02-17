@@ -1,4 +1,4 @@
-import type { SocialLink } from '../types';
+import type { SocialLink } from '$/types';
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
