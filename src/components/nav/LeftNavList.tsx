@@ -64,7 +64,7 @@ function updateIndicatorPosition({
   const activeRect = activeEl.getBoundingClientRect();
 
   const height = Math.max(16, activeRect.height * 0.72);
-  const x = activeRect.left - listRect.left - 2;
+  const x = activeRect.left - listRect.left - 7;
   const y = activeRect.top - listRect.top + (activeRect.height - height) / 2;
 
   indicatorEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
@@ -193,7 +193,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
           background: 'var(--color-accent)',
           pointerEvents: 'none',
           opacity: 0,
-          transform: 'translate3d(0, 0, 0)',
+          transform: 'translate(-7px, 0)',
           willChange: 'transform, width, height, opacity',
           width: '0px',
           height: '0px',
