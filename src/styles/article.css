@@ -122,6 +122,12 @@ html.dark .admonition-danger {
   background: oklch(20% 0.03 25);
 }
 
+/* Strip backtick pseudo-elements from inline code */
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+  content: '' !important;
+}
+
 /* Typography integration - ensure admonitions work well within prose */
 .prose .admonition {
   font-size: 0.9375rem;

@@ -21,7 +21,10 @@ if (!entry) {
   return Astro.redirect('/404');
 }
 
-const { Content, headings } = await render(entry);
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
+
+const title = entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? 'Untitled';
+const description = entry.data.description ?? remarkPluginFrontmatter?.extractedDescription;
 
 // Look up translation partner
 let translationEntry = null;
@@ -33,7 +36,7 @@ if (entry.data.translationOf) {
 const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
 ---
 
-<BaseLayout title={entry.data.title} toc={headings} contentLang={contentLang}>
+<BaseLayout title={title} toc={headings} contentLang={contentLang}>
   <article class="prose prose-lg max-w-none">
     {
       translationEntry && (
@@ -52,8 +55,8 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
         </div>
       )
     }
-    <h1>{entry.data.title}</h1>
-    {entry.data.description && <p class="lead">{entry.data.description}</p>}
+    <h1>{title}</h1>
+    {description && <p class="lead">{description}</p>}
     <div class="not-prose mb-6 flex flex-wrap gap-1.5">
       {
         entry.data.tags.map((tag: string) => (

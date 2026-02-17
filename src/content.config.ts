@@ -4,7 +4,7 @@ import { defineCollection, z } from 'astro:content';
 const articles = defineCollection({
   loader: glob({ base: './content/articles', pattern: '**/*.md' }),
   schema: z.object({
-    title: z.string(),
+    title: z.string().optional(),
     description: z.string().optional(),
     category: z.string().optional(),
     categoryName: z.string().optional(),

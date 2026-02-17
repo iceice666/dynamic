@@ -3,16 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import PostCard from '../components/PostCard.astro';
 import I18nText from '../components/I18nText.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { entrySlug } from '../utils';
 
-const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({
-  type: 'article' as const,
-  slug: entrySlug(entry.id),
-  publishedAt: entry.data.publishedAt,
-  data: entry.data,
-  body: entry.body ?? '',
-}));
+const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
+const articles = await Promise.all(
+  articlesRaw.map(async (entry) => {
+    const { remarkPluginFrontmatter } = await render(entry);
+    return {
+      type: 'article' as const,
+      slug: entrySlug(entry.id),
+      publishedAt: entry.data.publishedAt,
+      data: {
+        ...entry.data,
+        title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? entrySlug(entry.id),
+        description: entry.data.description ?? remarkPluginFrontmatter?.extractedDescription,
+      },
+      body: entry.body ?? '',
+    };
+  })
+);
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
   type: 'post' as const,

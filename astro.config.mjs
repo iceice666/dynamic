@@ -8,6 +8,7 @@ import remarkDirective from 'remark-directive';
 import rehypeKatex from 'rehype-katex';
 import { rehypeAccessibleEmojis } from 'rehype-accessible-emojis';
 import { remarkAdmonitions } from './src/utils/admonitions.ts';
+import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 
 export default defineConfig({
   output: 'server',
@@ -29,7 +30,7 @@ export default defineConfig({
     routing: { prefixDefaultLocale: false },
   },
   markdown: {
-    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonitions],
+    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonitions, remarkContentExtractor],
     rehypePlugins: [rehypeKatex, rehypeAccessibleEmojis],
     shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },
   },

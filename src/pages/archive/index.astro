@@ -1,18 +1,22 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import I18nText from '../../components/I18nText.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { entrySlug, formatDate } from '../../utils';
 import { ui } from '../../i18n/ui';
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
-const archiveEntries = articles
-  .map((entry) => ({
-    title: entry.data.title,
-    slug: entrySlug(entry.id),
-    publishedAt: entry.data.publishedAt,
-  }))
-  .sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+const archiveEntries = await Promise.all(
+  articles.map(async (entry) => {
+    const { remarkPluginFrontmatter } = await render(entry);
+    return {
+      title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? entrySlug(entry.id),
+      slug: entrySlug(entry.id),
+      publishedAt: entry.data.publishedAt,
+    };
+  })
+);
+archiveEntries.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
 
 const archiveGroups = new Map<number, typeof archiveEntries>();
 for (const entry of archiveEntries) {
