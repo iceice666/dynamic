@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
 
@@ -346,4 +346,4 @@ function ThemeButton() {
   );
 }
 
-export default memo(ThemeButton);
+export default ThemeButton;

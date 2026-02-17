@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useRef, useState, memo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Languages } from 'lucide-react';
 import type { Locale } from '$/i18n/ui';
 
 const STORAGE_KEY = 'dynamic:lang';
+const LANGUAGE_OPTIONS = [
+  { value: 'en' as const, label: 'English' },
+  { value: 'zh-tw' as const, label: '中文' },
+];
 
 function LanguageToggle() {
   const [locale, setLocaleState] = useState<Locale>('en');
@@ -26,21 +30,16 @@ function LanguageToggle() {
     return () => document.removeEventListener('pointerdown', handleOutside);
   }, [open]);
 
+  useEffect(() => {
+    document.documentElement.dataset.lang = locale;
+    document.documentElement.lang = locale === 'zh-tw' ? 'zh-TW' : 'en';
+  }, [locale]);
+
   function setLocale(next: Locale) {
     setLocaleState(next);
     localStorage.setItem(STORAGE_KEY, next);
-    document.documentElement.dataset.lang = next;
-    document.documentElement.lang = next === 'zh-tw' ? 'zh-TW' : 'en';
     setOpen(false);
   }
-
-  const options = useMemo(
-    () => [
-      { value: 'en' as const, label: 'English' },
-      { value: 'zh-tw' as const, label: '中文' },
-    ],
-    []
-  );
 
   const currentLabel = locale === 'en' ? 'English' : '中文';
 
@@ -96,7 +95,7 @@ function LanguageToggle() {
             zIndex: 60,
           }}
         >
-          {options.map((option) => (
+          {LANGUAGE_OPTIONS.map((option) => (
             <button
               key={option.value}
               type="button"
@@ -139,4 +138,4 @@ function LanguageToggle() {
   );
 }
 
-export default memo(LanguageToggle);
+export default LanguageToggle;

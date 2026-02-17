@@ -15,7 +15,14 @@ export default defineConfig({
   output: 'server',
   srcDir: './src',
   adapter: cloudflare({ imageService: 'compile' }),
-  integrations: [react(), mdx()],
+  integrations: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', {}]], // try empty config or just string
+      },
+    }),
+    mdx(),
+  ],
   vite: {
     plugins: [tailwindcss()],
     resolve: {

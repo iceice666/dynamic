@@ -4,6 +4,7 @@ import tsparser from '@typescript-eslint/parser';
 import astroPlugin from 'eslint-plugin-astro';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
+import reactCompiler from 'eslint-plugin-react-compiler';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
 
@@ -28,6 +29,7 @@ export default [
     plugins: {
       '@typescript-eslint': tseslint,
       react,
+      'react-compiler': reactCompiler,
       'react-hooks': reactHooks,
       'jsx-a11y': jsxA11y,
     },
@@ -44,6 +46,7 @@ export default [
       'react/prop-types': 'off', // Using TypeScript
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'react-compiler/react-compiler': 'error',
 
       // General
       'no-console': ['warn', { allow: ['warn', 'error'] }],

@@ -4,6 +4,7 @@ import '../../styles/global.css';
 import 'katex/dist/katex.min.css';
 import LeftNav from '$/components/nav/LeftNav.astro';
 import BottomNav from '$/components/nav/BottomNav.astro';
+import React from 'react';
 
 interface Props {
   title: string;
@@ -92,58 +93,60 @@ const { title, contentLang, toc } = Astro.props;
     </script>
   </head>
   <body>
-    <div class="site-layout">
-      <!-- Left: Nav -->
-      <aside class="left-col">
-        <div class="left-col-inner">
-          <LeftNav currentPath={Astro.url.pathname} toc={toc} />
-        </div>
-      </aside>
+    <React.StrictMode>
+      <div class="site-layout">
+        <!-- Left: Nav -->
+        <aside class="left-col">
+          <div class="left-col-inner">
+            <LeftNav currentPath={Astro.url.pathname} toc={toc} />
+          </div>
+        </aside>
 
-      <!-- Center: Content -->
-      <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
-        <slot />
-      </main>
+        <!-- Center: Content -->
+        <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
+          <slot />
+        </main>
 
-      <!-- Right: Panel (hidden, reserved for future use) -->
-      <aside class="right-col">
-        <div class="right-col-inner">
-          <slot name="right-panel" />
-        </div>
-      </aside>
-    </div>
-    <BottomNav currentPath={Astro.url.pathname} toc={toc} />
+        <!-- Right: Panel (hidden, reserved for future use) -->
+        <aside class="right-col">
+          <div class="right-col-inner">
+            <slot name="right-panel" />
+          </div>
+        </aside>
+      </div>
+      <BottomNav currentPath={Astro.url.pathname} toc={toc} />
 
-    <!-- Code block copy button handler -->
-    <script>
-      function initCopyButtons() {
-        document.querySelectorAll<HTMLButtonElement>('.code-block-copy').forEach((btn) => {
-          btn.addEventListener('click', async () => {
-            const wrapper = btn.closest('.code-block-wrapper');
-            const code = wrapper?.querySelector('pre code');
-            if (!code) return;
+      <!-- Code block copy button handler -->
+      <script>
+        function initCopyButtons() {
+          document.querySelectorAll<HTMLButtonElement>('.code-block-copy').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+              const wrapper = btn.closest('.code-block-wrapper');
+              const code = wrapper?.querySelector('pre code');
+              if (!code) return;
 
-            try {
-              await navigator.clipboard.writeText(code.textContent || '');
-              btn.textContent = 'Copied!';
-              btn.classList.add('copied');
-              setTimeout(() => {
-                btn.textContent = 'Copy';
-                btn.classList.remove('copied');
-              }, 2000);
-            } catch {
-              btn.textContent = 'Failed';
-              setTimeout(() => {
-                btn.textContent = 'Copy';
-              }, 2000);
-            }
+              try {
+                await navigator.clipboard.writeText(code.textContent || '');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                  btn.textContent = 'Copy';
+                  btn.classList.remove('copied');
+                }, 2000);
+              } catch {
+                btn.textContent = 'Failed';
+                setTimeout(() => {
+                  btn.textContent = 'Copy';
+                }, 2000);
+              }
+            });
           });
-        });
-      }
+        }
 
-      initCopyButtons();
-      document.addEventListener('astro:page-load', initCopyButtons);
-    </script>
+        initCopyButtons();
+        document.addEventListener('astro:page-load', initCopyButtons);
+      </script>
+    </React.StrictMode>
   </body>
 </html>
 

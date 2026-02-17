@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '$/i18n/ui';
 
@@ -37,6 +37,41 @@ function findActiveHref(pathname: string): string {
   return found?.href ?? NAV_ITEMS[0]?.href ?? '/';
 }
 
+function updateIndicatorPosition({
+  activeHref,
+  overrideHref,
+  listEl,
+  indicatorEl,
+  linkRefs,
+}: {
+  activeHref: string;
+  overrideHref?: string;
+  listEl: HTMLUListElement | null;
+  indicatorEl: HTMLDivElement | null;
+  linkRefs: Record<string, HTMLAnchorElement | null>;
+}): void {
+  const href = overrideHref ?? activeHref;
+  if (!listEl || !indicatorEl) return;
+
+  const activeEl = linkRefs[href];
+  if (!activeEl) {
+    indicatorEl.style.opacity = '0';
+    return;
+  }
+
+  const listRect = listEl.getBoundingClientRect();
+  const activeRect = activeEl.getBoundingClientRect();
+
+  const height = Math.max(16, activeRect.height * 0.72);
+  const x = activeRect.left - listRect.left - 2;
+  const y = activeRect.top - listRect.top + (activeRect.height - height) / 2;
+
+  indicatorEl.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  indicatorEl.style.width = '6px';
+  indicatorEl.style.height = `${height}px`;
+  indicatorEl.style.opacity = '1';
+}
+
 export default function LeftNavList({ currentPath }: LeftNavListProps) {
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const pendingHrefRef = useRef<string | null>(null);
@@ -47,40 +82,15 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
   const indicatorTransition =
     'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease';
 
-  // Direct DOM mutation — no state, no extra re-render
-  const updateIndicatorPosition = useCallback(
-    (overrideHref?: string) => {
-      const href = overrideHref ?? activeHref;
-      const list = listRef.current;
-      const indicator = indicatorRef.current;
-      const activeEl = linkRefs.current[href];
-
-      if (!list || !indicator) return;
-
-      if (!activeEl) {
-        indicator.style.opacity = '0';
-        return;
-      }
-
-      const listRect = list.getBoundingClientRect();
-      const activeRect = activeEl.getBoundingClientRect();
-
-      const height = Math.max(16, activeRect.height * 0.72);
-      const x = activeRect.left - listRect.left - 2;
-      const y = activeRect.top - listRect.top + (activeRect.height - height) / 2;
-
-      indicator.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      indicator.style.width = '6px';
-      indicator.style.height = `${height}px`;
-      indicator.style.opacity = '1';
-    },
-    [activeHref]
-  );
-
   // Update indicator whenever activeHref changes
   useLayoutEffect(() => {
-    updateIndicatorPosition();
-  }, [updateIndicatorPosition]);
+    updateIndicatorPosition({
+      activeHref,
+      listEl: listRef.current,
+      indicatorEl: indicatorRef.current,
+      linkRefs: linkRefs.current,
+    });
+  }, [activeHref]);
 
   // Listen for Astro navigation events
   useEffect(() => {
@@ -97,7 +107,15 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
         const nextHref = pendingHrefRef.current;
         pendingHrefRef.current = null;
         setActiveHref(nextHref);
-        requestAnimationFrame(() => updateIndicatorPosition(nextHref));
+        requestAnimationFrame(() =>
+          updateIndicatorPosition({
+            activeHref,
+            overrideHref: nextHref,
+            listEl: listRef.current,
+            indicatorEl: indicatorRef.current,
+            linkRefs: linkRefs.current,
+          })
+        );
       }
     };
 
@@ -105,7 +123,15 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
     const handlePageLoad = () => {
       const nextHref = findActiveHref(window.location.pathname);
       setActiveHref(nextHref);
-      requestAnimationFrame(() => updateIndicatorPosition(nextHref));
+      requestAnimationFrame(() =>
+        updateIndicatorPosition({
+          activeHref,
+          overrideHref: nextHref,
+          listEl: listRef.current,
+          indicatorEl: indicatorRef.current,
+          linkRefs: linkRefs.current,
+        })
+      );
     };
 
     document.addEventListener('astro:before-preparation', handleBeforePreparation);
@@ -117,19 +143,33 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
       document.removeEventListener('astro:after-swap', handleAfterSwap);
       document.removeEventListener('astro:page-load', handlePageLoad);
     };
-  }, [updateIndicatorPosition]);
+  }, [activeHref]);
 
   // Recalculate on resize
   useEffect(() => {
     const handleResize = () => {
-      requestAnimationFrame(() => updateIndicatorPosition());
+      requestAnimationFrame(() =>
+        updateIndicatorPosition({
+          activeHref,
+          listEl: listRef.current,
+          indicatorEl: indicatorRef.current,
+          linkRefs: linkRefs.current,
+        })
+      );
     };
     window.addEventListener('resize', handleResize);
 
     let resizeObserver: ResizeObserver | null = null;
     if (listRef.current && typeof ResizeObserver !== 'undefined') {
       resizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(() => updateIndicatorPosition());
+        requestAnimationFrame(() =>
+          updateIndicatorPosition({
+            activeHref,
+            listEl: listRef.current,
+            indicatorEl: indicatorRef.current,
+            linkRefs: linkRefs.current,
+          })
+        );
       });
       resizeObserver.observe(listRef.current);
     }
@@ -138,7 +178,7 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
       window.removeEventListener('resize', handleResize);
       resizeObserver?.disconnect();
     };
-  }, [updateIndicatorPosition]);
+  }, [activeHref]);
 
   return (
     <div className="relative m-0 flex list-none flex-col gap-1 p-0">

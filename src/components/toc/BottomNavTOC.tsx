@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-type TocHeading = { depth: number; slug: string; text: string };
+export type TocHeading = { depth: number; slug: string; text: string };
 
 interface BottomNavTOCProps {
   toc: TocHeading[];
@@ -8,11 +8,12 @@ interface BottomNavTOCProps {
 }
 
 export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
-  const filtered = useMemo(() => toc.filter((h) => h.depth === 2 || h.depth === 3), [toc]);
+  const filtered = toc.filter((h) => h.depth === 2 || h.depth === 3);
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   useEffect(() => {
-    if (filtered.length === 0) return;
+    const filteredHeadings = toc.filter((h) => h.depth === 2 || h.depth === 3);
+    if (filteredHeadings.length === 0) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -25,13 +26,13 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
       { rootMargin: '0px 0px -60% 0px', threshold: 0 }
     );
 
-    for (const h of filtered) {
+    for (const h of filteredHeadings) {
       const el = document.getElementById(h.slug);
       if (el) observer.observe(el);
     }
 
     return () => observer.disconnect();
-  }, [filtered]);
+  }, [toc]);
 
   if (filtered.length === 0) return null;
 

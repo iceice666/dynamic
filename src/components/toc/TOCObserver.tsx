@@ -1,4 +1,4 @@
-import { memo, useEffect } from 'react';
+import { useEffect } from 'react';
 
 interface Props {
   headingSlugs: string[];
@@ -38,4 +38,4 @@ function TOCObserver({ headingSlugs }: Props) {
   return null;
 }
 
-export default memo(TOCObserver);
+export default TOCObserver;

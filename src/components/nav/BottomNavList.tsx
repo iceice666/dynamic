@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '$/i18n/ui';
 import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
-import BottomNavTOC from '$/components/toc/BottomNavTOC';
+import BottomNavTOC, { type TocHeading } from '$/components/toc/BottomNavTOC';
 
 type NavItem = {
   labelKey: UIKey;
@@ -36,11 +36,44 @@ function findActiveHref(pathname: string): string {
   return found?.href ?? NAV_ITEMS[0]?.href ?? '/';
 }
 
-type TocHeading = { depth: number; slug: string; text: string };
+// type TocHeading imported from BottomNavTOC
 
 interface BottomNavListProps {
   currentPath: string;
   toc?: TocHeading[];
+}
+
+function updateIndicatorPosition({
+  activeHref,
+  overrideHref,
+  barEl,
+  indicatorEl,
+  linkRefs,
+}: {
+  activeHref: string;
+  overrideHref?: string;
+  barEl: HTMLDivElement | null;
+  indicatorEl: HTMLDivElement | null;
+  linkRefs: Record<string, HTMLAnchorElement | null>;
+}): void {
+  const href = overrideHref ?? activeHref;
+  if (!barEl || !indicatorEl) return;
+
+  const activeEl = linkRefs[href];
+  if (!activeEl) {
+    indicatorEl.style.opacity = '0';
+    return;
+  }
+
+  const barRect = barEl.getBoundingClientRect();
+  const activeRect = activeEl.getBoundingClientRect();
+
+  const width = Math.max(18, activeRect.width * 0.56);
+  const x = activeRect.left - barRect.left + (activeRect.width - width) / 2;
+
+  indicatorEl.style.transform = `translate3d(${x}px, 0, 0)`;
+  indicatorEl.style.width = `${width}px`;
+  indicatorEl.style.opacity = '1';
 }
 
 export default function BottomNavList({ currentPath, toc }: BottomNavListProps) {
@@ -55,36 +88,14 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
   const indicatorTransition =
     'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease';
 
-  const updateIndicatorPosition = useCallback(
-    (overrideHref?: string) => {
-      const href = overrideHref ?? activeHref;
-      const bar = barRef.current;
-      const indicator = indicatorRef.current;
-      const activeEl = linkRefs.current[href];
-
-      if (!bar || !indicator) return;
-
-      if (!activeEl) {
-        indicator.style.opacity = '0';
-        return;
-      }
-
-      const barRect = bar.getBoundingClientRect();
-      const activeRect = activeEl.getBoundingClientRect();
-
-      const width = Math.max(18, activeRect.width * 0.56);
-      const x = activeRect.left - barRect.left + (activeRect.width - width) / 2;
-
-      indicator.style.transform = `translate3d(${x}px, 0, 0)`;
-      indicator.style.width = `${width}px`;
-      indicator.style.opacity = '1';
-    },
-    [activeHref]
-  );
-
   useLayoutEffect(() => {
-    updateIndicatorPosition();
-  }, [updateIndicatorPosition]);
+    updateIndicatorPosition({
+      activeHref,
+      barEl: barRef.current,
+      indicatorEl: indicatorRef.current,
+      linkRefs: linkRefs.current,
+    });
+  }, [activeHref]);
 
   // Astro View Transitions
   useEffect(() => {
@@ -100,14 +111,30 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
         const nextHref = pendingHrefRef.current;
         pendingHrefRef.current = null;
         setActiveHref(nextHref);
-        requestAnimationFrame(() => updateIndicatorPosition(nextHref));
+        requestAnimationFrame(() =>
+          updateIndicatorPosition({
+            activeHref,
+            overrideHref: nextHref,
+            barEl: barRef.current,
+            indicatorEl: indicatorRef.current,
+            linkRefs: linkRefs.current,
+          })
+        );
       }
     };
 
     const handlePageLoad = () => {
       const nextHref = findActiveHref(window.location.pathname);
       setActiveHref(nextHref);
-      requestAnimationFrame(() => updateIndicatorPosition(nextHref));
+      requestAnimationFrame(() =>
+        updateIndicatorPosition({
+          activeHref,
+          overrideHref: nextHref,
+          barEl: barRef.current,
+          indicatorEl: indicatorRef.current,
+          linkRefs: linkRefs.current,
+        })
+      );
     };
 
     document.addEventListener('astro:before-preparation', handleBeforePreparation);
@@ -119,19 +146,33 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
       document.removeEventListener('astro:after-swap', handleAfterSwap);
       document.removeEventListener('astro:page-load', handlePageLoad);
     };
-  }, [updateIndicatorPosition]);
+  }, [activeHref]);
 
   // Recalculate on resize
   useEffect(() => {
     const handleResize = () => {
-      requestAnimationFrame(() => updateIndicatorPosition());
+      requestAnimationFrame(() =>
+        updateIndicatorPosition({
+          activeHref,
+          barEl: barRef.current,
+          indicatorEl: indicatorRef.current,
+          linkRefs: linkRefs.current,
+        })
+      );
     };
     window.addEventListener('resize', handleResize);
 
     let resizeObserver: ResizeObserver | null = null;
     if (barRef.current && typeof ResizeObserver !== 'undefined') {
       resizeObserver = new ResizeObserver(() => {
-        requestAnimationFrame(() => updateIndicatorPosition());
+        requestAnimationFrame(() =>
+          updateIndicatorPosition({
+            activeHref,
+            barEl: barRef.current,
+            indicatorEl: indicatorRef.current,
+            linkRefs: linkRefs.current,
+          })
+        );
       });
       resizeObserver.observe(barRef.current);
     }
@@ -140,7 +181,7 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
       window.removeEventListener('resize', handleResize);
       resizeObserver?.disconnect();
     };
-  }, [updateIndicatorPosition]);
+  }, [activeHref]);
 
   // Close panel on navigation
   useEffect(() => {

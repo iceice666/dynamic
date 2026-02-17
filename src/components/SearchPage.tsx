@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ui } from '$/i18n/ui';
 import { useLocale } from '$/i18n/useLocale';
 
@@ -28,6 +28,34 @@ function formatDate(iso: string): string {
 function getInitialQuery(): string {
   if (typeof window === 'undefined') return '';
   return new URLSearchParams(window.location.search).get('q') ?? '';
+}
+
+function buildCategoryCounts(index: SearchItem[]) {
+  const map = new Map<string, { name: string; count: number }>();
+  for (const item of index) {
+    if (!item.category) continue;
+    const existing = map.get(item.category);
+    if (existing) {
+      existing.count++;
+    } else {
+      map.set(item.category, { name: item.categoryName, count: 1 });
+    }
+  }
+  return Array.from(map.entries())
+    .map(([slug, { name, count }]) => ({ slug, name, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+function buildTagCounts(index: SearchItem[]) {
+  const map = new Map<string, number>();
+  for (const item of index) {
+    for (const tag of item.tags) {
+      map.set(tag, (map.get(tag) ?? 0) + 1);
+    }
+  }
+  return Array.from(map.entries())
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => b.count - a.count);
 }
 
 type Tab = 'categories' | 'tags';
@@ -81,34 +109,10 @@ export default function SearchPage() {
   }, []);
 
   // Derive category counts from index (language-agnostic)
-  const categoryCounts = useMemo(() => {
-    const map = new Map<string, { name: string; count: number }>();
-    for (const item of index) {
-      if (!item.category) continue;
-      const existing = map.get(item.category);
-      if (existing) {
-        existing.count++;
-      } else {
-        map.set(item.category, { name: item.categoryName, count: 1 });
-      }
-    }
-    return Array.from(map.entries())
-      .map(([slug, { name, count }]) => ({ slug, name, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [index]);
+  const categoryCounts = buildCategoryCounts(index);
 
   // Derive tag counts from index (language-agnostic)
-  const tagCounts = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const item of index) {
-      for (const tag of item.tags) {
-        map.set(tag, (map.get(tag) ?? 0) + 1);
-      }
-    }
-    return Array.from(map.entries())
-      .map(([tag, count]) => ({ tag, count }))
-      .sort((a, b) => b.count - a.count);
-  }, [index]);
+  const tagCounts = buildTagCounts(index);
 
   // Filter results
   const trimmed = query.trim();
