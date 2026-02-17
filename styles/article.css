@@ -1,3 +1,12 @@
+/* Prose font families */
+.prose {
+  font-family: var(--font-sans);
+}
+
+.prose :where(code, pre, kbd, samp):not(:where([class~='not-prose'] *)) {
+  font-family: var(--font-mono);
+}
+
 /* Flip Tailwind Typography prose variables for dark mode */
 html.dark .prose {
   --tw-prose-body: var(--color-foreground);

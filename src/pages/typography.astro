@@ -1,0 +1,256 @@
+---
+import BaseLayout from '$/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Typography System">
+  <div class="typo-page">
+    <h1 class="mb-2 text-3xl font-bold">Typography System</h1>
+    <p class="text-muted mb-8">
+      Dev reference — font families, type scale, weights, and spacing tokens.
+    </p>
+
+    <!-- Font Families -->
+    <section class="typo-section">
+      <h2 class="section-heading">Font Families</h2>
+      <div class="typo-grid">
+        <div class="typo-card">
+          <h3 class="card-label">Sans-serif <code class="text-xs">font-sans</code></h3>
+          <p class="mb-2 font-sans text-xl">The quick brown fox jumps over the lazy dog.</p>
+          <p class="mb-2 font-sans text-xl">敏捷的棕色狐狸跳過懶惰的狗。</p>
+          <p class="text-muted font-sans text-sm">SF Pro → Noto Sans TC → system-ui</p>
+        </div>
+        <div class="typo-card">
+          <h3 class="card-label">Monospace <code class="text-xs">font-mono</code></h3>
+          <p class="mb-2 font-mono text-xl">const hello = "world";</p>
+          <p class="mb-2 font-mono text-xl">函式 計算(輸入) → 結果</p>
+          <p class="text-muted font-mono text-sm">Cascadia Code → ui-monospace</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Type Scale -->
+    <section class="typo-section">
+      <h2 class="section-heading">Type Scale</h2>
+      <div class="scale-list">
+        {
+          [
+            ['text-xs', '0.75rem'],
+            ['text-sm', '0.875rem'],
+            ['text-base', '1rem'],
+            ['text-lg', '1.125rem'],
+            ['text-xl', '1.25rem'],
+            ['text-2xl', '1.5rem'],
+            ['text-3xl', '1.875rem'],
+            ['text-4xl', '2.25rem'],
+          ].map(([cls, size]) => (
+            <div class="scale-row">
+              <code class="scale-label">{cls}</code>
+              <span class="text-muted w-20 shrink-0 text-sm">{size}</span>
+              <span class:list={[cls]}>Typography 字體排版</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Font Weights -->
+    <section class="typo-section">
+      <h2 class="section-heading">Font Weights</h2>
+      <div class="typo-grid">
+        <div class="typo-card">
+          <h3 class="card-label">Sans-serif</h3>
+          <p class="text-lg" style="font-weight: 400;">400 Normal — 預設字重</p>
+          <p class="text-lg" style="font-weight: 500;">500 Medium — 中等字重</p>
+          <p class="text-lg" style="font-weight: 600;">600 Semibold — 半粗字重</p>
+          <p class="text-lg" style="font-weight: 700;">700 Bold — 粗體字重</p>
+        </div>
+        <div class="typo-card">
+          <h3 class="card-label">Monospace</h3>
+          <p class="font-mono text-lg" style="font-weight: 400;">400 Normal — const x = 1</p>
+          <p class="font-mono text-lg" style="font-weight: 500;">500 Medium — const x = 1</p>
+          <p class="font-mono text-lg" style="font-weight: 600;">600 Semibold — const x = 1</p>
+          <p class="font-mono text-lg" style="font-weight: 700;">700 Bold — const x = 1</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Line Height & Letter Spacing -->
+    <section class="typo-section">
+      <h2 class="section-heading">Line Height & Letter Spacing</h2>
+      <div class="typo-grid">
+        <div class="typo-card">
+          <h3 class="card-label">Line Height <code class="text-xs">leading-*</code></h3>
+          {
+            [
+              ['leading-tight', '1.25'],
+              ['leading-snug', '1.375'],
+              ['leading-normal', '1.5'],
+              ['leading-relaxed', '1.625'],
+            ].map(([cls, val]) => (
+              <div class="mb-3">
+                <code class="text-muted text-xs">
+                  {cls} ({val})
+                </code>
+                <p class:list={[cls, 'text-sm', 'border-l-2', 'border-border', 'pl-3', 'mt-1']}>
+                  Typography is the art of arranging type to make written language legible and
+                  appealing. 字體排版是將文字排列組合，使書面語言清晰易讀且美觀的藝術。
+                </p>
+              </div>
+            ))
+          }
+        </div>
+        <div class="typo-card">
+          <h3 class="card-label">Letter Spacing <code class="text-xs">tracking-*</code></h3>
+          {
+            [
+              ['tracking-tight', '-0.015em'],
+              ['tracking-normal', '0em'],
+              ['tracking-wide', '0.025em'],
+              ['tracking-widest', '0.08em'],
+            ].map(([cls, val]) => (
+              <div class="mb-3">
+                <code class="text-muted text-xs">
+                  {cls} ({val})
+                </code>
+                <p class:list={[cls, 'text-lg', 'mt-1']}>ABCDEFGHIJKLM 字體排版系統</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Prose Rendering -->
+    <section class="typo-section">
+      <h2 class="section-heading">Prose Rendering</h2>
+      <div class="typo-card">
+        <div class="prose prose-lg max-w-none">
+          <h1>Heading 1 — 一級標題</h1>
+          <h2>Heading 2 — 二級標題</h2>
+          <h3>Heading 3 — 三級標題</h3>
+          <h4>Heading 4 — 四級標題</h4>
+
+          <p>
+            Typography is the art and technique of arranging type to make written language
+            <strong>legible</strong>, <em>readable</em>, and <a href="#">appealing</a> when displayed.
+            The arrangement of type involves selecting typefaces, point sizes, line lengths, line-spacing
+            (leading), and letter-spacing (tracking).
+          </p>
+
+          <p>
+            字體排版是一門將文字排列組合的藝術與技術，使書面語言在展示時
+            <strong>清晰易讀</strong>、<em>賞心悅目</em>且<a href="#">引人入勝</a>。
+            文字的排列涉及字體選擇、字號大小、行寬、行距與字距的設定。
+          </p>
+
+          <blockquote>
+            <p>Good typography is invisible. Bad typography is everywhere.</p>
+          </blockquote>
+
+          <ul>
+            <li>Unordered list item one — 無序列表項目一</li>
+            <li>Unordered list item two — 無序列表項目二</li>
+            <li>Nested item with <code>inline code</code></li>
+          </ul>
+
+          <ol>
+            <li>Ordered list item one — 有序列表項目一</li>
+            <li>Ordered list item two — 有序列表項目二</li>
+            <li>Third item</li>
+          </ol>
+
+          <pre><code>// Code block example
+function greet(name: string): string {'{'}
+  return `Hello, ${'{'}name{'}'}!`;
+{'}'}</code></pre>
+
+          <p>
+            Here is some <code>inline code</code> mixed with regular text and
+            <kbd>Ctrl</kbd> + <kbd>C</kbd> keyboard shortcuts.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Value</th>
+                <th>Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>font-sans</code></td>
+                <td>SF Pro / Noto Sans TC</td>
+                <td>Body text, headings</td>
+              </tr>
+              <tr>
+                <td><code>font-mono</code></td>
+                <td>Cascadia Code</td>
+                <td>Code blocks, inline code</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .typo-page {
+    max-width: 56rem;
+  }
+
+  .typo-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .typo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .typo-card {
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-muted-bg);
+  }
+
+  .card-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .scale-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .scale-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+
+  .scale-label {
+    width: 5rem;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+</style>
