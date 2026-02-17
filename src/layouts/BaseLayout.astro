@@ -117,6 +117,37 @@ const { title, contentLang } = Astro.props;
       </aside>
     </div>
     <BottomNav currentPath={Astro.url.pathname} />
+
+    <!-- Code block copy button handler -->
+    <script>
+      function initCopyButtons() {
+        document.querySelectorAll<HTMLButtonElement>('.code-block-copy').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const wrapper = btn.closest('.code-block-wrapper');
+            const code = wrapper?.querySelector('pre code');
+            if (!code) return;
+
+            try {
+              await navigator.clipboard.writeText(code.textContent || '');
+              btn.textContent = 'Copied!';
+              btn.classList.add('copied');
+              setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+              }, 2000);
+            } catch {
+              btn.textContent = 'Failed';
+              setTimeout(() => {
+                btn.textContent = 'Copy';
+              }, 2000);
+            }
+          });
+        });
+      }
+
+      initCopyButtons();
+      document.addEventListener('astro:page-load', initCopyButtons);
+    </script>
   </body>
 </html>
 
