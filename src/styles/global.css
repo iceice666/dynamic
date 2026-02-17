@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './article.css';
 @plugin '@tailwindcss/typography';
 
 @theme {
@@ -28,26 +29,6 @@ body {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-}
-
-/* Flip Tailwind Typography prose variables for dark mode */
-html.dark .prose {
-  --tw-prose-body: var(--color-foreground);
-  --tw-prose-headings: var(--color-foreground);
-  --tw-prose-lead: var(--color-muted);
-  --tw-prose-links: var(--color-accent);
-  --tw-prose-bold: var(--color-foreground);
-  --tw-prose-counters: var(--color-muted);
-  --tw-prose-bullets: var(--color-muted);
-  --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-foreground);
-  --tw-prose-quote-borders: var(--color-accent);
-  --tw-prose-captions: var(--color-muted);
-  --tw-prose-code: var(--color-foreground);
-  --tw-prose-pre-code: var(--color-foreground);
-  --tw-prose-pre-bg: var(--color-muted-bg);
-  --tw-prose-th-borders: var(--color-border);
-  --tw-prose-td-borders: var(--color-border);
 }
 
 /* Register accent-hue as an animatable property */
@@ -176,113 +157,3 @@ html[data-lang='zh-tw'] [data-i18n-zh-tw] {
   cursor: pointer;
 }
 
-/* Admonitions / Callouts */
-.admonition {
-  margin: 1.5rem 0;
-  padding: 1rem 1.25rem;
-  border-left: 4px solid;
-  border-radius: 0.5rem;
-  background: var(--color-muted-bg);
-  position: relative;
-}
-
-.admonition::before {
-  content: '';
-  display: inline-block;
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.5rem;
-  vertical-align: -0.25rem;
-  background-size: contain;
-  background-repeat: no-repeat;
-  flex-shrink: 0;
-}
-
-.admonition > :first-child {
-  margin-top: 0;
-}
-
-.admonition > :last-child {
-  margin-bottom: 0;
-}
-
-/* Note (blue) */
-.admonition-note {
-  border-left-color: oklch(60% 0.15 250);
-  background: oklch(95% 0.02 250);
-}
-
-.admonition-note::before {
-  content: 'ℹ️';
-  filter: grayscale(0);
-}
-
-html.dark .admonition-note {
-  border-left-color: oklch(65% 0.15 250);
-  background: oklch(20% 0.03 250);
-}
-
-/* Tip (green) */
-.admonition-tip {
-  border-left-color: oklch(60% 0.15 150);
-  background: oklch(95% 0.02 150);
-}
-
-.admonition-tip::before {
-  content: '💡';
-  filter: grayscale(0);
-}
-
-html.dark .admonition-tip {
-  border-left-color: oklch(65% 0.15 150);
-  background: oklch(20% 0.03 150);
-}
-
-/* Warning (yellow/orange) */
-.admonition-warning {
-  border-left-color: oklch(65% 0.15 60);
-  background: oklch(95% 0.02 60);
-}
-
-.admonition-warning::before {
-  content: '⚠️';
-  filter: grayscale(0);
-}
-
-html.dark .admonition-warning {
-  border-left-color: oklch(70% 0.15 60);
-  background: oklch(20% 0.03 60);
-}
-
-/* Danger (red) */
-.admonition-danger {
-  border-left-color: oklch(60% 0.18 25);
-  background: oklch(95% 0.02 25);
-}
-
-.admonition-danger::before {
-  content: '🚨';
-  filter: grayscale(0);
-}
-
-html.dark .admonition-danger {
-  border-left-color: oklch(65% 0.18 25);
-  background: oklch(20% 0.03 25);
-}
-
-/* Typography integration - ensure admonitions work well within prose */
-.prose .admonition {
-  font-size: 0.9375rem;
-}
-
-.prose .admonition p {
-  margin: 0.5rem 0;
-}
-
-.prose .admonition p:first-of-type {
-  margin-top: 0;
-}
-
-.prose .admonition p:last-of-type {
-  margin-bottom: 0;
-}
