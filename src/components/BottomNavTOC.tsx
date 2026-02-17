@@ -1,3 +1,5 @@
+import { useEffect, useMemo, useState } from 'react';
+
 type TocHeading = { depth: number; slug: string; text: string };
 
 interface BottomNavTOCProps {
@@ -6,7 +8,31 @@ interface BottomNavTOCProps {
 }
 
 export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
-  const filtered = toc.filter((h) => h.depth === 2 || h.depth === 3);
+  const filtered = useMemo(() => toc.filter((h) => h.depth === 2 || h.depth === 3), [toc]);
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (filtered.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActiveSlug(entry.target.id);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -60% 0px', threshold: 0 }
+    );
+
+    for (const h of filtered) {
+      const el = document.getElementById(h.slug);
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, [filtered]);
+
   if (filtered.length === 0) return null;
 
   return (
@@ -39,12 +65,14 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
             onClick={onNavigate}
             style={{
               fontSize: '0.8125rem',
-              color: 'var(--color-muted)',
+              color: activeSlug === h.slug ? 'var(--color-accent)' : 'var(--color-muted)',
+              fontWeight: activeSlug === h.slug ? 500 : undefined,
               textDecoration: 'none',
               padding: '0.1875rem 0.5rem',
               paddingLeft: h.depth === 3 ? '1.25rem' : '0.5rem',
               borderRadius: '0.25rem',
               lineHeight: 1.4,
+              transition: 'color 0.15s ease',
             }}
           >
             {h.text}

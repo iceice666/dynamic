@@ -23,12 +23,14 @@ const hasToc = toc && toc.length > 0;
     hasToc && (
       <>
         <hr class="border-border" />
-        <TOCWidget headings={toc} />
+        <div class="min-h-0 flex-1 overflow-y-auto">
+          <TOCWidget headings={toc} />
+        </div>
       </>
     )
   }
 
-  <div class="flex-1"></div>
+  {!hasToc && <div class="flex-1" />}
 
   <div class="left-nav-controls flex flex-col gap-2">
     <ThemeButton client:load transition:persist />

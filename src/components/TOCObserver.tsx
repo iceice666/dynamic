@@ -17,7 +17,10 @@ function TOCObserver({ headingSlugs }: Props) {
             });
             // Add active to matching
             const li = document.querySelector(`#toc-list li[data-toc-id="${id}"]`);
-            if (li) li.classList.add('active');
+            if (li) {
+              li.classList.add('active');
+              li.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
           }
         }
       },
