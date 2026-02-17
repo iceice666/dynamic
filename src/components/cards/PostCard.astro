@@ -10,10 +10,8 @@ interface Props {
 const { publishedAt, tags } = Astro.props;
 ---
 
-<article
-  class="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150"
->
-  <div class="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+<article class="card">
+  <div class="label-uppercase">
     <I18nText k="post_label" />
   </div>
 
@@ -29,10 +27,7 @@ const { publishedAt, tags } = Astro.props;
     <div class="flex flex-wrap gap-1.5">
       {
         tags.map((tag) => (
-          <a
-            href={`/search?q=%23${tag}`}
-            class="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
-          >
+          <a href={`/search?q=%23${tag}`} class="tag-link">
             #{tag}
           </a>
         ))

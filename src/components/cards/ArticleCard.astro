@@ -16,10 +16,8 @@ const { title, description, slug, publishedAt, tags, categoryName } = Astro.prop
 const articlePath = `/articles/${slug}`;
 ---
 
-<article
-  class="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150"
->
-  <div class="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+<article class="card">
+  <div class="label-uppercase">
     {
       categoryName ? (
         <>
@@ -32,11 +30,7 @@ const articlePath = `/articles/${slug}`;
     }
   </div>
   <h2 class="m-0 text-[1.0625rem] leading-[1.3] font-bold">
-    <a
-      href={articlePath}
-      class="text-foreground hover:text-accent no-underline transition-colors duration-150"
-      >{title}</a
-    >
+    <a href={articlePath} class="link-accent">{title}</a>
   </h2>
   {
     description && (
@@ -47,10 +41,7 @@ const articlePath = `/articles/${slug}`;
     <div class="flex flex-wrap gap-1.5">
       {
         tags.map((tag) => (
-          <a
-            href={`/search?q=%23${tag}`}
-            class="text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75"
-          >
+          <a href={`/search?q=%23${tag}`} class="tag-link">
             #{tag}
           </a>
         ))
@@ -62,12 +53,3 @@ const articlePath = `/articles/${slug}`;
     >
   </div>
 </article>
-
-<style>
-  .excerpt {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-  }
-</style>

@@ -1,0 +1,115 @@
+/* Reusable component patterns extracted from repeated class strings */
+
+.card {
+  @apply border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150;
+}
+
+.label-uppercase {
+  @apply text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase;
+}
+
+.tag-link {
+  @apply text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75;
+}
+
+.link-accent {
+  @apply text-foreground hover:text-accent no-underline transition-colors duration-150;
+}
+
+/* Excerpt line clamping */
+.excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Search input styles (global because scoped styles don't pierce React islands) */
+.search-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 0.9375rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.search-input::placeholder {
+  color: var(--color-muted);
+}
+
+.search-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px oklch(from var(--color-accent) l c h / 25%);
+}
+
+/* ThemeButton slider styles */
+.hue-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    to right,
+    hsl(0, 80%, 50%),
+    hsl(60, 80%, 50%),
+    hsl(120, 80%, 50%),
+    hsl(180, 80%, 50%),
+    hsl(240, 80%, 50%),
+    hsl(300, 80%, 50%),
+    hsl(360, 80%, 50%)
+  );
+  cursor: pointer;
+}
+
+.hue-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--color-border);
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 20%);
+}
+
+.hue-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid var(--color-border);
+  box-shadow: 0 1px 3px oklch(0% 0 0 / 20%);
+}
+
+.speed-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-muted-bg);
+  cursor: pointer;
+}
+
+.speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+}
+
+.speed-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+}

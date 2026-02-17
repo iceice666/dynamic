@@ -10,9 +10,7 @@ interface Props {
 const { friend } = Astro.props;
 ---
 
-<article
-  class="border-border bg-background hover:bg-muted-bg rounded-lg border p-4 transition-colors duration-150"
->
+<article class="card">
   <div class="flex items-start gap-3">
     <a href={friend.url} target="_blank" rel="noopener noreferrer" class="shrink-0">
       <img
@@ -28,7 +26,7 @@ const { friend } = Astro.props;
         href={friend.url}
         target="_blank"
         rel="noopener noreferrer"
-        class="text-foreground hover:text-accent flex items-center gap-1 text-[0.9375rem] font-semibold no-underline transition-colors duration-150"
+        class="link-accent flex items-center gap-1 text-[0.9375rem] font-semibold"
       >
         {friend.name}
         <LucideIcons.ExternalLink size={14} className="shrink-0" aria-hidden="true" />

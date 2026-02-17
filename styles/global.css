@@ -1,47 +1,9 @@
 @import 'tailwindcss';
+@import './theme.css';
+@import './typography.css';
+@import './components.css';
 @import './article.css';
 @plugin '@tailwindcss/typography';
-
-@theme {
-  --color-background: oklch(99% 0 0);
-  --color-foreground: oklch(10% 0 0);
-  --color-muted: oklch(45% 0 0);
-  --color-muted-bg: oklch(95% 0 0);
-  --color-border: oklch(88% 0 0);
-  --color-accent: oklch(55% 0.18 var(--accent-hue, 255));
-  --color-accent-fg: oklch(99% 0 0);
-
-  --font-sans: 'SF Pro Text', 'SF Pro Display', -apple-system, BlinkMacSystemFont,
-    'Noto Sans TC Variable', 'Noto Sans TC', system-ui, sans-serif;
-  --font-mono: 'Cascadia Code Variable', 'Cascadia Code', ui-monospace,
-    'Cascadia Mono', monospace;
-
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  --leading-tight: 1.25;
-  --leading-snug: 1.375;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.625;
-
-  --tracking-tight: -0.015em;
-  --tracking-normal: 0em;
-  --tracking-wide: 0.025em;
-  --tracking-widest: 0.08em;
-}
-
-html.dark {
-  --color-background: oklch(10% 0 0);
-  --color-foreground: oklch(97% 0 0);
-  --color-muted: oklch(60% 0 0);
-  --color-muted-bg: oklch(17% 0 0);
-  --color-border: oklch(25% 0 0);
-  --color-accent: oklch(70% 0.15 var(--accent-hue, 255));
-  --color-accent-fg: oklch(10% 0 0);
-  --shiki-dark: oklch(97% 0 0);
-}
 
 body {
   font-family: var(--font-sans);
@@ -50,27 +12,6 @@ body {
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
-}
-
-/* Register accent-hue as an animatable property */
-@property --accent-hue {
-  syntax: '<number>';
-  initial-value: 255;
-  inherits: true;
-}
-
-/* Rainbow mode animation - animates hue without moving the slider */
-html.rainbow-active {
-  animation: rainbow-hue var(--rainbow-duration, 10s) linear infinite;
-}
-
-@keyframes rainbow-hue {
-  from {
-    --accent-hue: 0;
-  }
-  to {
-    --accent-hue: 360;
-  }
 }
 
 /* i18n: show/hide elements based on data-lang attribute */
@@ -86,94 +27,4 @@ html:not([data-lang]) [data-i18n-en] {
 
 html[data-lang='zh-tw'] [data-i18n-zh-tw] {
   display: contents;
-}
-
-/* Search input styles (global because scoped styles don't pierce React islands) */
-.search-input {
-  width: 100%;
-  padding: 0.625rem 0.875rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  background: var(--color-background);
-  color: var(--color-foreground);
-  font-size: 0.9375rem;
-  outline: none;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.search-input::placeholder {
-  color: var(--color-muted);
-}
-
-.search-input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px oklch(from var(--color-accent) l c h / 25%);
-}
-
-/* ThemeButton slider styles */
-.hue-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  border-radius: 4px;
-  background: linear-gradient(
-    to right,
-    hsl(0, 80%, 50%),
-    hsl(60, 80%, 50%),
-    hsl(120, 80%, 50%),
-    hsl(180, 80%, 50%),
-    hsl(240, 80%, 50%),
-    hsl(300, 80%, 50%),
-    hsl(360, 80%, 50%)
-  );
-  cursor: pointer;
-}
-
-.hue-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: white;
-  border: 2px solid var(--color-border);
-  box-shadow: 0 1px 3px oklch(0% 0 0 / 20%);
-}
-
-.hue-slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: white;
-  border: 2px solid var(--color-border);
-  box-shadow: 0 1px 3px oklch(0% 0 0 / 20%);
-}
-
-.speed-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--color-muted-bg);
-  cursor: pointer;
-}
-
-.speed-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  cursor: pointer;
-}
-
-.speed-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  cursor: pointer;
 }

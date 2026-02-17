@@ -255,29 +255,19 @@ function SearchPage() {
 
 function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   return (
-    <article className="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150">
-      <div className="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+    <article className="card">
+      <div className="label-uppercase">
         <span data-i18n-en>{ui.en.article_label}</span>
         <span data-i18n-zh-tw>{ui['zh-tw'].article_label}</span>
         {item.categoryName && ` \u00b7 ${item.categoryName}`}
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
-        <a
-          href={`/articles/${item.slug}`}
-          className="text-foreground hover:text-accent no-underline transition-colors duration-150"
-        >
+        <a href={`/articles/${item.slug}`} className="link-accent">
           {item.title}
         </a>
       </h2>
       {item.description && (
-        <p
-          className="text-muted m-0 overflow-hidden text-sm leading-normal"
-          style={{
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
+        <p className="excerpt text-muted m-0 overflow-hidden text-sm leading-normal">
           {item.description}
         </p>
       )}
@@ -288,7 +278,7 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
               key={tag}
               type="button"
               onClick={() => setQuery(`#${tag}`)}
-              className="text-accent cursor-pointer border-none bg-transparent p-0 text-xs transition-opacity duration-150 hover:opacity-75"
+              className="tag-link cursor-pointer border-none bg-transparent p-0"
             >
               #{tag}
             </button>
@@ -305,8 +295,8 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
 
 function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   return (
-    <article className="border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150">
-      <div className="text-muted text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
+    <article className="card">
+      <div className="label-uppercase">
         <span data-i18n-en>{ui.en.post_label}</span>
         <span data-i18n-zh-tw>{ui['zh-tw'].post_label}</span>
       </div>
@@ -320,7 +310,7 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
               key={tag}
               type="button"
               onClick={() => setQuery(`#${tag}`)}
-              className="text-accent cursor-pointer border-none bg-transparent p-0 text-xs transition-opacity duration-150 hover:opacity-75"
+              className="tag-link cursor-pointer border-none bg-transparent p-0"
             >
               #{tag}
             </button>
