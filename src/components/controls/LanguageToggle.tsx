@@ -148,4 +148,5 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
   );
 }
 
-export default LanguageToggle;
+import withStrictMode from '$/components/withStrictMode';
+export default withStrictMode(LanguageToggle);

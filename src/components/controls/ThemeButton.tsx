@@ -371,4 +371,5 @@ function ThemeButton({ className, compact = false, align = 'left' }: ThemeButton
   );
 }
 
-export default ThemeButton;
+import withStrictMode from '$/components/withStrictMode';
+export default withStrictMode(ThemeButton);

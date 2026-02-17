@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '$/i18n/ui';
 import ThemeButton from '$/components/controls/ThemeButton';
@@ -76,7 +77,7 @@ function updateIndicatorPosition({
   indicatorEl.style.opacity = '1';
 }
 
-export default function BottomNavList({ currentPath, toc }: BottomNavListProps) {
+function BottomNavList({ currentPath, toc }: BottomNavListProps) {
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const [panelOpen, setPanelOpen] = useState(false);
   const pendingHrefRef = useRef<string | null>(null);
@@ -318,3 +319,5 @@ export default function BottomNavList({ currentPath, toc }: BottomNavListProps) 
     </>
   );
 }
+
+export default withStrictMode(BottomNavList);

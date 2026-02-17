@@ -38,4 +38,5 @@ function TOCObserver({ headingSlugs }: Props) {
   return null;
 }
 
-export default TOCObserver;
+import withStrictMode from '$/components/withStrictMode';
+export default withStrictMode(TOCObserver);

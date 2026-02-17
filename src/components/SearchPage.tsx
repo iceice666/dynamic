@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import withStrictMode from '$/components/withStrictMode';
 import { ui } from '$/i18n/ui';
 import { useLocale } from '$/i18n/useLocale';
 
@@ -60,7 +61,7 @@ function buildTagCounts(index: SearchItem[]) {
 
 type Tab = 'categories' | 'tags';
 
-export default function SearchPage() {
+function SearchPage() {
   const locale = useLocale();
   const t = (key: keyof (typeof ui)['en']) => ui[locale][key];
 
@@ -333,3 +334,5 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
     </article>
   );
 }
+
+export default withStrictMode(SearchPage);

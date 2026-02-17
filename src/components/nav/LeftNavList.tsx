@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
 import { ui, type UIKey } from '$/i18n/ui';
 
@@ -72,7 +73,7 @@ function updateIndicatorPosition({
   indicatorEl.style.opacity = '1';
 }
 
-export default function LeftNavList({ currentPath }: LeftNavListProps) {
+function LeftNavList({ currentPath }: LeftNavListProps) {
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const pendingHrefRef = useRef<string | null>(null);
 
@@ -232,3 +233,5 @@ export default function LeftNavList({ currentPath }: LeftNavListProps) {
     </div>
   );
 }
+
+export default withStrictMode(LeftNavList);
