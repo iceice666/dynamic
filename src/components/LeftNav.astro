@@ -2,21 +2,42 @@
 import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle';
 import LeftNavList from './LeftNavList';
+import TOCWidget from './TOCWidget.astro';
+import AuthorBio from './AuthorBio.astro';
 
 interface Props {
   currentPath: string;
+  toc?: { depth: number; slug: string; text: string }[];
 }
 
-const { currentPath } = Astro.props;
+const { currentPath, toc } = Astro.props;
+const hasToc = toc && toc.length > 0;
 ---
 
-<nav class="left-nav flex h-full flex-col justify-between gap-4 px-4 py-6">
+<nav class="left-nav flex h-full flex-col gap-4 px-4 py-6">
   <div class="left-nav-primary flex flex-col gap-6">
     <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
 
+  {
+    hasToc && (
+      <>
+        <hr class="border-border" />
+        <TOCWidget headings={toc} />
+      </>
+    )
+  }
+
+  <div class="flex-1"></div>
+
   <div class="left-nav-controls flex flex-col gap-2">
     <ThemeButton client:load transition:persist />
     <LanguageToggle client:load transition:persist />
+  </div>
+
+  <hr class="border-border" />
+
+  <div transition:persist>
+    <AuthorBio />
   </div>
 </nav>

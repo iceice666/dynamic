@@ -17,7 +17,7 @@ const filteredHeadings = headings.filter((h: Heading) => h.depth === 2 || h.dept
 
 {
   filteredHeadings.length > 0 && (
-    <nav class="p-4" {...i18nAriaLabel('widget_toc_aria')}>
+    <nav {...i18nAriaLabel('widget_toc_aria')}>
       <div class="text-muted mb-3 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase">
         <I18nText k="widget_toc_label" />
       </div>

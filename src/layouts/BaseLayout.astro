@@ -4,7 +4,6 @@ import '../styles/global.css';
 import 'katex/dist/katex.min.css';
 import LeftNav from '../components/LeftNav.astro';
 import BottomNav from '../components/BottomNav.astro';
-import AuthorBio from '../components/AuthorBio.astro';
 
 interface Props {
   title: string;
@@ -12,7 +11,7 @@ interface Props {
   toc?: { depth: number; slug: string; text: string }[];
 }
 
-const { title, contentLang } = Astro.props;
+const { title, contentLang, toc } = Astro.props;
 ---
 
 <!doctype html>
@@ -97,7 +96,7 @@ const { title, contentLang } = Astro.props;
       <!-- Left: Nav -->
       <aside class="left-col">
         <div class="left-col-inner">
-          <LeftNav currentPath={Astro.url.pathname} />
+          <LeftNav currentPath={Astro.url.pathname} toc={toc} />
         </div>
       </aside>
 
@@ -106,17 +105,14 @@ const { title, contentLang } = Astro.props;
         <slot />
       </main>
 
-      <!-- Right: Panel -->
+      <!-- Right: Panel (hidden, reserved for future use) -->
       <aside class="right-col">
         <div class="right-col-inner">
           <slot name="right-panel" />
-          <div class="author-bio-wrapper" transition:persist>
-            <AuthorBio />
-          </div>
         </div>
       </aside>
     </div>
-    <BottomNav currentPath={Astro.url.pathname} />
+    <BottomNav currentPath={Astro.url.pathname} toc={toc} />
 
     <!-- Code block copy button handler -->
     <script>
@@ -154,8 +150,8 @@ const { title, contentLang } = Astro.props;
 <style>
   .site-layout {
     display: grid;
-    grid-template-columns: clamp(160px, 20vw, 240px) 1fr 280px;
-    grid-template-areas: 'left center right';
+    grid-template-columns: clamp(200px, 22vw, 280px) 1fr;
+    grid-template-areas: 'left center';
     min-height: 100vh;
     max-width: 1200px;
     margin: 0 auto;
@@ -167,6 +163,7 @@ const { title, contentLang } = Astro.props;
     position: sticky;
     top: 0;
     height: 100vh;
+    overflow-y: auto;
   }
 
   .left-col-inner {
@@ -180,59 +177,18 @@ const { title, contentLang } = Astro.props;
   }
 
   .right-col {
-    grid-area: right;
-    border-left: 1px solid var(--color-border);
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    overflow-y: auto;
-  }
-
-  .right-col-inner {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-  }
-
-  .author-bio-wrapper {
-    margin-top: auto;
-  }
-
-  @media (max-width: 1024px) {
-    .site-layout {
-      grid-template-columns: clamp(160px, 20vw, 240px) 1fr;
-      grid-template-areas:
-        'left center'
-        'left right';
-    }
-
-    .right-col {
-      grid-area: right;
-      position: static;
-      height: auto;
-      border-left: none;
-      border-top: 1px solid var(--color-border);
-    }
+    display: none;
   }
 
   @media (max-width: 640px) {
     .site-layout {
       grid-template-columns: 1fr;
-      grid-template-areas:
-        'center'
-        'right';
+      grid-template-areas: 'center';
       padding-bottom: 64px;
     }
 
     .left-col {
       display: none;
-    }
-
-    .right-col {
-      position: static;
-      height: auto;
-      border-left: none;
-      border-top: 1px solid var(--color-border);
     }
   }
 </style>

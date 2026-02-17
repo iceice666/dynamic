@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import TOCWidget from '../../components/TOCWidget.astro';
+import AuthorBio from '../../components/AuthorBio.astro';
 import { getCollection, render } from 'astro:content';
 import { entrySlug } from '../../utils';
 
@@ -69,5 +69,7 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
     <Content />
   </article>
 
-  <TOCWidget slot="right-panel" headings={headings} />
+  <div class="sm:hidden">
+    <AuthorBio />
+  </div>
 </BaseLayout>

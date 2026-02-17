@@ -3,6 +3,7 @@ import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-r
 import { ui, type UIKey } from '../i18n/ui';
 import ThemeButton from './ThemeButton';
 import LanguageToggle from './LanguageToggle';
+import BottomNavTOC from './BottomNavTOC';
 
 type NavItem = {
   labelKey: UIKey;
@@ -35,11 +36,14 @@ function findActiveHref(pathname: string): string {
   return found?.href ?? NAV_ITEMS[0]?.href ?? '/';
 }
 
+type TocHeading = { depth: number; slug: string; text: string };
+
 interface BottomNavListProps {
   currentPath: string;
+  toc?: TocHeading[];
 }
 
-export default function BottomNavList({ currentPath }: BottomNavListProps) {
+export default function BottomNavList({ currentPath, toc }: BottomNavListProps) {
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const [panelOpen, setPanelOpen] = useState(false);
   const pendingHrefRef = useRef<string | null>(null);
@@ -178,6 +182,7 @@ export default function BottomNavList({ currentPath }: BottomNavListProps) {
           boxShadow: panelOpen ? '0 -4px 20px oklch(0% 0 0 / 10%)' : 'none',
         }}
       >
+        {toc && <BottomNavTOC toc={toc} onNavigate={() => setPanelOpen(false)} />}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <ThemeButton />
           <LanguageToggle />

@@ -3,13 +3,14 @@ import BottomNavList from './BottomNavList';
 
 interface Props {
   currentPath: string;
+  toc?: { depth: number; slug: string; text: string }[];
 }
 
-const { currentPath } = Astro.props;
+const { currentPath, toc } = Astro.props;
 ---
 
 <nav class="bottom-nav" aria-label="Mobile navigation">
-  <BottomNavList client:load transition:persist currentPath={currentPath} />
+  <BottomNavList client:load transition:persist currentPath={currentPath} toc={toc} />
 </nav>
 
 <style>
