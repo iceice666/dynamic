@@ -9,6 +9,7 @@ import BottomNav from '$/components/nav/BottomNav.astro';
 import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
+import TOCObserver from '$/components/toc/TOCObserver';
 import { umami } from '../../dynamic.config';
 
 interface Props {
@@ -136,6 +137,15 @@ const { title, contentLang, toc } = Astro.props;
       </aside>
     </div>
     <BottomNav currentPath={Astro.url.pathname} toc={toc} />
+
+    {
+      toc && toc.length > 0 && (
+        <TOCObserver
+          client:idle
+          headingSlugs={toc.filter((h) => h.depth === 2 || h.depth === 3).map((h) => h.slug)}
+        />
+      )
+    }
 
     <!-- Floating FABs: Theme & Language (desktop only) -->
     <div class="floating-controls" transition:persist>

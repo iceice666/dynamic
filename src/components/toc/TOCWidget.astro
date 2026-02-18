@@ -1,5 +1,4 @@
 ---
-import TOCObserver from './TOCObserver';
 import { t, i18nAriaLabel } from '$/i18n';
 
 type Heading = { depth: number; slug: string; text: string };
@@ -19,14 +18,13 @@ const filteredHeadings = headings.filter((h: Heading) => h.depth === 2 || h.dept
   filteredHeadings.length > 0 && (
     <nav aria-label={i18nAriaLabel(locale, 'widget_toc_aria')}>
       <div class="label-uppercase mb-3">{t(locale, 'widget_toc_label')}</div>
-      <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" id="toc-list">
+      <ul class="toc-list m-0 flex list-none flex-col gap-1 p-0" data-toc-panel>
         {filteredHeadings.map((h) => (
           <li class={h.depth === 3 ? 'h3' : ''} data-toc-id={h.slug}>
             <a href={`#${h.slug}`}>{h.text}</a>
           </li>
         ))}
       </ul>
-      <TOCObserver client:idle headingSlugs={filteredHeadings.map((h) => h.slug)} />
     </nav>
   )
 }

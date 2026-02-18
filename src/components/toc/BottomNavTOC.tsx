@@ -9,27 +9,52 @@ interface BottomNavTOCProps {
 
 export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
   const filtered = toc.filter((h) => h.depth === 2 || h.depth === 3);
-  const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [activeSlugs, setActiveSlugs] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const filteredHeadings = toc.filter((h) => h.depth === 2 || h.depth === 3);
-    if (filteredHeadings.length === 0) return;
+    const headings = toc.filter((h) => h.depth === 2 || h.depth === 3);
+    if (headings.length === 0) return;
+
+    const slugs = headings.map((h) => h.slug);
+    const visibleHeadings = new Set<string>();
+
+    function computeActive(): Set<string> {
+      if (visibleHeadings.size > 0) {
+        return new Set(visibleHeadings);
+      }
+      // Fallback: last heading above viewport top
+      const viewportTop = window.scrollY;
+      let lastAbove: string | null = null;
+      for (const slug of slugs) {
+        const el = document.getElementById(slug);
+        if (el && el.offsetTop <= viewportTop + 10) {
+          lastAbove = slug;
+        }
+      }
+      return lastAbove ? new Set([lastAbove]) : new Set();
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            setActiveSlug(entry.target.id);
+            visibleHeadings.add(entry.target.id);
+          } else {
+            visibleHeadings.delete(entry.target.id);
           }
         }
+        setActiveSlugs(computeActive());
       },
-      { rootMargin: '0px 0px -60% 0px', threshold: 0 }
+      { rootMargin: '0px', threshold: 0 }
     );
 
-    for (const h of filteredHeadings) {
+    for (const h of headings) {
       const el = document.getElementById(h.slug);
       if (el) observer.observe(el);
     }
+
+    // Initial state
+    setActiveSlugs(computeActive());
 
     return () => observer.disconnect();
   }, [toc]);
@@ -66,8 +91,8 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
             onClick={onNavigate}
             style={{
               fontSize: '0.8125rem',
-              color: activeSlug === h.slug ? 'var(--color-accent)' : 'var(--color-muted)',
-              fontWeight: activeSlug === h.slug ? 500 : undefined,
+              color: activeSlugs.has(h.slug) ? 'var(--color-accent)' : 'var(--color-muted)',
+              fontWeight: activeSlugs.has(h.slug) ? 500 : undefined,
               textDecoration: 'none',
               padding: '0.1875rem 0.5rem',
               paddingLeft: h.depth === 3 ? '1.25rem' : '0.5rem',
