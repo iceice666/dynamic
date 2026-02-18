@@ -2,6 +2,7 @@
 import LeftNavList from './LeftNavList';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import AuthorBio from '$/components/cards/AuthorBio.astro';
+import VisitCounter from '$/components/widgets/VisitCounter';
 
 interface Props {
   currentPath: string;
@@ -29,6 +30,12 @@ const hasToc = toc && toc.length > 0;
   }
 
   {!hasToc && <div class="flex-1" />}
+
+  <hr class="border-border" />
+
+  <div transition:persist>
+    <VisitCounter client:idle />
+  </div>
 
   <hr class="border-border" />
 

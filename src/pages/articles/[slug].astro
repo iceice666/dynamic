@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import AuthorBio from '$/components/cards/AuthorBio.astro';
+import I18nText from '$/components/I18nText.astro';
+import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import { getCollection, render } from 'astro:content';
-import { entrySlug } from '$/utils';
+import { entrySlug, formatDate } from '$/utils';
+import { Calendar, BookOpen, Clock } from 'lucide-react';
 
 export const prerender = true;
 
@@ -34,6 +37,9 @@ if (entry.data.translationOf) {
 }
 
 const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
+
+const wc: number = remarkPluginFrontmatter?.wordCount ?? 0;
+const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
 ---
 
 <BaseLayout title={title} toc={headings} contentLang={contentLang}>
@@ -57,7 +63,7 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
     }
     <h1>{title}</h1>
     {description && <p class="lead">{description}</p>}
-    <div class="not-prose mb-6 flex flex-wrap gap-1.5">
+    <div class="not-prose mb-6 flex flex-wrap items-center gap-x-3 gap-y-1.5">
       {
         entry.data.tags.map((tag: string) => (
           <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
@@ -65,7 +71,30 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
           </a>
         ))
       }
+      {
+        entry.data.tags.length > 0 && (
+          <span class="text-border" aria-hidden="true">
+            |
+          </span>
+        )
+      }
+      <span class="text-muted flex items-center gap-1 text-xs">
+        <Calendar size={12} aria-hidden="true" />
+        <time datetime={entry.data.publishedAt.toISOString()}
+          >{formatDate(entry.data.publishedAt)}</time
+        >
+      </span>
+      <span class="text-muted flex items-center gap-1 text-xs">
+        <BookOpen size={12} aria-hidden="true" />
+        <span>{wc.toLocaleString()} <I18nText k="article_word_count" /></span>
+      </span>
+      <span class="text-muted flex items-center gap-1 text-xs">
+        <Clock size={12} aria-hidden="true" />
+        <span>{mins} <I18nText k="article_read_time" /></span>
+      </span>
+      <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
+    <hr class="not-prose border-border mb-8" />
     <Content />
   </article>
 

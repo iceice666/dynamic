@@ -43,6 +43,8 @@ export const ui = {
     // Article card
     article_label: 'ARTICLE',
     post_label: 'POST',
+    article_word_count: 'words',
+    article_read_time: 'min read',
     // Search
     nav_search: 'Search',
     page_search_heading: 'Search',
@@ -58,6 +60,11 @@ export const ui = {
     page_404_heading: '404',
     page_404_message: "The page you're looking for doesn't exist.",
     page_404_back_home: 'Back to Home',
+    // Visit counter
+    widget_visits_label: 'Site visits',
+    widget_visits_pageviews: 'pageviews',
+    widget_visits_visitors: 'visitors',
+    article_views: 'views',
     // Date
     date_format: 'en-US',
   },
@@ -105,6 +112,8 @@ export const ui = {
     // Article card
     article_label: '文章',
     post_label: '貼文',
+    article_word_count: '字',
+    article_read_time: '分鐘閱讀',
     // Search
     nav_search: '搜尋',
     page_search_heading: '搜尋',
@@ -120,6 +129,11 @@ export const ui = {
     page_404_heading: '404',
     page_404_message: '您尋找的頁面不存在。',
     page_404_back_home: '返回首頁',
+    // Visit counter
+    widget_visits_label: '站點訪問',
+    widget_visits_pageviews: '次瀏覽',
+    widget_visits_visitors: '位訪客',
+    article_views: '次瀏覽',
     // Date
     date_format: 'zh-TW',
   },

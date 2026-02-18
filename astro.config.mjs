@@ -9,6 +9,7 @@ import rehypeKatex from 'rehype-katex';
 import { rehypeAccessibleEmojis } from 'rehype-accessible-emojis';
 import { remarkAdmonitions } from './src/utils/admonitions.ts';
 import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
+import { remarkWordCount } from './src/utils/remarkWordCount.ts';
 import { codeBlockTransformer } from './src/utils/codeBlockTransformer.ts';
 
 export default defineConfig({
@@ -38,7 +39,13 @@ export default defineConfig({
     routing: { prefixDefaultLocale: false },
   },
   markdown: {
-    remarkPlugins: [remarkMath, remarkDirective, remarkAdmonitions, remarkContentExtractor],
+    remarkPlugins: [
+      remarkMath,
+      remarkDirective,
+      remarkAdmonitions,
+      remarkContentExtractor,
+      remarkWordCount,
+    ],
     rehypePlugins: [rehypeKatex, rehypeAccessibleEmojis],
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark' },

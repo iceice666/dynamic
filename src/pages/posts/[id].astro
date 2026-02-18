@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import I18nText from '$/components/I18nText.astro';
+import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import { getCollection, render } from 'astro:content';
 import { ui } from '$/i18n/ui';
 import { entrySlug } from '$/utils';
@@ -33,7 +34,7 @@ const { Content } = await render(entry);
       <I18nText k="post_label" />
     </div>
     <Content />
-    <div class="not-prose mt-4 flex flex-wrap gap-1.5">
+    <div class="not-prose mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
       {
         entry.data.tags.map((tag) => (
           <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
@@ -41,6 +42,7 @@ const { Content } = await render(entry);
           </a>
         ))
       }
+      <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
   </article>
 </BaseLayout>

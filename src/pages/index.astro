@@ -19,6 +19,8 @@ const articles = await Promise.all(
         title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? entrySlug(entry.id),
         description: entry.data.description ?? remarkPluginFrontmatter?.extractedDescription,
       },
+      wordCount: remarkPluginFrontmatter?.wordCount ?? 0,
+      readingTime: remarkPluginFrontmatter?.readingTime ?? 1,
       body: entry.body ?? '',
     };
   })
@@ -50,6 +52,8 @@ const feed = [...articles, ...posts].sort(
             publishedAt={item.publishedAt}
             tags={item.data.tags}
             categoryName={item.data.categoryName}
+            wordCount={item.wordCount}
+            readingTime={item.readingTime}
           />
         ) : (
           <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>

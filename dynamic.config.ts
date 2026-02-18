@@ -1,5 +1,17 @@
 import type { Author, Friend } from './src/types';
 
+// --- Umami Analytics ---
+// Set UMAMI_API_URL and UMAMI_WEBSITE_ID env vars to enable the visit counter widget.
+// Optional: set UMAMI_API_KEY if your instance requires authentication.
+export const umami = {
+  /** Public URL of your Umami instance (e.g. https://analytics.example.com) */
+  apiUrl: import.meta.env.UMAMI_API_URL ?? '',
+  /** Website ID from Umami dashboard */
+  websiteId: import.meta.env.UMAMI_WEBSITE_ID ?? '',
+  /** API key for authentication (optional — only needed if your instance requires it) */
+  apiKey: import.meta.env.UMAMI_API_KEY ?? '',
+};
+
 // --- Author ---
 
 export const author: Author = {

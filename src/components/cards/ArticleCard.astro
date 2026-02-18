@@ -1,6 +1,8 @@
 ---
 import I18nText from '$/components/I18nText.astro';
+import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import { formatDate } from '$/utils';
+import { BookOpen, Clock } from 'lucide-react';
 
 interface Props {
   title: string;
@@ -9,9 +11,12 @@ interface Props {
   publishedAt: Date;
   tags: string[];
   categoryName?: string;
+  wordCount?: number;
+  readingTime?: number;
 }
 
-const { title, description, slug, publishedAt, tags, categoryName } = Astro.props;
+const { title, description, slug, publishedAt, tags, categoryName, wordCount, readingTime } =
+  Astro.props;
 
 const articlePath = `/articles/${slug}`;
 ---
@@ -35,6 +40,29 @@ const articlePath = `/articles/${slug}`;
   {
     description && (
       <p class="excerpt text-muted m-0 overflow-hidden text-sm leading-normal">{description}</p>
+    )
+  }
+  {
+    (wordCount || readingTime) && (
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+        {wordCount != null && wordCount > 0 && (
+          <span class="text-muted flex items-center gap-1 text-xs">
+            <BookOpen size={12} aria-hidden="true" />
+            <span>
+              {wordCount.toLocaleString()} <I18nText k="article_word_count" />
+            </span>
+          </span>
+        )}
+        {readingTime != null && (
+          <span class="text-muted flex items-center gap-1 text-xs">
+            <Clock size={12} aria-hidden="true" />
+            <span>
+              {readingTime} <I18nText k="article_read_time" />
+            </span>
+          </span>
+        )}
+        <ArticleViewCount client:idle path={articlePath} />
+      </div>
     )
   }
   <div class="flex flex-wrap items-center gap-2">
