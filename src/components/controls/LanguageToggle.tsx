@@ -1,15 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { navigate } from 'astro:transitions/client';
 import { Languages } from 'lucide-react';
-import type { Locale } from '$/i18n/ui';
-import { useLocale } from '$/i18n';
-
-const STORAGE_KEY = 'dynamic:lang';
-const COOKIE_KEY = 'dynamic:lang';
-const LANGUAGE_OPTIONS = [
-  { value: 'en' as const, label: 'English' },
-  { value: 'zh-tw' as const, label: '中文' },
-];
+import { locales, localeLabels, useLocale, useLocaleSwitch } from '$/i18n';
 
 interface LanguageToggleProps {
   className?: string;
@@ -19,7 +10,7 @@ interface LanguageToggleProps {
 
 function LanguageToggle({ className, compact = false, align = 'left' }: LanguageToggleProps) {
   const locale = useLocale();
-  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
+  const { selectLocale } = useLocaleSwitch();
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -35,20 +26,12 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
     return () => document.removeEventListener('pointerdown', handleOutside);
   }, [open]);
 
-  // Persist locale change and navigate after state update
-  useEffect(() => {
-    if (!pendingLocale) return;
-    document.cookie = `${COOKIE_KEY}=${pendingLocale};max-age=31536000;path=/;SameSite=Lax`;
-    localStorage.setItem(STORAGE_KEY, pendingLocale);
-    navigate(location.href);
-  }, [pendingLocale]);
-
-  function setLocale(next: Locale) {
+  function setLocale(next: (typeof locales)[number]) {
     setOpen(false);
-    setPendingLocale(next);
+    selectLocale(next);
   }
 
-  const currentLabel = locale === 'en' ? 'English' : '中文';
+  const currentLabel = localeLabels[locale];
 
   return (
     <div ref={menuRef} style={{ position: 'relative', width: '100%' }} className={className}>
@@ -106,14 +89,14 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
             marginBottom: '0.25rem',
           }}
         >
-          {LANGUAGE_OPTIONS.map((option) => (
+          {locales.map((loc) => (
             <button
-              key={option.value}
+              key={loc}
               type="button"
               role="menuitemradio"
-              aria-checked={locale === option.value}
-              onClick={() => setLocale(option.value)}
-              lang={option.value === 'zh-tw' ? 'zh-TW' : 'en'}
+              aria-checked={locale === loc}
+              onClick={() => setLocale(loc)}
+              lang={loc === 'zh-tw' ? 'zh-TW' : 'en'}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -125,7 +108,7 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
                 padding: '0.5rem',
                 borderRadius: '0.375rem',
                 fontSize: '0.85rem',
-                color: locale === option.value ? 'var(--color-foreground)' : 'var(--color-muted)',
+                color: locale === loc ? 'var(--color-foreground)' : 'var(--color-muted)',
                 cursor: 'pointer',
                 transition: 'color 0.15s ease, background 0.15s ease',
               }}
@@ -135,12 +118,12 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.color =
-                  locale === option.value ? 'var(--color-foreground)' : 'var(--color-muted)';
+                  locale === loc ? 'var(--color-foreground)' : 'var(--color-muted)';
                 e.currentTarget.style.background = 'transparent';
               }}
             >
-              <span>{option.label}</span>
-              {locale === option.value ? <span aria-hidden="true">•</span> : null}
+              <span>{localeLabels[loc]}</span>
+              {locale === loc ? <span aria-hidden="true">•</span> : null}
             </button>
           ))}
         </div>

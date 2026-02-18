@@ -1,5 +1,6 @@
-export { ui, locales, defaultLocale, type Locale, type UIKey } from './ui';
+export { ui, locales, localeLabels, defaultLocale, type Locale, type UIKey } from './ui';
 export { useLocale, useTranslation } from './useLocale';
+export { useLocaleSwitch } from './useLocaleSwitch';
 
 import { ui, type Locale, type UIKey } from './ui';
 
