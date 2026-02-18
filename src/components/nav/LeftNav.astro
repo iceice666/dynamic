@@ -2,7 +2,6 @@
 import LeftNavList from './LeftNavList';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import AuthorBio from '$/components/cards/AuthorBio';
-import VisitCounter from '$/components/widgets/VisitCounter';
 
 interface Props {
   currentPath: string;
@@ -20,20 +19,17 @@ const hasToc = toc && toc.length > 0;
 
   {
     hasToc && (
-      <>
+      <div class="left-toc-wrapper flex min-h-0 flex-1 flex-col gap-4">
         <hr class="border-border" />
         <div class="min-h-0 flex-1 overflow-y-auto">
           <TOCWidget headings={toc} />
         </div>
-      </>
+      </div>
     )
   }
 
   {!hasToc && <div class="flex-1" />}
-
-  <div transition:persist>
-    <VisitCounter client:idle />
-  </div>
+  {hasToc && <div class="left-toc-spacer flex-1" />}
 
   <hr class="border-border" />
 
@@ -41,3 +37,19 @@ const hasToc = toc && toc.length > 0;
     <AuthorBio client:load />
   </div>
 </nav>
+
+<style>
+  .left-toc-spacer {
+    display: none;
+  }
+
+  @media (min-width: 1201px) {
+    .left-toc-wrapper {
+      display: none;
+    }
+
+    .left-toc-spacer {
+      display: block;
+    }
+  }
+</style>

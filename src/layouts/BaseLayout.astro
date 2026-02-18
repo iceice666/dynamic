@@ -8,6 +8,7 @@ import LeftNav from '$/components/nav/LeftNav.astro';
 import BottomNav from '$/components/nav/BottomNav.astro';
 import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
+import TOCWidget from '$/components/toc/TOCWidget.astro';
 import { umami } from '../../dynamic.config';
 
 interface Props {
@@ -121,10 +122,16 @@ const { title, contentLang, toc } = Astro.props;
         <slot />
       </main>
 
-      <!-- Right: Panel (hidden, reserved for future use) -->
+      <!-- Right: TOC panel (visible at wide viewports) -->
       <aside class="right-col">
         <div class="right-col-inner">
-          <slot name="right-panel" />
+          {
+            toc && toc.length > 0 && (
+              <div class="p-4">
+                <TOCWidget headings={toc} />
+              </div>
+            )
+          }
         </div>
       </aside>
     </div>
@@ -179,7 +186,7 @@ const { title, contentLang, toc } = Astro.props;
     grid-template-columns: clamp(200px, 22vw, 280px) 1fr;
     grid-template-areas: 'left center';
     min-height: 100vh;
-    max-width: 1200px;
+    max-width: 1440px;
     margin: 0 auto;
   }
 
@@ -206,6 +213,23 @@ const { title, contentLang, toc } = Astro.props;
 
   .right-col {
     display: none;
+  }
+
+  @media (min-width: 1201px) {
+    .site-layout {
+      grid-template-columns: clamp(200px, 22vw, 280px) 1fr 240px;
+      grid-template-areas: 'left center right';
+    }
+
+    .right-col {
+      display: block;
+      grid-area: right;
+      border-left: 1px solid var(--color-border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
   }
 
   .floating-controls {
