@@ -193,7 +193,7 @@ const { title, contentLang, toc } = Astro.props;
 <style>
   .site-layout {
     display: grid;
-    grid-template-columns: clamp(200px, 22vw, 280px) 1fr;
+    grid-template-columns: clamp(180px, 20vw, 280px) 1fr;
     grid-template-areas: 'left center';
     min-height: 100vh;
     max-width: 1440px;
@@ -227,7 +227,7 @@ const { title, contentLang, toc } = Astro.props;
 
   @media (min-width: 1201px) {
     .site-layout {
-      grid-template-columns: clamp(200px, 22vw, 280px) 1fr 240px;
+      grid-template-columns: clamp(180px, 20vw, 280px) 1fr 240px;
       grid-template-areas: 'left center right';
     }
 
@@ -290,7 +290,7 @@ const { title, contentLang, toc } = Astro.props;
     border-radius: 50%;
   }
 
-  @media (max-width: 640px) {
+  @media (max-width: 768px) {
     .site-layout {
       grid-template-columns: 1fr;
       grid-template-areas: 'center';
