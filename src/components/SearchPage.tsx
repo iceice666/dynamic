@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
-import { ui } from '$/i18n/ui';
-import { useLocale } from '$/i18n/useLocale';
+import { useTranslation } from '$/i18n';
 
 interface SearchItem {
   type: 'article' | 'post';
@@ -62,8 +61,7 @@ function buildTagCounts(index: SearchItem[]) {
 type Tab = 'categories' | 'tags';
 
 function SearchPage() {
-  const locale = useLocale();
-  const t = (key: keyof (typeof ui)['en']) => ui[locale][key];
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState(getInitialQuery);
   const [index, setIndex] = useState<SearchItem[]>(cachedIndex ?? []);
@@ -141,10 +139,7 @@ function SearchPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-foreground m-0 mb-2 text-2xl font-bold">
-        <span data-i18n-en>{ui.en.page_search_heading}</span>
-        <span data-i18n-zh-tw>{ui['zh-tw'].page_search_heading}</span>
-      </h1>
+      <h1 className="text-foreground m-0 mb-2 text-2xl font-bold">{t('page_search_heading')}</h1>
 
       <input
         ref={inputRef}
@@ -254,11 +249,11 @@ function SearchPage() {
 }
 
 function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
+  const { t } = useTranslation();
   return (
     <article className="card">
       <div className="label-uppercase">
-        <span data-i18n-en>{ui.en.article_label}</span>
-        <span data-i18n-zh-tw>{ui['zh-tw'].article_label}</span>
+        {t('article_label')}
         {item.categoryName && ` \u00b7 ${item.categoryName}`}
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
@@ -294,12 +289,10 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
 }
 
 function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
+  const { t } = useTranslation();
   return (
     <article className="card">
-      <div className="label-uppercase">
-        <span data-i18n-en>{ui.en.post_label}</span>
-        <span data-i18n-zh-tw>{ui['zh-tw'].post_label}</span>
-      </div>
+      <div className="label-uppercase">{t('post_label')}</div>
       <div className="text-foreground max-w-none text-sm">
         {item.body.length >= 500 ? item.body + '...' : item.body}
       </div>

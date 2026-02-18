@@ -1,20 +1,21 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
-import I18nText from '$/components/I18nText.astro';
-import { ui } from '$/i18n/ui';
+import { t } from '$/i18n';
+
+const { locale } = Astro.locals;
 ---
 
-<BaseLayout title={ui.en.page_404_title}>
+<BaseLayout title={t(locale, 'page_404_title')}>
   <div class="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
     <div class="flex flex-col gap-3">
       <h1 class="text-accent m-0 text-8xl font-bold tabular-nums">
-        <I18nText k="page_404_heading" />
+        {t(locale, 'page_404_heading')}
       </h1>
       <h2 class="text-foreground m-0 text-2xl font-semibold">
-        <I18nText k="page_404_title" />
+        {t(locale, 'page_404_title')}
       </h2>
       <p class="text-muted m-0 text-base">
-        <I18nText k="page_404_message" />
+        {t(locale, 'page_404_message')}
       </p>
     </div>
     <a
@@ -35,7 +36,7 @@ import { ui } from '$/i18n/ui';
         <path d="m12 19-7-7 7-7"></path>
         <path d="M19 12H5"></path>
       </svg>
-      <I18nText k="page_404_back_home" />
+      {t(locale, 'page_404_back_home')}
     </a>
   </div>
 </BaseLayout>

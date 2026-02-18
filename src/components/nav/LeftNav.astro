@@ -1,7 +1,7 @@
 ---
 import LeftNavList from './LeftNavList';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
-import AuthorBio from '$/components/cards/AuthorBio.astro';
+import AuthorBio from '$/components/cards/AuthorBio';
 import VisitCounter from '$/components/widgets/VisitCounter';
 
 interface Props {
@@ -40,6 +40,6 @@ const hasToc = toc && toc.length > 0;
   <hr class="border-border" />
 
   <div transition:persist>
-    <AuthorBio />
+    <AuthorBio client:load />
   </div>
 </nav>

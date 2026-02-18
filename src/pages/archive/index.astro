@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
-import I18nText from '$/components/I18nText.astro';
+import { t } from '$/i18n';
 import { getCollection, render } from 'astro:content';
 import { entrySlug, formatDate } from '$/utils';
-import { ui } from '$/i18n/ui';
+
+const { locale } = Astro.locals;
 
 const articles = await getCollection('articles', ({ data }) => !data.draft);
 const archiveEntries = await Promise.all(
@@ -33,10 +34,10 @@ const archiveYears = Array.from(archiveGroups.entries())
   .map(([year, items]) => ({ year, items }));
 ---
 
-<BaseLayout title={ui.en.page_archive_heading}>
+<BaseLayout title={t(locale, 'page_archive_heading')}>
   <div class="flex flex-col gap-6">
     <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">
-      <I18nText k="page_archive_heading" />
+      {t(locale, 'page_archive_heading')}
     </h1>
     {
       archiveYears.map(({ year, items }) => (
@@ -44,13 +45,12 @@ const archiveYears = Array.from(archiveGroups.entries())
           <div class="flex items-baseline justify-between gap-4">
             <h2 class="text-foreground m-0 text-xl font-bold">{year}</h2>
             <div class="text-muted text-sm">
-              <span data-i18n-en>
-                {items.length}{' '}
-                {items.length === 1 ? ui.en.archive_article_singular : ui.en.archive_article_plural}
-              </span>
-              <span data-i18n-zh-tw>
-                {items.length} {ui['zh-tw'].archive_article_plural}
-              </span>
+              {items.length}{' '}
+              {locale === 'en'
+                ? items.length === 1
+                  ? t(locale, 'archive_article_singular')
+                  : t(locale, 'archive_article_plural')
+                : t(locale, 'archive_article_plural')}
             </div>
           </div>
           <ul class="m-0 flex list-none flex-col gap-2 p-0">

@@ -1,23 +1,14 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
-import I18nText from '$/components/I18nText.astro';
+import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
-import { ui } from '$/i18n/ui';
 import { entrySlug } from '$/utils';
 
-export const prerender = true;
-
-export async function getStaticPaths() {
-  const posts = await getCollection('posts', ({ data }) => !data.draft);
-  return posts.map((entry) => ({
-    params: { id: entrySlug(entry.id) },
-    props: { entry },
-  }));
-}
-
-const { entry } = Astro.props;
+const id = Astro.params.id;
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const entry = posts.find((p) => entrySlug(p.id) === id);
 
 // Safety check: ensure entry exists
 if (!entry) {
@@ -25,14 +16,15 @@ if (!entry) {
 }
 
 const { Content } = await render(entry);
+const { locale } = Astro.locals;
 ---
 
-<BaseLayout title={ui.en.post_label}>
+<BaseLayout title={t(locale, 'post_label')}>
   <article class="prose prose-lg max-w-none">
     <div
       class="not-prose text-muted mb-4 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase"
     >
-      <I18nText k="post_label" />
+      {t(locale, 'post_label')}
     </div>
     <Content />
     <div class="not-prose mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">

@@ -1,24 +1,16 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
-import AuthorBio from '$/components/cards/AuthorBio.astro';
-import I18nText from '$/components/I18nText.astro';
+import AuthorBio from '$/components/cards/AuthorBio';
+import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
 import { entrySlug, formatDate } from '$/utils';
 import { Calendar, BookOpen, Clock } from 'lucide-react';
 
-export const prerender = true;
-
-export async function getStaticPaths() {
-  const articles = await getCollection('articles', ({ data }) => !data.draft);
-  return articles.map((entry) => ({
-    params: { slug: entrySlug(entry.id) },
-    props: { entry },
-  }));
-}
-
-const { entry } = Astro.props;
+const slug = Astro.params.slug;
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const entry = articles.find((a) => entrySlug(a.id) === slug);
 
 // Safety check: ensure entry exists
 if (!entry) {
@@ -41,6 +33,8 @@ const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
 
 const wc: number = remarkPluginFrontmatter?.wordCount ?? 0;
 const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
+
+const { locale } = Astro.locals;
 ---
 
 <BaseLayout title={title} toc={headings} contentLang={contentLang}>
@@ -52,12 +46,9 @@ const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
             href={`/articles/${entrySlug(translationEntry.id)}`}
             class="text-accent text-sm no-underline hover:opacity-75"
           >
-            <span data-i18n-en>
-              Read in {translationEntry.data.lang === 'zh-tw' ? 'Chinese' : 'English'} →
-            </span>
-            <span data-i18n-zh-tw>
-              閱讀{translationEntry.data.lang === 'zh-tw' ? '中文' : '英文'}版本 →
-            </span>
+            {translationEntry.data.lang === 'zh-tw'
+              ? t(locale, 'article_read_in_chinese')
+              : t(locale, 'article_read_in_english')}
           </a>
         </div>
       )
@@ -87,11 +78,11 @@ const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
       </span>
       <span class="text-muted flex items-center gap-1 text-xs">
         <BookOpen size={12} aria-hidden="true" />
-        <span>{wc.toLocaleString()} <I18nText k="article_word_count" /></span>
+        <span>{wc.toLocaleString()} {t(locale, 'article_word_count')}</span>
       </span>
       <span class="text-muted flex items-center gap-1 text-xs">
         <Clock size={12} aria-hidden="true" />
-        <span>{mins} <I18nText k="article_read_time" /></span>
+        <span>{mins} {t(locale, 'article_read_time')}</span>
       </span>
       <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
@@ -102,6 +93,6 @@ const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
   <GiscusComments client:idle />
 
   <div class="sm:hidden">
-    <AuthorBio />
+    <AuthorBio client:load />
   </div>
 </BaseLayout>

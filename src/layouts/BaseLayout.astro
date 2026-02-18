@@ -47,6 +47,11 @@ const { title, contentLang, toc } = Astro.props;
         return document;
       }
 
+      function getCookie(name) {
+        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+      }
+
       function applyThemeSettings(target) {
         const targetDocument = resolveTargetDocument(target);
         const root = targetDocument.documentElement;
@@ -76,17 +81,12 @@ const { title, contentLang, toc } = Astro.props;
           root.classList.remove('rainbow-active');
         }
 
-        const lang = localStorage.getItem('dynamic:lang') || 'en';
+        // Cookie takes precedence (server source of truth); localStorage as fallback
+        const lang = getCookie('dynamic:lang') || localStorage.getItem('dynamic:lang') || 'en';
         root.dataset.lang = lang;
         if (!root.getAttribute('data-content-lang')) {
           root.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
         }
-
-        // Update i18n aria-label attributes
-        const ariaAttr = 'data-aria-' + lang;
-        targetDocument.querySelectorAll('[' + ariaAttr + ']').forEach(function (el) {
-          el.setAttribute('aria-label', el.getAttribute(ariaAttr));
-        });
       }
 
       // Apply on initial load

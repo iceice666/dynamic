@@ -1,3 +1,6 @@
+export const defaultLocale = 'en' as const;
+export const locales = ['en', 'zh-tw'] as const;
+
 export const ui = {
   en: {
     // Nav
@@ -45,6 +48,8 @@ export const ui = {
     post_label: 'POST',
     article_word_count: 'words',
     article_read_time: 'min read',
+    article_read_in_english: 'Read in English →',
+    article_read_in_chinese: 'Read in Chinese →',
     // Search
     nav_search: 'Search',
     page_search_heading: 'Search',
@@ -114,6 +119,8 @@ export const ui = {
     post_label: '貼文',
     article_word_count: '字',
     article_read_time: '分鐘閱讀',
+    article_read_in_english: '閱讀英文版本 →',
+    article_read_in_chinese: '閱讀中文版本 →',
     // Search
     nav_search: '搜尋',
     page_search_heading: '搜尋',

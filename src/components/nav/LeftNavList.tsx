@@ -1,7 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
-import { ui, type UIKey } from '$/i18n/ui';
+import { type UIKey } from '$/i18n/ui';
+import { useTranslation } from '$/i18n';
 
 type NavItem = {
   labelKey: UIKey;
@@ -74,6 +75,7 @@ function updateIndicatorPosition({
 }
 
 function LeftNavList({ currentPath }: LeftNavListProps) {
+  const { t } = useTranslation();
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const pendingHrefRef = useRef<string | null>(null);
 
@@ -219,12 +221,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
                 aria-current={isActive ? 'page' : undefined}
               >
                 <Icon size={18} className="shrink-0" aria-hidden="true" />
-                <span className="left-nav-label" data-i18n-en>
-                  {ui.en[item.labelKey]}
-                </span>
-                <span className="left-nav-label" data-i18n-zh-tw>
-                  {ui['zh-tw'][item.labelKey]}
-                </span>
+                <span className="left-nav-label">{t(item.labelKey)}</span>
               </a>
             </li>
           );

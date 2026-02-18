@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { navigate } from 'astro:transitions/client';
 import { Languages } from 'lucide-react';
 import type { Locale } from '$/i18n/ui';
+import { useLocale } from '$/i18n';
 
 const STORAGE_KEY = 'dynamic:lang';
+const COOKIE_KEY = 'dynamic:lang';
 const LANGUAGE_OPTIONS = [
   { value: 'en' as const, label: 'English' },
   { value: 'zh-tw' as const, label: '中文' },
@@ -15,14 +18,10 @@ interface LanguageToggleProps {
 }
 
 function LanguageToggle({ className, compact = false, align = 'left' }: LanguageToggleProps) {
-  const [locale, setLocaleState] = useState<Locale>('en');
+  const locale = useLocale();
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'zh-tw') setLocaleState('zh-tw');
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -36,15 +35,17 @@ function LanguageToggle({ className, compact = false, align = 'left' }: Language
     return () => document.removeEventListener('pointerdown', handleOutside);
   }, [open]);
 
+  // Persist locale change and navigate after state update
   useEffect(() => {
-    document.documentElement.dataset.lang = locale;
-    document.documentElement.lang = locale === 'zh-tw' ? 'zh-TW' : 'en';
-  }, [locale]);
+    if (!pendingLocale) return;
+    document.cookie = `${COOKIE_KEY}=${pendingLocale};max-age=31536000;path=/;SameSite=Lax`;
+    localStorage.setItem(STORAGE_KEY, pendingLocale);
+    navigate(location.href);
+  }, [pendingLocale]);
 
   function setLocale(next: Locale) {
-    setLocaleState(next);
-    localStorage.setItem(STORAGE_KEY, next);
     setOpen(false);
+    setPendingLocale(next);
   }
 
   const currentLabel = locale === 'en' ? 'English' : '中文';

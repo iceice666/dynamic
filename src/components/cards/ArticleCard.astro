@@ -1,5 +1,5 @@
 ---
-import I18nText from '$/components/I18nText.astro';
+import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import { formatDate } from '$/utils';
 import { BookOpen, Clock } from 'lucide-react';
@@ -17,6 +17,7 @@ interface Props {
 
 const { title, description, slug, publishedAt, tags, categoryName, wordCount, readingTime } =
   Astro.props;
+const { locale } = Astro.locals;
 
 const articlePath = `/articles/${slug}`;
 ---
@@ -26,11 +27,11 @@ const articlePath = `/articles/${slug}`;
     {
       categoryName ? (
         <>
-          <I18nText k="article_label" />
+          {t(locale, 'article_label')}
           {` · ${categoryName}`}
         </>
       ) : (
-        <I18nText k="article_label" />
+        t(locale, 'article_label')
       )
     }
   </div>
@@ -49,7 +50,7 @@ const articlePath = `/articles/${slug}`;
           <span class="text-muted flex items-center gap-1 text-xs">
             <BookOpen size={12} aria-hidden="true" />
             <span>
-              {wordCount.toLocaleString()} <I18nText k="article_word_count" />
+              {wordCount.toLocaleString()} {t(locale, 'article_word_count')}
             </span>
           </span>
         )}
@@ -57,7 +58,7 @@ const articlePath = `/articles/${slug}`;
           <span class="text-muted flex items-center gap-1 text-xs">
             <Clock size={12} aria-hidden="true" />
             <span>
-              {readingTime} <I18nText k="article_read_time" />
+              {readingTime} {t(locale, 'article_read_time')}
             </span>
           </span>
         )}

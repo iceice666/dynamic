@@ -1,7 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
-import { ui, type UIKey } from '$/i18n/ui';
+import { type UIKey } from '$/i18n/ui';
+import { useTranslation } from '$/i18n';
 import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
 import BottomNavTOC, { type TocHeading } from '$/components/toc/BottomNavTOC';
@@ -78,6 +79,7 @@ function updateIndicatorPosition({
 }
 
 function BottomNavList({ currentPath, toc }: BottomNavListProps) {
+  const { t } = useTranslation();
   const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
   const [panelOpen, setPanelOpen] = useState(false);
   const pendingHrefRef = useRef<string | null>(null);
@@ -289,7 +291,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
               }}
             >
               <Icon size={20} aria-hidden="true" />
-              <span className="sr-only">{ui.en[item.labelKey]}</span>
+              <span className="sr-only">{t(item.labelKey)}</span>
             </a>
           );
         })}

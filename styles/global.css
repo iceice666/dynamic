@@ -13,18 +13,3 @@ body {
     background-color 0.2s ease,
     color 0.2s ease;
 }
-
-/* i18n: show/hide elements based on data-lang attribute */
-[data-i18n-en],
-[data-i18n-zh-tw] {
-  display: none;
-}
-
-html[data-lang='en'] [data-i18n-en],
-html:not([data-lang]) [data-i18n-en] {
-  display: contents;
-}
-
-html[data-lang='zh-tw'] [data-i18n-zh-tw] {
-  display: contents;
-}

@@ -1,5 +1,5 @@
 ---
-import I18nText from '$/components/I18nText.astro';
+import { t } from '$/i18n';
 import { formatDate } from '$/utils';
 
 interface Props {
@@ -8,11 +8,12 @@ interface Props {
 }
 
 const { publishedAt, tags } = Astro.props;
+const { locale } = Astro.locals;
 ---
 
 <article class="card">
   <div class="label-uppercase">
-    <I18nText k="post_label" />
+    {t(locale, 'post_label')}
   </div>
 
   <details>
