@@ -100,6 +100,10 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
     });
   }, [activeHref]);
 
+  // Keep a ref to the latest activeHref so event handlers always read current value
+  const activeHrefRef = useRef(activeHref);
+  activeHrefRef.current = activeHref;
+
   // Astro View Transitions
   useEffect(() => {
     const handleBeforePreparation = (event: Event) => {
@@ -116,7 +120,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
         setActiveHref(nextHref);
         requestAnimationFrame(() =>
           updateIndicatorPosition({
-            activeHref,
+            activeHref: activeHrefRef.current,
             overrideHref: nextHref,
             barEl: barRef.current,
             indicatorEl: indicatorRef.current,
@@ -131,7 +135,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
       setActiveHref(nextHref);
       requestAnimationFrame(() =>
         updateIndicatorPosition({
-          activeHref,
+          activeHref: activeHrefRef.current,
           overrideHref: nextHref,
           barEl: barRef.current,
           indicatorEl: indicatorRef.current,
@@ -149,7 +153,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
       document.removeEventListener('astro:after-swap', handleAfterSwap);
       document.removeEventListener('astro:page-load', handlePageLoad);
     };
-  }, [activeHref]);
+  }, []);
 
   // Recalculate on resize
   useEffect(() => {

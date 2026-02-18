@@ -95,6 +95,10 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
     });
   }, [activeHref]);
 
+  // Keep a ref to the latest activeHref so event handlers always read current value
+  const activeHrefRef = useRef(activeHref);
+  activeHrefRef.current = activeHref;
+
   // Listen for Astro navigation events
   useEffect(() => {
     // Early: start sliding as soon as navigation is detected (before view transition)
@@ -112,7 +116,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
         setActiveHref(nextHref);
         requestAnimationFrame(() =>
           updateIndicatorPosition({
-            activeHref,
+            activeHref: activeHrefRef.current,
             overrideHref: nextHref,
             listEl: listRef.current,
             indicatorEl: indicatorRef.current,
@@ -128,7 +132,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
       setActiveHref(nextHref);
       requestAnimationFrame(() =>
         updateIndicatorPosition({
-          activeHref,
+          activeHref: activeHrefRef.current,
           overrideHref: nextHref,
           listEl: listRef.current,
           indicatorEl: indicatorRef.current,
@@ -146,7 +150,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
       document.removeEventListener('astro:after-swap', handleAfterSwap);
       document.removeEventListener('astro:page-load', handlePageLoad);
     };
-  }, [activeHref]);
+  }, []);
 
   // Recalculate on resize
   useEffect(() => {
@@ -215,7 +219,7 @@ function LeftNavList({ currentPath }: LeftNavListProps) {
                 }}
                 href={item.href}
                 data-nav-href={item.href}
-                className={`text-muted relative z-1 flex items-center gap-2.5 rounded-md p-2 text-[0.9rem] no-underline transition-colors duration-150 hover:text-foreground${
+                className={`text-muted hover:text-foreground relative z-1 flex items-center gap-2.5 rounded-md p-2 text-[0.9rem] no-underline transition-colors duration-150 ${
                   isActive ? 'text-foreground font-semibold' : ''
                 }`}
                 aria-current={isActive ? 'page' : undefined}

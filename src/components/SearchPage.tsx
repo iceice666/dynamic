@@ -293,7 +293,7 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
     <article className="card">
       <div className="label-uppercase">{t('post_label')}</div>
       <div className="text-foreground max-w-none text-sm">
-        {item.body.length >= 500 ? item.body + '...' : item.body}
+        {item.body.length >= 500 ? item.body.slice(0, 500) + '...' : item.body}
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">

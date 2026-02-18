@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '$/i18n/useLocale';
 
 export type TocHeading = { depth: number; slug: string; text: string };
 
@@ -8,6 +9,7 @@ interface BottomNavTOCProps {
 }
 
 export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
+  const { t } = useTranslation();
   const filtered = toc.filter((h) => h.depth === 2 || h.depth === 3);
   const [activeSlugs, setActiveSlugs] = useState<Set<string>>(new Set());
 
@@ -73,7 +75,7 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
           marginBottom: '0.5rem',
         }}
       >
-        Table of Contents
+        {t('widget_toc_label')}
       </div>
       <div
         style={{
