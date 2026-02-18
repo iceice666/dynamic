@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
-import { useTheme, type Theme } from './useTheme';
+import { useStore } from '@nanostores/react';
+import {
+  $theme,
+  $hue,
+  $rainbow,
+  $speed,
+  setTheme,
+  setHue,
+  setRainbow,
+  setSpeed,
+  type Theme,
+} from '$/stores/theme';
 
 interface ThemeButtonProps {
   className?: string;
@@ -12,7 +23,10 @@ interface ThemeButtonProps {
 function ThemeButton({ className, compact = false, align = 'left' }: ThemeButtonProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { theme, hue, rainbow, speed, setTheme, setHue, setRainbow, setSpeed } = useTheme();
+  const theme = useStore($theme);
+  const hue = useStore($hue);
+  const rainbow = useStore($rainbow);
+  const speed = useStore($speed);
   const { t } = useTranslation();
 
   // Close on click outside

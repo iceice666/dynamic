@@ -1,7 +1,18 @@
 import React from 'react';
 import { Sun, Moon, Monitor } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
-import { useTheme, type Theme } from './useTheme';
+import { useStore } from '@nanostores/react';
+import {
+  $theme,
+  $hue,
+  $rainbow,
+  $speed,
+  setTheme,
+  setHue,
+  setRainbow,
+  setSpeed,
+  type Theme,
+} from '$/stores/theme';
 import withStrictMode from '$/components/withStrictMode';
 
 interface ThemeButtonTouchProps {
@@ -9,7 +20,10 @@ interface ThemeButtonTouchProps {
 }
 
 function ThemeButtonTouch({ className }: ThemeButtonTouchProps) {
-  const { theme, hue, rainbow, speed, setTheme, setHue, setRainbow, setSpeed } = useTheme();
+  const theme = useStore($theme);
+  const hue = useStore($hue);
+  const rainbow = useStore($rainbow);
+  const speed = useStore($speed);
   const { t } = useTranslation();
 
   const modes: { value: Theme; label: string; icon: React.ReactNode }[] = [
