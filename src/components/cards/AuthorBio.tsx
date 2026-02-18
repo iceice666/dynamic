@@ -8,21 +8,26 @@ function AuthorBio() {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col gap-2 p-4">
-      <div className="flex flex-col gap-0.5">
-        <span className="text-muted text-xs leading-[1.4]">{t('author_bio_heading')}</span>
-      </div>
-      <img
-        className="border-border h-12 w-12 rounded-full border-2 object-cover"
-        src={author.avatar}
-        alt="Author avatar"
-        width="48"
-        height="48"
-        loading="eager"
-      />
-      <div className="flex flex-col gap-0.5">
-        <span className="text-foreground text-sm font-semibold">{author.name}</span>
-        <span className="text-muted text-xs leading-[1.4]">{author.tagline}</span>
+    <div className="flex flex-col gap-2 p-2">
+      <a
+        href="/articles/about-me"
+        className="text-muted hover:text-accent text-xs leading-[1.4] no-underline transition-colors duration-150"
+      >
+        {t('author_bio_heading')}
+      </a>
+      <div className="flex items-center gap-3">
+        <img
+          className="border-border h-12 w-12 shrink-0 rounded-full border-2 object-cover"
+          src={author.avatar}
+          alt="Author avatar"
+          width="48"
+          height="48"
+          loading="eager"
+        />
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <span className="text-foreground text-sm font-semibold">{author.name}</span>
+          <span className="text-muted text-xs leading-[1.4]">{author.tagline}</span>
+        </div>
       </div>
       <div className="mt-1 flex gap-2">
         {author.socials.map((link) => {

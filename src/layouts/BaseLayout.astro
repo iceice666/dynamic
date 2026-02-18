@@ -35,11 +35,7 @@ const { title, contentLang, toc } = Astro.props;
         <script
           is:inline
           defer
-          src={
-            umami.scriptProxy
-              ? '/api/uwu.js'
-              : (umami.scriptUrl ?? `${umami.apiUrl}/script.js`)
-          }
+          src={umami.scriptProxy ? '/api/uwu.js' : (umami.scriptUrl ?? `${umami.apiUrl}/script.js`)}
           data-website-id={umami.websiteId}
         />
       )

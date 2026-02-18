@@ -13,7 +13,7 @@ const { currentPath, toc } = Astro.props;
 const hasToc = toc && toc.length > 0;
 ---
 
-<nav class="left-nav flex h-full flex-col gap-4 px-4 py-6">
+<nav class="left-nav flex h-full flex-col gap-4 p-4">
   <div class="left-nav-primary flex flex-col gap-4">
     <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
@@ -30,8 +30,6 @@ const hasToc = toc && toc.length > 0;
   }
 
   {!hasToc && <div class="flex-1" />}
-
-  <hr class="border-border" />
 
   <div transition:persist>
     <VisitCounter client:idle />
