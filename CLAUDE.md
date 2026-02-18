@@ -2,6 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Overview
+
+This is a TypeScript Astro project with React components, deployed to Cloudflare Pages. CSS files are organized by concern. Path aliases use `$` prefix (maps to `src/`). Use `pnpm` as the package manager.
+
+## General Guidelines
+
+When asked to implement something, proceed directly to code changes. Do not spend time exploring the codebase or writing plans unless explicitly asked. Bias toward action over planning.
+
+## Workflow
+
+Always run `pnpm check` (or equivalent format/lint/typecheck) after making code changes. Fix any errors before presenting work as complete.
+
+## UI/CSS Guidelines
+
+When implementing UI changes, test on mobile/iOS Safari edge cases (e.g., rubber-band scrolling, touch targets). Do not assume desktop-only behavior.
+
 ## Commands
 
 ```bash
