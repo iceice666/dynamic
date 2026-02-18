@@ -2,7 +2,7 @@
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import { t } from '$/i18n';
 import { getCollection, render } from 'astro:content';
-import { entrySlug, formatDate } from '$/utils';
+import { parseArticleId, formatDate } from '$/utils';
 
 const { locale } = Astro.locals;
 
@@ -10,9 +10,11 @@ const articles = await getCollection('articles', ({ data }) => !data.draft);
 const archiveEntries = await Promise.all(
   articles.map(async (entry) => {
     const { remarkPluginFrontmatter } = await render(entry);
+    const { slug, lang: fileLang } = parseArticleId(entry.id);
     return {
-      title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? entrySlug(entry.id),
-      slug: entrySlug(entry.id),
+      title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? slug,
+      slug,
+      translationLang: fileLang ?? undefined,
       publishedAt: entry.data.publishedAt,
     };
   })
@@ -67,6 +69,11 @@ const archiveYears = Array.from(archiveGroups.entries())
                     {formatDate(entry.publishedAt)}
                   </time>
                   <span class="text-foreground font-medium">{entry.title}</span>
+                  {entry.translationLang && (
+                    <span class="border-border rounded border px-1 py-0.5 text-[0.6rem] font-semibold tracking-wider uppercase opacity-60">
+                      {entry.translationLang}
+                    </span>
+                  )}
                 </a>
               </li>
             ))}

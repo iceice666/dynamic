@@ -11,8 +11,7 @@ const articles = defineCollection({
     tags: z.array(z.string()).default([]),
     publishedAt: z.date(),
     draft: z.boolean().default(false),
-    lang: z.enum(['en', 'zh-tw']).default('en'),
-    translationOf: z.string().optional(),
+    lang: z.string().optional(), // required on base files; omit on translated files ({slug}.{lang}.md)
   }),
 });
 
@@ -22,8 +21,7 @@ const posts = defineCollection({
     tags: z.array(z.string()).default([]),
     publishedAt: z.date(),
     draft: z.boolean().default(false),
-    lang: z.enum(['en', 'zh-tw']).default('en'),
-    translationOf: z.string().optional(),
+    lang: z.string().optional(), // required on base files; omit on translated files
   }),
 });
 

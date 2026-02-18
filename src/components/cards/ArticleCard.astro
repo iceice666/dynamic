@@ -13,10 +13,20 @@ interface Props {
   categoryName?: string;
   wordCount?: number;
   readingTime?: number;
+  translationLang?: string;
 }
 
-const { title, description, slug, publishedAt, tags, categoryName, wordCount, readingTime } =
-  Astro.props;
+const {
+  title,
+  description,
+  slug,
+  publishedAt,
+  tags,
+  categoryName,
+  wordCount,
+  readingTime,
+  translationLang,
+} = Astro.props;
 const { locale } = Astro.locals;
 
 const articlePath = `/articles/${slug}`;
@@ -24,14 +34,13 @@ const articlePath = `/articles/${slug}`;
 
 <article class="card">
   <div class="label-uppercase">
+    {t(locale, 'article_label')}
+    {categoryName && ` · ${categoryName}`}
     {
-      categoryName ? (
-        <>
-          {t(locale, 'article_label')}
-          {` · ${categoryName}`}
-        </>
-      ) : (
-        t(locale, 'article_label')
+      translationLang && (
+        <span class="border-border ml-1.5 rounded border px-1 py-0.5 text-[0.6rem] font-semibold tracking-wider uppercase opacity-60">
+          {translationLang}
+        </span>
       )
     }
   </div>

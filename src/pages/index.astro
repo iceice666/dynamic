@@ -4,7 +4,7 @@ import ArticleCard from '$/components/cards/ArticleCard.astro';
 import PostCard from '$/components/cards/PostCard.astro';
 import { t } from '$/i18n';
 import { getCollection, render } from 'astro:content';
-import { entrySlug } from '$/utils';
+import { parseArticleId } from '$/utils';
 
 const { locale } = Astro.locals;
 
@@ -12,13 +12,15 @@ const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
 const articles = await Promise.all(
   articlesRaw.map(async (entry) => {
     const { remarkPluginFrontmatter } = await render(entry);
+    const { slug, lang: fileLang } = parseArticleId(entry.id);
     return {
       type: 'article' as const,
-      slug: entrySlug(entry.id),
+      slug,
+      translationLang: fileLang ?? undefined,
       publishedAt: entry.data.publishedAt,
       data: {
         ...entry.data,
-        title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? entrySlug(entry.id),
+        title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? slug,
         description: entry.data.description ?? remarkPluginFrontmatter?.extractedDescription,
       },
       wordCount: remarkPluginFrontmatter?.wordCount ?? 0,
@@ -30,7 +32,7 @@ const articles = await Promise.all(
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
   type: 'post' as const,
-  slug: entrySlug(entry.id),
+  slug: parseArticleId(entry.id).slug,
   publishedAt: entry.data.publishedAt,
   data: entry.data,
   body: entry.body ?? '',
@@ -56,6 +58,7 @@ const feed = [...articles, ...posts].sort(
             categoryName={item.data.categoryName}
             wordCount={item.wordCount}
             readingTime={item.readingTime}
+            translationLang={item.translationLang}
           />
         ) : (
           <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>

@@ -6,6 +6,7 @@ categoryName: Meta
 tags: [example, hello]
 publishedAt: 2026-02-16
 draft: false
+lang: en
 ---
 
 # Markdown Features Showcase

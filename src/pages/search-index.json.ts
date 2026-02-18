@@ -1,24 +1,27 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { entrySlug } from '$/utils';
+import { parseArticleId } from '$/utils';
 
 export const GET: APIRoute = async () => {
-  const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => ({
-    type: 'article' as const,
-    slug: entrySlug(entry.id),
-    title: entry.data.title,
-    description: entry.data.description ?? '',
-    tags: entry.data.tags,
-    publishedAt: entry.data.publishedAt.toISOString(),
-    category: entry.data.category ?? '',
-    categoryName: entry.data.categoryName ?? '',
-    lang: entry.data.lang,
-    body: entry.body ?? '',
-  }));
+  const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => {
+    const { slug, lang: fileLang } = parseArticleId(entry.id);
+    return {
+      type: 'article' as const,
+      slug,
+      title: entry.data.title,
+      description: entry.data.description ?? '',
+      tags: entry.data.tags,
+      publishedAt: entry.data.publishedAt.toISOString(),
+      category: entry.data.category ?? '',
+      categoryName: entry.data.categoryName ?? '',
+      lang: fileLang ?? entry.data.lang,
+      body: entry.body ?? '',
+    };
+  });
 
   const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
     type: 'post' as const,
-    slug: entrySlug(entry.id),
+    slug: parseArticleId(entry.id).slug,
     title: '',
     description: '',
     tags: entry.data.tags,

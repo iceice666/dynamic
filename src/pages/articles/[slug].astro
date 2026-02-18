@@ -1,58 +1,60 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import AuthorBio from '$/components/cards/AuthorBio';
+import ArticleLangSelector from '$/components/ArticleLangSelector';
 import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
-import { entrySlug, formatDate } from '$/utils';
+import { parseArticleId, formatDate } from '$/utils';
 import { Calendar, BookOpen, Clock } from 'lucide-react';
+import type { CollectionEntry } from 'astro:content';
 
 const slug = Astro.params.slug;
-const articles = await getCollection('articles', ({ data }) => !data.draft);
-const entry = articles.find((a) => entrySlug(a.id) === slug);
+const { locale } = Astro.locals;
 
-// Safety check: ensure entry exists
-if (!entry) {
-  return Astro.redirect('/404');
+const all = await getCollection('articles', ({ data }) => !data.draft);
+
+// Warn if a translated file has lang in frontmatter (it's always ignored; lang comes from filename)
+for (const a of all) {
+  const { lang: fileLang } = parseArticleId(a.id);
+  if (fileLang !== null) {
+    console.warn(
+      `[i18n] "${a.id}": lang field in frontmatter is ignored on translated files — lang is derived from the filename suffix. Remove the lang field.`
+    );
+  }
 }
+
+// Effective lang: filename suffix takes priority over frontmatter
+const effectiveLang = (a: CollectionEntry<'articles'>): string =>
+  parseArticleId(a.id).lang ?? a.data.lang ?? 'en';
+
+// Group all variants by base slug
+const group = all.filter((a) => parseArticleId(a.id).slug === slug);
+if (group.length === 0) return Astro.redirect('/404');
+
+// Pick best variant for current locale, with fallbacks
+const entry =
+  group.find((a) => effectiveLang(a) === locale) ??
+  group.find((a) => parseArticleId(a.id).lang === null) ??
+  group[0]!;
 
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 
 const title = entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? 'Untitled';
 const description = entry.data.description ?? remarkPluginFrontmatter?.extractedDescription;
 
-// Look up translation partner
-let translationEntry = null;
-if (entry.data.translationOf) {
-  const all = await getCollection('articles', ({ data }) => !data.draft);
-  translationEntry = all.find((a) => entrySlug(a.id) === entry.data.translationOf) ?? null;
-}
-
-const contentLang = entry.data.lang === 'zh-tw' ? 'zh-TW' : 'en';
-
+const contentLang = effectiveLang(entry) === 'zh-tw' ? 'zh-TW' : 'en';
 const wc: number = remarkPluginFrontmatter?.wordCount ?? 0;
 const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
 
-const { locale } = Astro.locals;
+// Build lang selector data (all variants, including current)
+const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
 ---
 
 <BaseLayout title={title} toc={headings} contentLang={contentLang}>
   <article class="prose prose-lg max-w-none">
-    {
-      translationEntry && (
-        <div class="not-prose border-accent/20 bg-accent/5 mb-6 rounded-lg border p-3">
-          <a
-            href={`/articles/${entrySlug(translationEntry.id)}`}
-            class="text-accent text-sm no-underline hover:opacity-75"
-          >
-            {translationEntry.data.lang === 'zh-tw'
-              ? t(locale, 'article_read_in_chinese')
-              : t(locale, 'article_read_in_english')}
-          </a>
-        </div>
-      )
-    }
+    {availableLangs.length > 1 && <ArticleLangSelector client:load available={availableLangs} />}
     <h1>{title}</h1>
     {description && <p class="lead">{description}</p>}
     <div class="not-prose mb-6 flex flex-wrap items-center gap-x-3 gap-y-1.5">
