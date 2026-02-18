@@ -161,3 +161,14 @@ export const friends: Friend[] = [
     ],
   },
 ];
+
+// --- Site Configuration ---
+export const site = {
+  /** The production URL of your site */
+  url: 'https://example.com',
+  /** The site title, used for RSS/Sitemap */
+  title: 'Dynamic Blog',
+  /** The site description, used for RSS/Sitemap */
+  description: 'A dynamic blog built with Astro',
+};
+

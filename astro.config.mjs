@@ -12,9 +12,13 @@ import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 import { remarkWordCount } from './src/utils/remarkWordCount.ts';
 import { codeBlockTransformer } from './src/utils/codeBlockTransformer.ts';
 
+import sitemap from '@astrojs/sitemap';
+import { site } from './dynamic.config.ts';
+
 export default defineConfig({
   output: 'server',
   srcDir: './src',
+  site: site.url,
   adapter: cloudflare({ imageService: 'compile' }),
   integrations: [
     react({
@@ -23,6 +27,7 @@ export default defineConfig({
       },
     }),
     mdx(),
+    sitemap(),
   ],
   vite: {
     plugins: [tailwindcss()],
