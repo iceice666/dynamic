@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
     category: entry.data.category ?? '',
     categoryName: entry.data.categoryName ?? '',
     lang: entry.data.lang,
-    body: (entry.body ?? '').slice(0, 500),
+    body: entry.body ?? '',
   }));
 
   const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
@@ -26,7 +26,7 @@ export const GET: APIRoute = async () => {
     category: '',
     categoryName: '',
     lang: entry.data.lang,
-    body: (entry.body ?? '').slice(0, 500),
+    body: entry.body ?? '',
   }));
 
   const index = [...articles, ...posts].sort(

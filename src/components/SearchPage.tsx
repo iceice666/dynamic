@@ -117,14 +117,13 @@ function SearchPage() {
   const trimmed = query.trim();
   const results = trimmed
     ? index.filter((item) => {
-        if (item.lang !== locale) return false;
         if (trimmed.startsWith('#')) {
           const tagQuery = trimmed.slice(1).toLowerCase();
-          return item.tags.some((t) => t.toLowerCase() === tagQuery);
+          return item.tags.some((t) => t.toLowerCase().includes(tagQuery));
         }
         if (trimmed.startsWith('@')) {
           const catQuery = trimmed.slice(1).toLowerCase();
-          return item.category.toLowerCase() === catQuery;
+          return item.category.toLowerCase().includes(catQuery);
         }
         const q = trimmed.toLowerCase();
         return (
