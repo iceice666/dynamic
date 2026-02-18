@@ -1,17 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Eye, Users } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
-
-interface Stats {
-  pageviews: number;
-  visitors: number;
-}
-
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return String(n);
-}
+import { fetchUmamiStats, formatCount, type UmamiStats } from '$/utils/umami';
 
 export default function VisitCounter({ path }: { path?: string } = {}) {
   const { t } = useTranslation();
@@ -52,7 +42,9 @@ export default function VisitCounter({ path }: { path?: string } = {}) {
           <Eye size={12} aria-hidden="true" className="shrink-0" />
           {stats ? (
             <span>
-              <span className="text-foreground font-medium">{formatCount(stats.pageviews)}</span>{' '}
+              <span className="text-foreground font-medium">
+                {formatCount(stats.pageviews, locale)}
+              </span>{' '}
               {t('widget_visits_pageviews')}
             </span>
           ) : (
@@ -63,7 +55,9 @@ export default function VisitCounter({ path }: { path?: string } = {}) {
           <Users size={12} aria-hidden="true" className="shrink-0" />
           {stats ? (
             <span>
-              <span className="text-foreground font-medium">{formatCount(stats.visitors)}</span>{' '}
+              <span className="text-foreground font-medium">
+                {formatCount(stats.visitors, locale)}
+              </span>{' '}
               {t('widget_visits_visitors')}
             </span>
           ) : (

@@ -1,16 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Eye } from 'lucide-react';
 import { useTranslation } from '$/i18n/useLocale';
-
-interface Stats {
-  pageviews: number;
-}
-
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return String(n);
-}
+import { fetchUmamiStats, formatCount, type UmamiStats } from '$/utils/umami';
 
 export default function ArticleViewCount({ path }: { path: string }) {
   const { t } = useTranslation();
@@ -42,7 +33,9 @@ export default function ArticleViewCount({ path }: { path: string }) {
       <Eye size={12} aria-hidden="true" />
       {stats ? (
         <span>
-          <span className="text-foreground font-medium">{formatCount(stats.pageviews)}</span>{' '}
+          <span className="text-foreground font-medium">
+            {formatCount(stats.pageviews, locale)}
+          </span>{' '}
           {t('article_views')}
         </span>
       ) : (
