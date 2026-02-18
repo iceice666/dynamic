@@ -1,5 +1,18 @@
 import type { Author, Friend } from './src/types';
 
+// --- Giscus Comments ---
+// Configure via https://giscus.app/ — leave repo empty to disable comments entirely.
+export const giscus = {
+  /** GitHub repository in "owner/repo" format (e.g. 'alice/my-blog') */
+  repo: '' as `${string}/${string}`,
+  /** Repository ID from giscus.app */
+  repoId: '',
+  /** GitHub Discussions category name */
+  category: 'Comments',
+  /** Category ID from giscus.app */
+  categoryId: '',
+};
+
 // --- Umami Analytics ---
 // Set UMAMI_API_URL and UMAMI_WEBSITE_ID env vars to enable the visit counter widget.
 // Optional: set UMAMI_API_KEY if your instance requires authentication.

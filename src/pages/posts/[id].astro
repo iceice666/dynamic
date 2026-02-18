@@ -2,6 +2,7 @@
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import I18nText from '$/components/I18nText.astro';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
+import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
 import { ui } from '$/i18n/ui';
 import { entrySlug } from '$/utils';
@@ -45,4 +46,6 @@ const { Content } = await render(entry);
       <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
   </article>
+
+  <GiscusComments client:idle />
 </BaseLayout>

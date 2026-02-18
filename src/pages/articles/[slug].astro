@@ -3,6 +3,7 @@ import BaseLayout from '$/layouts/BaseLayout.astro';
 import AuthorBio from '$/components/cards/AuthorBio.astro';
 import I18nText from '$/components/I18nText.astro';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
+import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
 import { entrySlug, formatDate } from '$/utils';
 import { Calendar, BookOpen, Clock } from 'lucide-react';
@@ -97,6 +98,8 @@ const mins: number = remarkPluginFrontmatter?.readingTime ?? 1;
     <hr class="not-prose border-border mb-8" />
     <Content />
   </article>
+
+  <GiscusComments client:idle />
 
   <div class="sm:hidden">
     <AuthorBio />
