@@ -70,6 +70,14 @@ export const ui = {
     widget_visits_pageviews: 'pageviews',
     widget_visits_visitors: 'visitors',
     article_views: 'views',
+    // Footer
+    footer_copyright: '© {year} {name}',
+    footer_license: 'CC BY-NC-SA 4.0',
+    footer_rss: 'RSS Feed',
+    footer_sitemap: 'Sitemap',
+    footer_powered_by: 'Powered by',
+    footer_clear_cookies: 'Clear Cookies',
+    footer_clear_cookies_confirm: 'All cookies and local settings will be cleared. Continue?',
     // Date
     date_format: 'en-US',
   },
@@ -141,6 +149,14 @@ export const ui = {
     widget_visits_pageviews: '次瀏覽',
     widget_visits_visitors: '位訪客',
     article_views: '次瀏覽',
+    // Footer
+    footer_copyright: '© {year} {name}',
+    footer_license: 'CC BY-NC-SA 4.0',
+    footer_rss: 'RSS 訂閱',
+    footer_sitemap: '網站地圖',
+    footer_powered_by: '由',
+    footer_clear_cookies: '清除 Cookie',
+    footer_clear_cookies_confirm: '所有 Cookie 與本地設定將被清除，確定繼續？',
     // Date
     date_format: 'zh-TW',
   },

@@ -2,6 +2,7 @@
 import LeftNavList from './LeftNavList';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import AuthorBio from '$/components/cards/AuthorBio';
+import SiteFooter from '$/components/widgets/SiteFooter';
 
 interface Props {
   currentPath: string;
@@ -36,6 +37,8 @@ const hasToc = toc && toc.length > 0;
   <div transition:persist>
     <AuthorBio client:load />
   </div>
+
+  <SiteFooter client:load />
 </nav>
 
 <style>

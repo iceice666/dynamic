@@ -10,6 +10,7 @@ import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import TOCObserver from '$/components/toc/TOCObserver';
+import SiteFooter from '$/components/widgets/SiteFooter';
 import { umami } from '../../dynamic.config';
 
 interface Props {
@@ -121,6 +122,9 @@ const { title, contentLang, toc } = Astro.props;
       <!-- Center: Content -->
       <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
         <slot />
+        <footer class="mobile-footer">
+          <SiteFooter client:load />
+        </footer>
       </main>
 
       <!-- Right: TOC panel (visible at wide viewports) -->
@@ -290,6 +294,10 @@ const { title, contentLang, toc } = Astro.props;
     border-radius: 50%;
   }
 
+  .mobile-footer {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .site-layout {
       grid-template-columns: 1fr;
@@ -303,6 +311,13 @@ const { title, contentLang, toc } = Astro.props;
 
     .floating-controls {
       display: none;
+    }
+
+    .mobile-footer {
+      display: block;
+      border-top: 1px solid var(--color-border);
+      margin-top: 2rem;
+      padding-bottom: 1rem;
     }
   }
 </style>

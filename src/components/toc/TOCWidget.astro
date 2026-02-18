@@ -42,7 +42,7 @@ const filteredHeadings = headings.filter((h: Heading) => h.depth === 2 || h.dept
         {t(locale, 'widget_toc_label')}
       </div>
       <ul class="toc-list m-0 flex list-none flex-col p-0" data-toc-panel>
-        <div class="toc-range-bar" data-toc-range-bar></div>
+        <div class="toc-range-bar" data-toc-range-bar />
         {filteredHeadings.map((h) => (
           <li class={h.depth === 3 ? 'h3' : ''} data-toc-id={h.slug}>
             <a href={`#${h.slug}`}>{h.text}</a>
