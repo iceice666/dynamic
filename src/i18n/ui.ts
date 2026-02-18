@@ -1,6 +1,11 @@
 export const defaultLocale = 'en' as const;
 export const locales = ['en', 'zh-tw'] as const;
 
+export const localeLabels: Record<(typeof locales)[number], string> = {
+  en: 'English',
+  'zh-tw': '中文（繁體）',
+};
+
 export const ui = {
   en: {
     // Nav

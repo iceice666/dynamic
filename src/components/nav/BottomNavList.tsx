@@ -3,8 +3,8 @@ import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
 import { type UIKey } from '$/i18n/ui';
 import { useTranslation } from '$/i18n';
-import ThemeButton from '$/components/controls/ThemeButton';
-import LanguageToggle from '$/components/controls/LanguageToggle';
+import ThemeButtonTouch from '$/components/controls/ThemeButtonTouch';
+import LanguageToggleTouch from '$/components/controls/LanguageToggleTouch';
 import BottomNavTOC, { type TocHeading } from '$/components/toc/BottomNavTOC';
 
 type NavItem = {
@@ -227,9 +227,9 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
         }}
       >
         {toc && <BottomNavTOC toc={toc} onNavigate={() => setPanelOpen(false)} />}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '0.5rem' }}>
-          <ThemeButton className="flex-1" compact align="left" />
-          <LanguageToggle className="flex-1" compact align="right" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <LanguageToggleTouch />
+          <ThemeButtonTouch />
         </div>
       </div>
 
