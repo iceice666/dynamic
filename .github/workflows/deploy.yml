@@ -30,6 +30,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Create .assetsignore
+        run: echo '_worker.js' > dist/.assetsignore
+
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
@@ -59,6 +62,9 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Create .assetsignore
+        run: echo '_worker.js' > dist/.assetsignore
 
       - name: Deploy preview to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
