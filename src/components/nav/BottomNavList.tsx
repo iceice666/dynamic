@@ -191,6 +191,25 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
     setPanelOpen(false);
   }, [activeHref]);
 
+  // Lock body scroll when panel is open (iOS-safe: position:fixed preserves scroll position)
+  useEffect(() => {
+    if (!panelOpen) return;
+
+    const scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, [panelOpen]);
+
   return (
     <>
       {/* Slide-up panel backdrop */}
@@ -202,6 +221,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
             background: 'oklch(0% 0 0 / 40%)',
             zIndex: 9,
             transition: 'opacity 0.2s ease',
+            touchAction: 'none',
           }}
           onClick={() => setPanelOpen(false)}
         />
@@ -224,6 +244,9 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
           transition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.3s',
           pointerEvents: panelOpen ? 'auto' : 'none',
           boxShadow: panelOpen ? '0 -4px 20px oklch(0% 0 0 / 10%)' : 'none',
+          maxHeight: '80vh',
+          overscrollBehavior: 'contain',
+          overflowY: 'auto',
         }}
       >
         {toc && <BottomNavTOC toc={toc} onNavigate={() => setPanelOpen(false)} />}

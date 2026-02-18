@@ -62,7 +62,7 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
   if (filtered.length === 0) return null;
 
   return (
-    <div style={{ marginBottom: '0.75rem' }}>
+    <div>
       <div
         style={{
           fontSize: '0.6875rem',
@@ -79,7 +79,6 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.25rem',
           maxHeight: '40vh',
           overflowY: 'auto',
         }}
@@ -90,15 +89,18 @@ export default function BottomNavTOC({ toc, onNavigate }: BottomNavTOCProps) {
             href={`#${h.slug}`}
             onClick={onNavigate}
             style={{
-              fontSize: '0.8125rem',
+              fontSize: h.depth === 3 ? '0.8125rem' : '0.875rem',
               color: activeSlugs.has(h.slug) ? 'var(--color-accent)' : 'var(--color-muted)',
               fontWeight: activeSlugs.has(h.slug) ? 500 : undefined,
               textDecoration: 'none',
-              padding: '0.1875rem 0.5rem',
-              paddingLeft: h.depth === 3 ? '1.25rem' : '0.5rem',
+              padding: '0.5rem 0.75rem',
+              paddingLeft: h.depth === 3 ? '1.5rem' : '0.75rem',
               borderRadius: '0.25rem',
               lineHeight: 1.4,
-              transition: 'color 0.15s ease',
+              transition: 'color 0.15s ease, background 0.15s ease',
+              background: activeSlugs.has(h.slug)
+                ? 'oklch(from var(--color-accent) l c h / 0.1)'
+                : 'transparent',
             }}
           >
             {h.text}
