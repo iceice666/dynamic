@@ -11,3 +11,20 @@ export function formatCount(n: number, locale: string = 'en'): string {
     maximumFractionDigits: 1,
   }).format(n);
 }
+
+/**
+ * Fetch stats from the /api/wuw proxy.
+ * @param path  optional URL path to filter by; omit for site-wide stats
+ * @returns     stats, or null if the request failed / Umami is not configured
+ */
+export async function fetchUmamiStats(path?: string): Promise<UmamiStats | null> {
+  try {
+    const apiPath = path ? `/api/wuw?path=${encodeURIComponent(path)}` : '/api/wuw';
+    const res = await fetch(apiPath);
+    if (!res.ok) throw new Error('non-ok');
+    const data: UmamiStats = await res.json();
+    return data;
+  } catch {
+    return null;
+  }
+}

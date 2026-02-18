@@ -4,20 +4,20 @@ import { useTranslation } from '$/i18n/useLocale';
 import { fetchUmamiStats, formatCount, type UmamiStats } from '$/utils/umami';
 
 export default function ArticleViewCount({ path }: { path: string }) {
-  const { t } = useTranslation();
-  const [stats, setStats] = useState<Stats | null>(null);
+  const { t, locale } = useTranslation();
+  const [stats, setStats] = useState<UmamiStats | null>(null);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      try {
-        const res = await fetch(`/api/visit-count?path=${encodeURIComponent(path)}`);
-        if (!res.ok) throw new Error('non-ok');
-        const data: Stats = await res.json();
-        if (!cancelled) setStats(data);
-      } catch {
-        if (!cancelled) setError(true);
+      const data = await fetchUmamiStats(path);
+      if (!cancelled) {
+        if (data) {
+          setStats(data);
+        } else {
+          setError(true);
+        }
       }
     }
     load();

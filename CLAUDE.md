@@ -81,7 +81,7 @@ React components (`.tsx`) run client-side. All are wrapped with `withStrictMode(
 - `TOCObserver` — IntersectionObserver-based TOC active-heading highlighting
 - `LanguageToggle` — switches locale, updates `localStorage` + `document.documentElement.dataset.lang`
 - `SearchPage` — fetches `/search-index.json` (cached module-level), supports `#tag` and `@category` syntax
-- `VisitCounter` / `ArticleViewCount` — fetch `/api/visit-count` (Umami proxy)
+- `VisitCounter` / `ArticleViewCount` — fetch `/api/wuw` (Umami proxy)
 - `GiscusComments` — GitHub Discussions; disabled if `giscus.repo` is empty in `dynamic.config.ts`
 
 ### i18n
