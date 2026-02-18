@@ -39,9 +39,25 @@ function TOCObserver({ headingSlugs }: Props) {
         }
       }
 
-      // Scroll active item into view — only in visible panels
+      // Update range bars and scroll active item into view
       const panels = document.querySelectorAll<HTMLElement>('[data-toc-panel]');
       for (const panel of panels) {
+        const rangeBar = panel.querySelector<HTMLElement>('[data-toc-range-bar]');
+        const activeItems = panel.querySelectorAll<HTMLElement>('li.active');
+
+        if (rangeBar) {
+          if (activeItems.length > 0) {
+            const first = activeItems[0];
+            const last = activeItems[activeItems.length - 1];
+            const rangeTop = first.offsetTop;
+            const rangeHeight = last.offsetTop + last.offsetHeight - rangeTop;
+            rangeBar.style.setProperty('--range-top', `${rangeTop}px`);
+            rangeBar.style.setProperty('--range-height', `${rangeHeight}px`);
+          } else {
+            rangeBar.style.setProperty('--range-height', '0px');
+          }
+        }
+
         if (!panel.offsetParent) continue; // skip hidden panels
         const firstActive = panel.querySelector<HTMLElement>('li.active');
         if (firstActive) {
