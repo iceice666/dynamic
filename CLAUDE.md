@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 pnpm dev        # Start dev server at localhost:4321 (hot reload)
 pnpm build      # Build static site to ./dist/
 pnpm preview    # Preview production build locally
-pnpm check      # Type-check + lint + format check
+pnpm check      # Type-check (astro check) + lint + format check
+pnpm lint       # ESLint check only
 pnpm lint:fix   # Auto-fix lint issues
 pnpm format     # Auto-format with Prettier
 ```
@@ -28,57 +29,89 @@ pnpm format     # Auto-format with Prettier
 ```
 ├── assets/                  # Static assets (images, SVGs)
 ├── styles/                  # Global CSS (Tailwind entry + article styles)
-├── dynamic.config.ts        # Site config (author, friends list)
-├── src/
-│   ├── components/
-│   │   ├── nav/             # LeftNav, LeftNavList, BottomNav, BottomNavList
-│   │   ├── toc/             # TOCWidget, TOCObserver, BottomNavTOC
-│   │   ├── cards/           # ArticleCard, PostCard, AuthorBio, FriendCard
-│   │   ├── controls/        # ThemeButton, LanguageToggle
-│   │   ├── I18nText.astro   # Dual-span i18n text utility
-│   │   └── SearchPage.tsx   # Client-side search page
-│   ├── content/             # Markdown collections (articles/, posts/)
-│   ├── i18n/                # Translation dictionary + hooks
-│   ├── layouts/             # BaseLayout.astro
-│   ├── pages/               # Astro file-based routes
-│   ├── types.ts             # Shared TypeScript types
-│   └── utils.ts             # Shared utilities (entrySlug, formatDate)
+│   ├── global.css           # Entry point: @import tailwindcss + all partials
+│   ├── theme.css            # OKLCH color tokens + dark mode + --accent-hue
+│   ├── typography.css       # Font families and base text styles
+│   ├── components.css       # Cards, buttons, code block UI
+│   └── article.css          # Prose layout and article-specific styles
+├── dynamic.config.ts        # Site config: author profile, friends list, Giscus, Umami
+├── content/                 # Markdown collections (articles/, posts/)
+└── src/
+    ├── components/
+    │   ├── nav/             # LeftNav, LeftNavList, BottomNav, BottomNavList
+    │   ├── toc/             # TOCWidget, TOCObserver, BottomNavTOC
+    │   ├── cards/           # ArticleCard, PostCard, AuthorBio, FriendCard
+    │   ├── controls/        # ThemeButton, LanguageToggle
+    │   ├── widgets/         # VisitCounter, ArticleViewCount (Umami-backed)
+    │   ├── GiscusComments.tsx
+    │   ├── I18nText.astro   # Dual-span i18n text utility
+    │   ├── SearchPage.tsx   # Client-side full-text search
+    │   └── withStrictMode.tsx  # HOC: wraps React components in <StrictMode>
+    ├── content.config.ts    # Astro content collection schemas (articles + posts)
+    ├── i18n/
+    │   ├── ui.ts            # Static translation dictionary (en, zh-tw)
+    │   ├── index.ts         # t(), i18nAriaLabel(), re-exports
+    │   └── useLocale.ts     # React hook: reads locale from dataset.lang reactively
+    ├── layouts/
+    │   └── BaseLayout.astro # 2-col grid, dark mode FOUC prevention, view transitions
+    ├── pages/               # File-based routes (index, articles/[slug], posts/[id], etc.)
+    │   └── api/
+    │       └── visit-count.ts  # Umami analytics proxy endpoint
+    ├── types.ts             # SocialLink, Friend, Author types
+    ├── utils.ts             # entrySlug(), formatDate()
+    └── utils/               # Custom remark/rehype plugins
+        ├── admonitions.ts          # :::note/tip/warning/danger directive blocks
+        ├── codeBlockTransformer.ts # Shiki transformer: lang label + copy button
+        ├── remarkContentExtractor.ts # Extracts title/description from markdown body
+        ├── remarkWordCount.ts      # Word count + reading time in frontmatter
+        └── social.ts               # socialHref(), socialIcon() for SocialLink types
 ```
 
 ### Styling
 
 - **Tailwind CSS v4** via `@tailwindcss/vite` plugin (NOT `@astrojs/tailwind` — incompatible with v4).
-- Design tokens defined in `styles/global.css` using OKLCH colors with a configurable `--accent-hue` CSS custom property.
+- Design tokens in `styles/theme.css` using OKLCH colors. The `--accent-hue` CSS variable (0–360) drives the accent color; users can change it via ThemeButton.
 - Dark mode via `html.dark` class, applied by a blocking inline script in `BaseLayout.astro` to prevent FOUC.
+- Rainbow mode: `html.rainbow-active` animates `--accent-hue` continuously; speed is controlled by `--rainbow-duration`.
 
 ### React Islands
 
-React components (`.tsx`) run client-side via `client:load` or `client:idle` directives:
-- `ThemeButton` — dark/light/system toggle + accent hue picker + rainbow mode
-- `TOCObserver` — IntersectionObserver-based table of contents highlighting
-- `SearchPage`, `LanguageToggle`, `LeftNavList`, `BottomNavList`, `BottomNavTOC`
+React components (`.tsx`) run client-side. All are wrapped with `withStrictMode()` HOC before mounting. Key islands:
+- `ThemeButton` — dark/light/system toggle + accent hue slider + rainbow mode; persists to `localStorage` under `dynamic:theme`, `dynamic:accent-hue`, `dynamic:rainbow-mode`, `dynamic:rainbow-speed`
+- `TOCObserver` — IntersectionObserver-based TOC active-heading highlighting
+- `LanguageToggle` — switches locale, updates `localStorage` + `document.documentElement.dataset.lang`
+- `SearchPage` — fetches `/search-index.json` (cached module-level), supports `#tag` and `@category` syntax
+- `VisitCounter` / `ArticleViewCount` — fetch `/api/visit-count` (Umami proxy)
+- `GiscusComments` — GitHub Discussions; disabled if `giscus.repo` is empty in `dynamic.config.ts`
 
 ### i18n
 
 - Locales: `en` (default, no URL prefix) and `zh-tw` (prefix `/zh-tw/`).
 - Configured in `astro.config.mjs` via Astro's built-in `i18n` option.
 - Static translations live in `src/i18n/ui.ts`. Access them:
-  - **Astro components:** `t(key)` from `src/i18n/index.ts` returns `{ en, 'zh-tw' }` for dual-span rendering via `I18nText.astro`.
-  - **React islands:** `useTranslation()` hook from `src/i18n/useLocale.ts` reads locale from `document.documentElement.dataset.lang` reactively.
+  - **Astro components:** `t(key)` returns `{ en, 'zh-tw' }` for dual-span rendering via `<I18nText>`.
+  - **React islands:** `useTranslation()` hook reads `document.documentElement.dataset.lang` reactively.
+  - **aria-labels:** `i18nAriaLabel(key)` returns `{ 'aria-label', 'data-aria-en', 'data-aria-zh-tw' }`.
 
 ### Content
 
-- Articles and posts are Markdown/MDX files under `src/content/articles/` and `src/content/posts/`.
+- Articles live in `content/articles/`, posts in `content/posts/`. Both are Markdown; MDX is supported.
 - Entry IDs include the `.md` extension — always use `entrySlug(entry.id)` from `src/utils.ts` to strip it for URL generation.
+- Content schema fields: `title`, `description`, `category`, `categoryName`, `tags`, `publishedAt`, `draft`, `lang`, `translationOf`. Title and description can be omitted and auto-extracted from markdown body by `remarkContentExtractor`.
 
 ### Markdown Pipeline
 
-Custom remark/rehype plugins configured in `astro.config.mjs`:
-- `remarkAdmonitions` (`src/utils/admonitions.ts`) — custom directive-based admonition blocks
-- `remarkContentExtractor` (`src/utils/remarkContentExtractor.ts`) — extracts title/description from markdown body
-- `codeBlockTransformer` (`src/utils/codeBlockTransformer.ts`) — adds language labels and copy buttons to Shiki code blocks
+Custom remark/rehype plugins in `astro.config.mjs`:
+- `remarkAdmonitions` — `:::note`, `:::tip`, `:::warning`, `:::danger` directive blocks
+- `remarkContentExtractor` — auto-extracts first `h1` as title and first paragraph as description
+- `remarkWordCount` — stores `wordCount` and `readingTime` in frontmatter (CJK + Latin word counting)
+- `codeBlockTransformer` — Shiki transformer adding language label and copy button to code blocks
 - `remark-math` + `rehype-katex` — LaTeX math rendering
+- `rehype-accessible-emojis` — wraps emoji characters with `<span role="img">`
 
-### Layout
+### Deployment
 
-`BaseLayout.astro` provides a 2-column layout: left panel (nav + widgets) and main content area. Mobile uses a bottom navigation bar (`BottomNav.astro`).
+- **CI:** `.github/workflows/ci.yml` runs `pnpm check` + `pnpm build` on push/PR.
+- **Deploy:** `.github/workflows/deploy.yml` deploys on the `publish` branch (production) and creates PR previews.
+- **Required secrets:** `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
+- **Umami analytics:** configured via env vars `UMAMI_API_URL`, `UMAMI_WEBSITE_ID`, `UMAMI_API_KEY`.

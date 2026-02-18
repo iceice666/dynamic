@@ -1,77 +1,67 @@
-# Astro Starter Kit: Basics
+# dynamic
 
-```sh
-pnpm create astro@latest --template basics
+An Astro 5 blog with bilingual support (English + Traditional Chinese), deployed to Cloudflare Workers via SSR.
+
+## Features
+
+- **Markdown pipeline:** admonitions, LaTeX math, syntax highlighting with copy buttons, word count + reading time, auto-extracted titles/descriptions
+- **Theming:** OKLCH-based design tokens, dark/light/system modes, per-user accent hue picker, rainbow animation mode
+- **i18n:** English (default) and Traditional Chinese (`/zh-tw/` prefix), with client-reactive locale switching
+- **Search:** Client-side full-text search with `#tag` and `@category` filter syntax
+- **Analytics:** Optional Umami integration (visit counter, per-article view count)
+- **Comments:** Optional Giscus (GitHub Discussions) integration
+- **Layout:** 2-column desktop (sticky left nav + TOC), bottom nav on mobile
+
+## Commands
+
+```bash
+pnpm install    # Install dependencies
+pnpm dev        # Start dev server at localhost:4321
+pnpm build      # Build to ./dist/
+pnpm preview    # Preview production build locally
+pnpm check      # Type-check + lint + format check
+pnpm lint:fix   # Auto-fix lint issues
+pnpm format     # Format with Prettier
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Configuration
 
-## 🚀 Project Structure
+Edit `dynamic.config.ts` in the project root to set:
 
-Inside of your Astro project, you'll see the following folders and files:
+- **Author** profile (name, tagline, avatar, social links)
+- **Friends** list displayed on the `/friends` page
+- **Giscus** (GitHub Discussions comments) — leave `repo: ''` to disable
+- **Umami** analytics — configure via environment variables `UMAMI_API_URL`, `UMAMI_WEBSITE_ID`, `UMAMI_API_KEY`
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src
-│   ├── assets
-│   │   └── astro.svg
-│   ├── components
-│   │   └── Welcome.astro
-│   ├── layouts
-│   │   └── Layout.astro
-│   └── pages
-│       └── index.astro
-└── package.json
-```
+## Content
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+Add Markdown files to `content/articles/` (long-form) or `content/posts/` (short-form). Frontmatter fields:
 
-## 🧞 Commands
+| Field | Articles | Posts | Notes |
+|---|---|---|---|
+| `publishedAt` | required | required | |
+| `title` | optional | — | Auto-extracted from first `# h1` if omitted |
+| `description` | optional | — | Auto-extracted from first paragraph if omitted |
+| `tags` | optional | optional | Array of strings |
+| `category` / `categoryName` | optional | — | |
+| `draft` | optional | optional | Defaults to `false` |
+| `lang` | optional | optional | `en` or `zh-tw`, defaults to `en` |
+| `translationOf` | optional | optional | Slug of the original article |
 
-All commands are run from the root of the project, from a terminal:
+## Deployment (Cloudflare Workers)
 
-| Command             | Action                                           |
-| :------------------ | :----------------------------------------------- |
-| `pnpm install`      | Installs dependencies                            |
-| `pnpm dev`          | Starts local dev server at `localhost:4321`      |
-| `pnpm build`        | Build your production site to `./dist/`          |
-| `pnpm preview`      | Preview your build locally, before deploying     |
-| `pnpm astro ...`    | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro --help` | Get help using the Astro CLI                     |
+Two GitHub Actions workflows are included:
 
-## 🚀 Deployment (Cloudflare Workers)
+- **CI** (`.github/workflows/ci.yml`): runs `pnpm check` and `pnpm build` on push/PR
+- **Deploy** (`.github/workflows/deploy.yml`): deploys on the `publish` branch (production) and creates PR preview deployments
 
-This project is configured for **Cloudflare Workers (SSR)** via the Astro Cloudflare adapter.
+Required GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
 
-### GitHub Actions
+To set up the production branch:
 
-Two workflows are provided:
-
-- `.github/workflows/ci.yml`: runs `pnpm check` and `pnpm build` on pushes and PRs
-- `.github/workflows/deploy.yml`: deploys to Cloudflare Workers on `publish` branch and creates PR previews
-
-### Required GitHub Secrets
-
-Add the following secrets in your GitHub repo:
-
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
-
-### Production branch
-
-Deployment triggers on the `publish` branch. Create and push it once:
-
-```sh
+```bash
 git checkout -b publish
 git push -u origin publish
 ```
 
-### Preview URLs
-
 PR previews deploy to worker names like `dynamic-pr-<PR number>`.
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
