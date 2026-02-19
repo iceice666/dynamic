@@ -185,6 +185,8 @@ html.dark .code-block-copy:hover {
 
 /* Heading anchor links — hidden by default, shown on hover */
 .anchor-link {
+  display: inline-flex;
+  align-items: center;
   opacity: 0;
   margin-left: 0.35em;
   color: var(--color-muted);
