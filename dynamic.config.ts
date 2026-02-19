@@ -40,6 +40,21 @@ export const umami = {
   apiKey: import.meta.env.UMAMI_API_KEY ?? '',
 
   /**
+   * Username for authenticating with a self-hosted Umami instance.
+   * Used to obtain a JWT token via `/api/auth/login`.
+   * Not needed for Umami Cloud (use `apiKey` instead).
+   * @env UMAMI_USERNAME
+   */
+  username: import.meta.env.UMAMI_USERNAME ?? '',
+
+  /**
+   * Password for authenticating with a self-hosted Umami instance.
+   * Used together with `username` to obtain a JWT token.
+   * @env UMAMI_PASSWORD
+   */
+  password: import.meta.env.UMAMI_PASSWORD ?? '',
+
+  /**
    * Custom URL for the Umami tracking script.
    * Defaults to `{apiUrl}/script.js` when omitted.
    * Useful if you serve the script from a different path or CDN.
