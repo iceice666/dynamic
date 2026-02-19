@@ -20,11 +20,19 @@ interface ThemeButtonTouchProps {
 }
 
 function ThemeButtonTouch({ className }: ThemeButtonTouchProps) {
-  const theme = useStore($theme);
+  const [mounted, setMounted] = React.useState(false);
+  const storeTheme = useStore($theme);
   const hue = useStore($hue);
   const rainbow = useStore($rainbow);
   const speed = useStore($speed);
   const { t } = useTranslation();
+
+  // Use 'system' during hydration to match server
+  const theme = mounted ? storeTheme : 'system';
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const modes: { value: Theme; label: string; icon: React.ReactNode }[] = [
     { value: 'light', label: t('nav_theme_light'), icon: <Sun size={20} /> },

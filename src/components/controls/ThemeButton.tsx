@@ -22,12 +22,20 @@ interface ThemeButtonProps {
 
 function ThemeButton({ className, compact = false, align = 'left' }: ThemeButtonProps) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const theme = useStore($theme);
+  const storeTheme = useStore($theme);
   const hue = useStore($hue);
   const rainbow = useStore($rainbow);
   const speed = useStore($speed);
   const { t } = useTranslation();
+
+  // Use 'system' during hydration to match server
+  const theme = mounted ? storeTheme : 'system';
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close on click outside
   useEffect(() => {
