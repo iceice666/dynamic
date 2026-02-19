@@ -40,7 +40,9 @@ export default defineConfig({
   integrations: [
     react({
       babel: {
-        plugins: [['babel-plugin-react-compiler', {}]], // try empty config or just string
+        plugins: [['babel-plugin-react-compiler', {
+          sources: (filename) => !filename.includes('GiscusComments'),
+        }]],
       },
     }),
     mdx(),

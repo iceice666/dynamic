@@ -1,5 +1,3 @@
-'use no memo';
-
 import Giscus from '@giscus/react';
 import { useSyncExternalStore } from 'react';
 import { useLocale } from '$/i18n/useLocale';
