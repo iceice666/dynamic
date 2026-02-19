@@ -32,7 +32,7 @@ export default function VisitCounter({ path }: { path?: string } = {}) {
   if (error) return null;
 
   return (
-    <div className="text-muted flex items-center gap-3 text-xs">
+    <div className="text-muted flex flex-wrap items-center gap-3 text-xs">
       <div className="flex items-center gap-1.5">
         <Eye size={12} aria-hidden="true" className="shrink-0" />
         {stats ? (

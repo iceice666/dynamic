@@ -8,7 +8,7 @@ const linkClass =
   'text-muted hover:text-accent text-xs no-underline transition-colors duration-150';
 
 function SiteFooter() {
-  const { t, locale } = useTranslation();
+  const { t } = useTranslation();
 
   const year = new Date().getFullYear();
   const copyrightText = t('footer_copyright')
@@ -35,6 +35,9 @@ function SiteFooter() {
       <div className="flex flex-col gap-1.5 px-4 py-3">
         {/* Visit counter */}
         <VisitCounter />
+
+        {/* Copyright */}
+        <span className="text-muted text-xs">{copyrightText}</span>
 
         {/* License */}
         <span className="text-muted text-xs">
@@ -68,34 +71,36 @@ function SiteFooter() {
         </div>
 
         {/* Powered by */}
-        <span className="text-muted/60 text-[10px]">
-          {t('footer_powered_by')}{' '}
-          <a href="https://astro.build/" target="_blank" rel="noopener" className={linkClass}>
-            Astro
-          </a>
-          {' & '}
-          <a
-            href="https://github.com/iceice666/dynamic"
-            target="_blank"
-            rel="noopener"
-            className={linkClass}
-          >
-            Dynamic
-          </a>
-          {locale === 'zh-tw' ? ' 驅動' : ''}
-          {' @ '}
-          <a
-            href={`https://github.com/iceice666/dynamic/commit/${__GIT_HASH__}`}
-            target="_blank"
-            rel="noopener"
-            className={linkClass}
-          >
-            {__GIT_HASH__}
-          </a>
-        </span>
-
-        {/* Copyright */}
-        <span className="text-muted text-xs">{copyrightText}</span>
+        {(() => {
+          const [poweredByPrefix, poweredBySuffix] = t('footer_powered_by').split('{tools}');
+          return (
+            <span className="text-muted/60 text-[10px]">
+              {poweredByPrefix}
+              <a href="https://astro.build/" target="_blank" rel="noopener" className={linkClass}>
+                Astro
+              </a>
+              {' & '}
+              <a
+                href="https://github.com/iceice666/dynamic"
+                target="_blank"
+                rel="noopener"
+                className={linkClass}
+              >
+                Dynamic
+              </a>
+              {' @ '}
+              <a
+                href={`https://github.com/iceice666/dynamic/commit/${__GIT_HASH__}`}
+                target="_blank"
+                rel="noopener"
+                className={linkClass}
+              >
+                {__GIT_HASH__}
+              </a>
+              {poweredBySuffix}
+            </span>
+          );
+        })()}
       </div>
     </div>
   );

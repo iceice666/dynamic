@@ -80,7 +80,7 @@ export const ui = {
     footer_license: 'CC BY-NC-SA 4.0',
     footer_rss: 'RSS Feed',
     footer_sitemap: 'Sitemap',
-    footer_powered_by: 'Powered by',
+    footer_powered_by: 'Powered by {tools}',
     footer_clear_cookies: 'Clear Cookies',
     footer_clear_cookies_confirm: 'All cookies and local settings will be cleared. Continue?',
     // Date
@@ -159,7 +159,7 @@ export const ui = {
     footer_license: 'CC BY-NC-SA 4.0',
     footer_rss: 'RSS 訂閱',
     footer_sitemap: '網站地圖',
-    footer_powered_by: '由',
+    footer_powered_by: '由 {tools} 強力驅動',
     footer_clear_cookies: '清除 Cookie',
     footer_clear_cookies_confirm: '所有 Cookie 與本地設定將被清除，確定繼續？',
     // Date
