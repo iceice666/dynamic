@@ -191,6 +191,26 @@ const { title, contentLang, toc } = Astro.props;
       initCopyButtons();
       document.addEventListener('astro:page-load', initCopyButtons);
     </script>
+
+    <!-- Spoiler text reveal handler -->
+    <script>
+      function initSpoilers() {
+        document.querySelectorAll<HTMLSpanElement>('.spoiler').forEach((el) => {
+          el.addEventListener('click', () => {
+            el.classList.toggle('revealed');
+          });
+          el.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              el.classList.toggle('revealed');
+            }
+          });
+        });
+      }
+
+      initSpoilers();
+      document.addEventListener('astro:page-load', initSpoilers);
+    </script>
   </body>
 </html>
 

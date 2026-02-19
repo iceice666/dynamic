@@ -10,7 +10,7 @@ draft: false
 
 # Markdown 功能展示
 
-本頁展示內建 Markdown 功能（GFM、智慧標點、程式碼區塊）以及外掛功能（數學、表情符號、提示區塊）。
+本頁展示內建 Markdown 功能（GFM、智慧標點、程式碼區塊）以及外掛功能（數學、表情符號、提示區塊、劇透文字等）。
 
 ## 內建 Markdown（GFM + 智慧標點）
 
@@ -60,9 +60,11 @@ $$
 \int_0^\infty e^{-x} dx = 1
 $$
 
-### 表情符號（rehype-accessible-emojis）
+### 表情符號（remark-emoji + rehype-accessible-emojis）
 
-確保表情符號具備無障礙支援：😄 ✨ 🚀
+表情符號簡碼：:rocket: :star: :tada: :thumbsup:
+
+Unicode 表情符號無障礙支援：😄 ✨ 🚀
 
 ### 提示區塊（remark-admonitions）
 
@@ -81,3 +83,17 @@ $$
 :::danger
 這是一個危險區塊，用於重要風險提示。
 :::
+
+### 劇透文字
+
+點擊以揭示：||這是一個秘密訊息！||
+
+你可以在任何地方使用劇透，例如答案是 ||42||。
+
+### 外部連結
+
+此連結會在新分頁中開啟並帶有安全屬性：[Google](https://google.com)
+
+### 標題錨點
+
+本頁的每個標題都有可點擊的錨點連結——將滑鼠移到任何標題上即可看到 `#` 符號。

@@ -11,7 +11,7 @@ lang: en
 
 # Markdown Features Showcase
 
-This page demonstrates Markdown built-ins (GFM, smartypants, code fences) plus plugin features (math, emoji accessibility, admonitions).
+This page demonstrates Markdown built-ins (GFM, smartypants, code fences) plus plugin features (math, emoji, admonitions, spoilers, and more).
 
 ## Built-in Markdown (GFM + Smartypants)
 
@@ -39,7 +39,7 @@ This is ~~deprecated~~ updated content.
 
 ### Blockquote
 
-> “Markdown should be readable and expressive.” — Everyone
+> "Markdown should be readable and expressive." — Everyone
 
 ### Code fences
 
@@ -61,9 +61,11 @@ $$
 \int_0^\infty e^{-x} dx = 1
 $$
 
-### Emoji (rehype-accessible-emojis)
+### Emoji (remark-emoji + rehype-accessible-emojis)
 
-Make sure emojis are accessible: 😄 ✨ 🚀
+Emoji shortcodes: :rocket: :star: :tada: :thumbsup:
+
+Unicode emojis with accessibility: 😄 ✨ 🚀
 
 ### Admonitions (remark-admonitions)
 
@@ -82,3 +84,17 @@ This is a warning callout. Use it for gotchas.
 :::danger
 This is a danger callout. Use it for critical risks.
 :::
+
+### Spoiler Text
+
+Click to reveal: ||This is a secret message!||
+
+You can put spoilers anywhere inline, like the answer is ||42|| of course.
+
+### External Links
+
+This link opens in a new tab with security attributes: [Google](https://google.com)
+
+### Heading Anchors
+
+Every heading on this page has a clickable anchor link — hover over any heading to see the `#` symbol.

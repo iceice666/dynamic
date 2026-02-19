@@ -182,3 +182,43 @@ html.dark .code-block-copy:hover {
 .prose .admonition p:last-of-type {
   margin-bottom: 0;
 }
+
+/* Heading anchor links — hidden by default, shown on hover */
+.anchor-link {
+  opacity: 0;
+  margin-left: 0.35em;
+  color: var(--color-muted);
+  text-decoration: none;
+  vertical-align: middle;
+  transition: opacity 0.2s ease;
+}
+
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link,
+.anchor-link:focus {
+  opacity: 1;
+}
+
+/* Spoiler text — hidden until clicked */
+.spoiler {
+  background-color: var(--color-foreground);
+  color: transparent;
+  border-radius: 0.25rem;
+  padding: 0.1em 0.3em;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+  user-select: none;
+}
+
+.spoiler.revealed {
+  background-color: var(--color-muted-bg);
+  color: var(--color-foreground);
+  user-select: auto;
+  cursor: text;
+}
