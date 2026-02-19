@@ -9,14 +9,16 @@ import { parseArticleId } from '$/utils';
 const { locale } = Astro.locals;
 
 const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
+
 const articles = await Promise.all(
   articlesRaw.map(async (entry) => {
     const { remarkPluginFrontmatter } = await render(entry);
     const { slug, lang: fileLang } = parseArticleId(entry.id);
+    const articleLang = fileLang ?? entry.data.lang ?? 'en';
     return {
       type: 'article' as const,
       slug,
-      translationLang: fileLang ?? undefined,
+      translationLang: articleLang,
       publishedAt: entry.data.publishedAt,
       data: {
         ...entry.data,

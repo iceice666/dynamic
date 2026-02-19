@@ -12,5 +12,11 @@ export const onRequest = defineMiddleware(({ locals, cookies, url }, next) => {
   locals.locale = (locales as readonly string[]).includes(stored ?? '')
     ? (stored as Locale)
     : defaultLocale;
+
+  const storedArticleLang = cookies.get('dynamic:article-lang')?.value;
+  locals.articleLocale = (locales as readonly string[]).includes(storedArticleLang ?? '')
+    ? (storedArticleLang as Locale)
+    : locals.locale;
+
   return next();
 });

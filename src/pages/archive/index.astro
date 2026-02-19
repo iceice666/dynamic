@@ -6,15 +6,17 @@ import { parseArticleId, formatDate } from '$/utils';
 
 const { locale } = Astro.locals;
 
-const articles = await getCollection('articles', ({ data }) => !data.draft);
+const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
+
 const archiveEntries = await Promise.all(
-  articles.map(async (entry) => {
+  articlesRaw.map(async (entry) => {
     const { remarkPluginFrontmatter } = await render(entry);
     const { slug, lang: fileLang } = parseArticleId(entry.id);
+    const articleLang = fileLang ?? entry.data.lang ?? 'en';
     return {
       title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? slug,
       slug,
-      translationLang: fileLang ?? undefined,
+      translationLang: articleLang,
       publishedAt: entry.data.publishedAt,
     };
   })

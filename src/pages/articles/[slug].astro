@@ -11,14 +11,14 @@ import { Calendar, BookOpen, Clock } from 'lucide-react';
 import type { CollectionEntry } from 'astro:content';
 
 const slug = Astro.params.slug;
-const { locale } = Astro.locals;
+const { locale, articleLocale } = Astro.locals;
 
 const all = await getCollection('articles', ({ data }) => !data.draft);
 
-// Warn if a translated file has lang in frontmatter (it's always ignored; lang comes from filename)
+// Warn only when a translated file (with lang suffix) also has a redundant lang field in frontmatter
 for (const a of all) {
   const { lang: fileLang } = parseArticleId(a.id);
-  if (fileLang !== null) {
+  if (fileLang !== null && a.data.lang) {
     console.warn(
       `[i18n] "${a.id}": lang field in frontmatter is ignored on translated files — lang is derived from the filename suffix. Remove the lang field.`
     );
@@ -33,9 +33,9 @@ const effectiveLang = (a: CollectionEntry<'articles'>): string =>
 const group = all.filter((a) => parseArticleId(a.id).slug === slug);
 if (group.length === 0) return Astro.redirect('/404');
 
-// Pick best variant for current locale, with fallbacks
+// Pick best variant for article locale (independent of UI locale), with fallbacks
 const entry =
-  group.find((a) => effectiveLang(a) === locale) ??
+  group.find((a) => effectiveLang(a) === articleLocale) ??
   group.find((a) => parseArticleId(a.id).lang === null) ??
   group[0]!;
 
@@ -54,39 +54,52 @@ const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
 
 <BaseLayout title={title} toc={headings} contentLang={contentLang}>
   <article class="prose prose-lg max-w-none">
-    {availableLangs.length > 1 && <ArticleLangSelector client:load available={availableLangs} />}
     <h1>{title}</h1>
     {description && <p class="lead">{description}</p>}
-    <div class="not-prose mb-6 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+    <div class="not-prose mb-6 flex flex-wrap items-center justify-between gap-y-1.5">
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+        {
+          entry.data.tags.map((tag: string) => (
+            <a
+              href={`/search?q=%23${tag}`}
+              class="text-accent text-xs no-underline hover:opacity-75"
+            >
+              #{tag}
+            </a>
+          ))
+        }
+        {
+          entry.data.tags.length > 0 && (
+            <span class="text-border" aria-hidden="true">
+              |
+            </span>
+          )
+        }
+        <span class="text-muted flex items-center gap-1 text-xs">
+          <Calendar size={12} aria-hidden="true" />
+          <time datetime={entry.data.publishedAt.toISOString()}
+            >{formatDate(entry.data.publishedAt)}</time
+          >
+        </span>
+        <span class="text-muted flex items-center gap-1 text-xs">
+          <BookOpen size={12} aria-hidden="true" />
+          <span>{wc.toLocaleString()} {t(locale, 'article_word_count')}</span>
+        </span>
+        <span class="text-muted flex items-center gap-1 text-xs">
+          <Clock size={12} aria-hidden="true" />
+          <span>{mins} {t(locale, 'article_read_time')}</span>
+        </span>
+        <ArticleViewCount client:idle path={Astro.url.pathname} />
+      </div>
       {
-        entry.data.tags.map((tag: string) => (
-          <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
-            #{tag}
-          </a>
-        ))
-      }
-      {
-        entry.data.tags.length > 0 && (
-          <span class="text-border" aria-hidden="true">
-            |
-          </span>
+        availableLangs.length > 1 && (
+          <ArticleLangSelector
+            client:load
+            available={availableLangs}
+            currentLang={effectiveLang(entry)}
+          />
         )
       }
-      <span class="text-muted flex items-center gap-1 text-xs">
-        <Calendar size={12} aria-hidden="true" />
-        <time datetime={entry.data.publishedAt.toISOString()}
-          >{formatDate(entry.data.publishedAt)}</time
-        >
-      </span>
-      <span class="text-muted flex items-center gap-1 text-xs">
-        <BookOpen size={12} aria-hidden="true" />
-        <span>{wc.toLocaleString()} {t(locale, 'article_word_count')}</span>
-      </span>
-      <span class="text-muted flex items-center gap-1 text-xs">
-        <Clock size={12} aria-hidden="true" />
-        <span>{mins} {t(locale, 'article_read_time')}</span>
-      </span>
-      <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
     <hr class="not-prose border-border mb-8" />
     <Content />

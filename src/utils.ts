@@ -20,7 +20,8 @@ export function formatDate(date: Date): string {
  *
  * The `lang` field in frontmatter is ignored for translated files (those with a lang suffix).
  */
-const LOCALE_SUFFIX_RE = /\.([a-z]{2}(?:-[a-z]{2,4})?)\.mdx?$/i;
+// IDs no longer carry the .md extension (generateId strips it), so match at end-of-string.
+const LOCALE_SUFFIX_RE = /\.([a-z]{2}(?:-[a-z]{2,4})?)$/i;
 
 export function parseArticleId(id: string): { slug: string; lang: string | null } {
   const match = id.match(LOCALE_SUFFIX_RE);
