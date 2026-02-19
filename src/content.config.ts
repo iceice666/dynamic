@@ -25,10 +25,8 @@ const articles = defineCollection({
 const posts = defineCollection({
   loader: glob({ base: './content/posts', pattern: '**/*.md' }),
   schema: z.object({
-    tags: z.array(z.string()).default([]),
-    publishedAt: z.date(),
-    draft: z.boolean().default(false),
-    lang: z.string().optional(), // required on base files; omit on translated files
+    tags: z.array(z.string()).optional(),
+    publishedAt: z.coerce.date().optional(),
   }),
 });
 

@@ -26,6 +26,7 @@ import { remarkAdmonitions } from './src/utils/admonitions.ts';
 import { remarkSpoiler } from './src/utils/remarkSpoiler.ts';
 import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 import { remarkWordCount } from './src/utils/remarkWordCount.ts';
+import { remarkPostMeta } from './src/utils/remarkPostMeta.ts';
 import { codeBlockTransformer } from './src/utils/codeBlockTransformer.ts';
 
 import sitemap from '@astrojs/sitemap';
@@ -70,6 +71,7 @@ export default defineConfig({
       remarkEmoji,
       remarkSpoiler,
       remarkContentExtractor,
+      remarkPostMeta,
       remarkWordCount,
     ],
     rehypePlugins: [

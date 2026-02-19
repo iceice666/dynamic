@@ -32,13 +32,22 @@ const articles = await Promise.all(
   })
 );
 
-const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
-  type: 'post' as const,
-  slug: parseArticleId(entry.id).slug,
-  publishedAt: entry.data.publishedAt,
-  data: entry.data,
-  body: entry.body ?? '',
-}));
+const postsRaw = await getCollection('posts');
+const posts = await Promise.all(
+  postsRaw.map(async (entry) => {
+    const { remarkPluginFrontmatter } = await render(entry);
+    return {
+      type: 'post' as const,
+      slug: parseArticleId(entry.id).slug,
+      publishedAt: entry.data.publishedAt ?? remarkPluginFrontmatter?.publishedAt ?? new Date(),
+      data: {
+        ...entry.data,
+        tags: entry.data.tags ?? remarkPluginFrontmatter?.tags ?? [],
+      },
+      body: entry.body ?? '',
+    };
+  })
+);
 
 const feed = [...articles, ...posts].sort(
   (a, b) => b.publishedAt.getTime() - a.publishedAt.getTime()

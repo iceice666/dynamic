@@ -116,7 +116,7 @@ Content lives in `content/`.
 - **Articles**: Long-form content in `content/articles/`.
 - **Posts**: Short updates or notes in `content/posts/`.
 
-### Frontmatter
+### Article Frontmatter
 
 ```yaml
 ---
@@ -129,6 +129,19 @@ lang: "en"                     # "en" or "zh-tw" for default language
 draft: false                   # Set to true to hide in production
 ---
 ```
+
+### Post Frontmatter
+
+Posts are minimal — all frontmatter is optional:
+
+```yaml
+---
+publishedAt: 2026-02-14        # Optional (auto-read from git first-commit date)
+tags: ["astro", "react"]       # Optional (auto-extracted from trailing #tag lines)
+---
+```
+
+If `publishedAt` is omitted, the date of the file's first git commit is used. If `tags` is omitted, the last line of the post body is checked — if it matches the pattern `#word #word ...`, those words become the tags and the line is removed from rendered output.
 
 ### Internationalization (i18n)
 

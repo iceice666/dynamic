@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { parseArticleId } from '$/utils';
 
 export const GET: APIRoute = async () => {
@@ -19,18 +19,27 @@ export const GET: APIRoute = async () => {
     };
   });
 
-  const posts = (await getCollection('posts', ({ data }) => !data.draft)).map((entry) => ({
-    type: 'post' as const,
-    slug: parseArticleId(entry.id).slug,
-    title: '',
-    description: '',
-    tags: entry.data.tags,
-    publishedAt: entry.data.publishedAt.toISOString(),
-    category: '',
-    categoryName: '',
-    lang: entry.data.lang,
-    body: entry.body ?? '',
-  }));
+  const postsRaw = await getCollection('posts');
+  const posts = await Promise.all(
+    postsRaw.map(async (entry) => {
+      const { remarkPluginFrontmatter } = await render(entry);
+      return {
+        type: 'post' as const,
+        slug: parseArticleId(entry.id).slug,
+        title: '',
+        description: '',
+        tags: entry.data.tags ?? remarkPluginFrontmatter?.tags ?? [],
+        publishedAt: (
+          entry.data.publishedAt ??
+          remarkPluginFrontmatter?.publishedAt ??
+          new Date()
+        ).toISOString(),
+        category: '',
+        categoryName: '',
+        body: entry.body ?? '',
+      };
+    })
+  );
 
   const index = [...articles, ...posts].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
