@@ -14,58 +14,13 @@ export const giscus = {
 };
 
 // --- Umami Analytics ---
-// Set UMAMI_API_URL and UMAMI_WEBSITE_ID env vars to enable the visit counter widget.
-// Optional: set UMAMI_API_KEY if your instance requires authentication.
+// You also need to setup several environment variables.
+// See .env.example for more information.
 export const umami = {
-  /**
-   * Public base URL of your Umami instance.
-   * Used for both the tracking script and the stats API.
-   * @example 'https://analytics.example.com'
-   * @env UMAMI_API_URL
-   */
-  apiUrl: import.meta.env.UMAMI_API_URL ?? '',
-
-  /**
-   * Website ID found in your Umami dashboard under Settings -> Websites.
-   * Required to enable tracking and the visit counter widget.
-   * @env UMAMI_WEBSITE_ID
-   */
-  websiteId: import.meta.env.UMAMI_WEBSITE_ID ?? '',
-
-  /**
-   * API key for authenticating requests to the Umami stats API.
-   * Only needed if your Umami instance has API key auth enabled.
-   * @env UMAMI_API_KEY
-   */
-  apiKey: import.meta.env.UMAMI_API_KEY ?? '',
-
-  /**
-   * Username for authenticating with a self-hosted Umami instance.
-   * Used to obtain a JWT token via `/api/auth/login`.
-   * Not needed for Umami Cloud (use `apiKey` instead).
-   * @env UMAMI_USERNAME
-   */
-  username: import.meta.env.UMAMI_USERNAME ?? '',
-
-  /**
-   * Password for authenticating with a self-hosted Umami instance.
-   * Used together with `username` to obtain a JWT token.
-   * @env UMAMI_PASSWORD
-   */
-  password: import.meta.env.UMAMI_PASSWORD ?? '',
-
-  /**
-   * Custom URL for the Umami tracking script.
-   * Defaults to `{apiUrl}/script.js` when omitted.
-   * Useful if you serve the script from a different path or CDN.
-   * @env UMAMI_SCRIPT_URL
-   */
-  scriptUrl: import.meta.env.UMAMI_SCRIPT_URL,
-
   /**
    * Proxy the Umami tracking script through `/api/uwu.js` on your own domain.
    * Helps avoid ad-blockers that block direct requests to analytics domains.
-   * Requires `apiUrl` to be set. When enabled, `scriptUrl` is ignored.
+   * Requires UMAMI_API_URL env var set.
    */
   scriptProxy: false,
 };

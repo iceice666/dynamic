@@ -1,6 +1,4 @@
-/* eslint-disable no-console */
 import type { APIRoute } from 'astro';
-import { umami } from '../../../dynamic.config';
 
 // --- Token cache (in-memory, per-process) ---
 let cachedToken: string | null = null;
@@ -10,11 +8,12 @@ let tokenExpiresAt = 0; // epoch ms
  * Obtain a JWT token from Umami's login endpoint.
  * Caches the token in memory and refreshes when it nears expiry.
  */
-async function getAuthToken(): Promise<string | null> {
-  // If we already have a valid API key (Umami Cloud), skip login
-  if (umami.apiKey) return null; // we'll use x-umami-api-key header instead
-
-  if (!umami.username || !umami.password) {
+async function getAuthToken(
+  apiUrl: string,
+  username: string,
+  password: string
+): Promise<string | null> {
+  if (!username || !password) {
     console.warn('[wuw] No UMAMI_USERNAME / UMAMI_PASSWORD configured — cannot authenticate');
     return null;
   }
@@ -24,18 +23,14 @@ async function getAuthToken(): Promise<string | null> {
     return cachedToken;
   }
 
-  const apiBase = umami.apiUrl.replace(/\/+$/, '');
+  const apiBase = apiUrl.replace(/\/+$/, '');
   const loginUrl = `${apiBase}/api/auth/login`;
-  // Login request
 
   try {
     const res = await fetch(loginUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: umami.username,
-        password: umami.password,
-      }),
+      body: JSON.stringify({ username, password }),
     });
 
     if (!res.ok) {
@@ -60,15 +55,20 @@ async function getAuthToken(): Promise<string | null> {
 /**
  * Build the Authorization / API-key headers for an Umami API request.
  */
-async function buildAuthHeaders(): Promise<Record<string, string>> {
+async function buildAuthHeaders(
+  apiUrl: string,
+  apiKey: string,
+  username: string,
+  password: string
+): Promise<Record<string, string>> {
   const headers: Record<string, string> = { Accept: 'application/json' };
 
-  if (umami.apiKey) {
+  if (apiKey) {
     // Umami Cloud path
-    headers['x-umami-api-key'] = umami.apiKey;
+    headers['x-umami-api-key'] = apiKey;
   } else {
     // Self-hosted path — login for a JWT
-    const token = await getAuthToken();
+    const token = await getAuthToken(apiUrl, username, password);
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -77,9 +77,17 @@ async function buildAuthHeaders(): Promise<Record<string, string>> {
   return headers;
 }
 
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
+  const {
+    UMAMI_API_URL: apiUrl = '',
+    UMAMI_WEBSITE_ID: websiteId = '',
+    UMAMI_API_KEY: apiKey = '',
+    UMAMI_USERNAME: username = '',
+    UMAMI_PASSWORD: password = '',
+  } = locals.runtime.env;
+
   const path = url.searchParams.get('path') ?? undefined;
-  if (!umami.apiUrl || !umami.websiteId) {
+  if (!apiUrl || !websiteId) {
     console.error('[wuw] Umami not configured (missing apiUrl or websiteId)');
     return new Response(JSON.stringify({ error: 'Umami not configured' }), {
       status: 503,
@@ -97,18 +105,18 @@ export const GET: APIRoute = async ({ url }) => {
     ...(path ? { url: path } : {}),
   });
 
-  const apiBase = umami.apiUrl.replace(/\/+$/, '');
-  const apiUrl = `${apiBase}/api/websites/${umami.websiteId}/stats?${params}`;
-  const headers = await buildAuthHeaders();
+  const apiBase = apiUrl.replace(/\/+$/, '');
+  const statsUrl = `${apiBase}/api/websites/${websiteId}/stats?${params}`;
+  const headers = await buildAuthHeaders(apiUrl, apiKey, username, password);
 
   try {
-    let res = await fetch(apiUrl, { headers });
+    let res = await fetch(statsUrl, { headers });
     // If we got a 401 and are using a cached token, try refreshing once
     if (res.status === 401 && cachedToken) {
       cachedToken = null;
       tokenExpiresAt = 0;
-      const freshHeaders = await buildAuthHeaders();
-      res = await fetch(apiUrl, { headers: freshHeaders });
+      const freshHeaders = await buildAuthHeaders(apiUrl, apiKey, username, password);
+      res = await fetch(statsUrl, { headers: freshHeaders });
     }
 
     if (!res.ok) {
