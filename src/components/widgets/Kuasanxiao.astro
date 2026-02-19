@@ -1,0 +1,64 @@
+<script>
+  import confetti from 'canvas-confetti';
+  import { setMysteryUnlocked } from '$/stores/mystery';
+
+  const KUASANXIAO_CODE = [
+    'ArrowUp',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'ArrowLeft',
+    'ArrowRight',
+    'b',
+    'a',
+  ];
+
+  class KuasanxiaoHandler {
+    private sequence: string[] = [];
+    private maxSequenceLength = KUASANXIAO_CODE.length;
+
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      document.addEventListener('keydown', this.onKeydown.bind(this));
+    }
+
+    onKeydown(e: KeyboardEvent) {
+      this.sequence.push(e.key);
+
+      if (this.sequence.length > this.maxSequenceLength) {
+        this.sequence.shift();
+      }
+
+      if (this.matchesKuasanxiaoCode()) {
+        this.triggerConfetti();
+        setMysteryUnlocked(true);
+        this.sequence = [];
+      }
+    }
+
+    matchesKuasanxiaoCode() {
+      return this.sequence.join('') === KUASANXIAO_CODE.join('');
+    }
+
+    triggerConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    }
+  }
+
+  // Initialize on page load and after view transitions
+  function initKuasanxiao() {
+    new KuasanxiaoHandler();
+  }
+
+  initKuasanxiao();
+  document.addEventListener('astro:page-load', initKuasanxiao);
+</script>

@@ -11,6 +11,8 @@ import LanguageToggle from '$/components/controls/LanguageToggle';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import TOCObserver from '$/components/toc/TOCObserver';
 import SiteFooter from '$/components/widgets/SiteFooter';
+import Kuasanxiao from '$/components/widgets/Kuasanxiao.astro';
+import MysteryButton from '$/components/controls/MysteryButton';
 import { umami } from '../../dynamic.config';
 
 interface Props {
@@ -153,13 +155,16 @@ const { title, contentLang, toc } = Astro.props;
 
     <!-- Floating FABs: Theme & Language (desktop only) -->
     <div class="floating-controls" transition:persist>
-      <div class="fab-btn">
+      <MysteryButton client:load compact align="right" className="fab-btn" />
+      <div class="fab-btn fab-btn-wrapper">
         <ThemeButton client:load compact align="right" />
       </div>
-      <div class="fab-btn">
+      <div class="fab-btn fab-btn-wrapper">
         <LanguageToggle client:load compact align="right" />
       </div>
     </div>
+
+    <Kuasanxiao />
 
     <!-- Code block copy button handler -->
     <script>
@@ -275,44 +280,6 @@ const { title, contentLang, toc } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
-
-  .fab-btn {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 50%;
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    box-shadow: 0 2px 8px oklch(0% 0 0 / 12%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      box-shadow 0.2s ease,
-      border-color 0.2s ease;
-    overflow: visible;
-    cursor: pointer;
-  }
-
-  .fab-btn:hover {
-    box-shadow: 0 4px 16px oklch(0% 0 0 / 20%);
-    border-color: var(--color-accent);
-  }
-
-  .fab-btn :global(> div) {
-    position: relative;
-    width: 100% !important;
-    height: 100% !important;
-  }
-
-  .fab-btn :global(button) {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 !important;
-    border-radius: 50%;
   }
 
   .mobile-footer {

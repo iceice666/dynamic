@@ -1,5 +1,6 @@
 import { useTranslation } from '$/i18n';
 import { author } from '../../../dynamic.config';
+import { setMysteryUnlocked } from '$/stores/mystery';
 import VisitCounter from './VisitCounter';
 import withStrictMode from '$/components/withStrictMode';
 
@@ -16,6 +17,8 @@ function SiteFooter() {
 
   function handleClearCookies() {
     if (!window.confirm(t('footer_clear_cookies_confirm'))) return;
+
+    setMysteryUnlocked(false); // Explicitly lock the mystery feature
 
     document.cookie.split(';').forEach((c) => {
       const name = c.split('=')[0].trim();
