@@ -1,5 +1,14 @@
 import { defineConfig } from 'astro/config';
+import { execSync } from 'child_process';
 import tailwindcss from '@tailwindcss/vite';
+
+const gitHash = (() => {
+  try {
+    return execSync('git rev-parse --short HEAD').toString().trim();
+  } catch {
+    return 'unknown';
+  }
+})();
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
@@ -37,6 +46,9 @@ export default defineConfig({
     sitemap(),
   ],
   vite: {
+    define: {
+      __GIT_HASH__: JSON.stringify(gitHash),
+    },
     plugins: [tailwindcss()],
     resolve: {
       dedupe: ['react', 'react-dom', 'react-dom/server'],

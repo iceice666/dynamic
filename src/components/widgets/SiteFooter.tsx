@@ -31,10 +31,8 @@ function SiteFooter() {
       <VisitCounter />
       <hr className="border-border" />
       <div className="flex flex-col gap-1.5 px-4 py-3">
-        {/* Copyright & License */}
+        {/* License */}
         <span className="text-muted text-xs">
-          {copyrightText}
-          {' · '}
           <a
             href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
             target="_blank"
@@ -80,7 +78,19 @@ function SiteFooter() {
             Dynamic
           </a>
           {locale === 'zh-tw' ? ' 驅動' : ''}
+          {' @ '}
+          <a
+            href={`https://github.com/iceice666/dynamic/commit/${__GIT_HASH__}`}
+            target="_blank"
+            rel="noopener"
+            className={linkClass}
+          >
+            {__GIT_HASH__}
+          </a>
         </span>
+
+        {/* Copyright */}
+        <span className="text-muted text-xs">{copyrightText}</span>
       </div>
     </div>
   );

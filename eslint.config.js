@@ -24,6 +24,7 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        __GIT_HASH__: 'readonly',
       },
     },
     plugins: {
