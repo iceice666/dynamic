@@ -46,6 +46,7 @@ const {
           is:inline
           defer
           src={umami.scriptProxy ? '/api/uwu.js' : (scriptUrl ?? `${apiUrl}/script.js`)}
+          data-host-url={umami.scriptProxy ? apiUrl : undefined}
           data-website-id={websiteId}
         />
       )
