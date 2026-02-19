@@ -32,39 +32,33 @@ export default function VisitCounter({ path }: { path?: string } = {}) {
   if (error) return null;
 
   return (
-    <>
-      <hr className="border-border" />
-      <div className="px-4 py-3">
-        <div className="label-uppercase mb-2">{t('widget_visits_label')}</div>
-        <div className="flex flex-col gap-1.5">
-          <div className="text-muted flex items-center gap-1.5 text-xs">
-            <Eye size={12} aria-hidden="true" className="shrink-0" />
-            {stats ? (
-              <span>
-                <span className="text-foreground font-medium">
-                  {formatCount(stats.pageviews, locale)}
-                </span>{' '}
-                {t('widget_visits_pageviews')}
-              </span>
-            ) : (
-              <span className="bg-muted-bg h-3 w-16 animate-pulse rounded" aria-hidden="true" />
-            )}
-          </div>
-          <div className="text-muted flex items-center gap-1.5 text-xs">
-            <Users size={12} aria-hidden="true" className="shrink-0" />
-            {stats ? (
-              <span>
-                <span className="text-foreground font-medium">
-                  {formatCount(stats.visitors, locale)}
-                </span>{' '}
-                {t('widget_visits_visitors')}
-              </span>
-            ) : (
-              <span className="bg-muted-bg h-3 w-16 animate-pulse rounded" aria-hidden="true" />
-            )}
-          </div>
-        </div>
+    <div className="text-muted flex items-center gap-3 text-xs">
+      <div className="flex items-center gap-1.5">
+        <Eye size={12} aria-hidden="true" className="shrink-0" />
+        {stats ? (
+          <span>
+            <span className="text-foreground font-medium">
+              {formatCount(stats.pageviews, locale)}
+            </span>{' '}
+            {t('widget_visits_pageviews')}
+          </span>
+        ) : (
+          <span className="bg-muted-bg h-3 w-16 animate-pulse rounded" aria-hidden="true" />
+        )}
       </div>
-    </>
+      <div className="flex items-center gap-1.5">
+        <Users size={12} aria-hidden="true" className="shrink-0" />
+        {stats ? (
+          <span>
+            <span className="text-foreground font-medium">
+              {formatCount(stats.visitors, locale)}
+            </span>{' '}
+            {t('widget_visits_visitors')}
+          </span>
+        ) : (
+          <span className="bg-muted-bg h-3 w-16 animate-pulse rounded" aria-hidden="true" />
+        )}
+      </div>
+    </div>
   );
 }

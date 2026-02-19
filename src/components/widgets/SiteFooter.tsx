@@ -28,9 +28,11 @@ function SiteFooter() {
 
   return (
     <div className="site-footer">
-      <VisitCounter />
       <hr className="border-border" />
       <div className="flex flex-col gap-1.5 px-4 py-3">
+        {/* Visit counter */}
+        <VisitCounter />
+
         {/* License */}
         <span className="text-muted text-xs">
           <a
