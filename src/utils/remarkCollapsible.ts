@@ -11,20 +11,23 @@ type MdastNode = {
   [key: string]: any;
 };
 
+const OPEN_PREFIX = ':::|> ';
+const CLOSE_TEXT = ':::';
+
 /**
- * Remark plugin to transform `|> Title` ... `---` blocks into collapsible <details> elements.
+ * Remark plugin to transform `:::|> Title` ... `:::` blocks into collapsible <details> elements.
  *
  * Syntax:
- *   |> Title text here
+ *   :::|> Title text — supports **bold**, `code`, _italic_, etc.
  *
  *   Content paragraph one.
  *
  *   Content paragraph two.
  *
- *   ---
+ *   :::
  *
- * The `---` (thematic break) must be preceded by a blank line to avoid being
- * parsed as a setext heading. Content inside the block supports full markdown.
+ * Content inside the block supports full markdown (admonitions, code blocks, etc.).
+ * Inline markdown in the title is also rendered correctly.
  */
 
 function processChildren(children: MdastNode[]): void {
@@ -44,14 +47,20 @@ function processChildren(children: MdastNode[]): void {
       if (
         first?.type === 'text' &&
         typeof first.value === 'string' &&
-        first.value.startsWith('|>')
+        first.value.startsWith(OPEN_PREFIX)
       ) {
-        const summaryText = first.value.slice(2).trimStart();
+        const summaryText = first.value.slice(OPEN_PREFIX.length);
 
-        // Find the closing thematic break (---)
+        // Find the closing :::
         let closeIdx = -1;
         for (let j = i + 1; j < children.length; j++) {
-          if (children[j].type === 'thematicBreak') {
+          const candidate = children[j];
+          if (
+            candidate.type === 'paragraph' &&
+            candidate.children?.length === 1 &&
+            candidate.children[0].type === 'text' &&
+            candidate.children[0].value === CLOSE_TEXT
+          ) {
             closeIdx = j;
             break;
           }
@@ -60,21 +69,18 @@ function processChildren(children: MdastNode[]): void {
         if (closeIdx !== -1) {
           const contentNodes = children.slice(i + 1, closeIdx);
 
-          // Summary element: paragraph → <summary>
           const summaryNode: MdastNode = {
             type: 'paragraph',
             data: { hName: 'summary' },
             children: [{ ...first, value: summaryText }, ...inlines.slice(1)],
           };
 
-          // Content wrapper: → <div class="collapsible-content">
           const contentWrapper: MdastNode = {
             type: 'blockquote',
             data: { hName: 'div', hProperties: { class: 'collapsible-content' } },
             children: contentNodes,
           };
 
-          // Details wrapper: → <details class="collapsible">
           const detailsNode: MdastNode = {
             type: 'collapsible',
             data: { hName: 'details', hProperties: { class: 'collapsible' } },
