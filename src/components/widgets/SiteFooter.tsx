@@ -36,11 +36,10 @@ function SiteFooter() {
         {/* Visit counter */}
         <VisitCounter />
 
-        {/* Copyright */}
-        <span className="text-muted text-xs">{copyrightText}</span>
-
-        {/* License */}
-        <span className="text-muted text-xs">
+        {/* Copyright + License */}
+        <div className="text-muted flex flex-wrap items-center gap-x-1.5 text-xs">
+          <span>{copyrightText}</span>
+          <span aria-hidden="true">·</span>
           <a
             href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
             target="_blank"
@@ -49,7 +48,7 @@ function SiteFooter() {
           >
             {t('footer_license')}
           </a>
-        </span>
+        </div>
 
         {/* Links row */}
         <div className="text-muted flex flex-wrap items-center gap-x-1 text-xs">

@@ -107,7 +107,7 @@ const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
 
   <GiscusComments client:only="react" />
 
-  <div class="sm:hidden">
+  <div class="mt-8 hidden max-sm:block">
     <AuthorBio client:load />
   </div>
 </BaseLayout>

@@ -6,7 +6,7 @@ import withStrictMode from '$/components/withStrictMode';
 function AuthorBio() {
   return (
     <div
-      className="flex cursor-pointer flex-col gap-2 p-2 transition-opacity duration-150 hover:opacity-80"
+      className="flex cursor-pointer flex-col gap-2 px-4 py-2 transition-opacity duration-150 hover:opacity-80"
       onClick={() => {
         window.location.href = '/articles/about-me';
       }}
