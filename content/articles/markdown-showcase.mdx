@@ -54,7 +54,7 @@ Smart punctuation is on: "curly quotes", 'apostrophes', and dashes -- like this 
 | `remark-spoiler` | `||spoiler text||` inline spoilers |
 | `remarkCollapsible` | `:::\|> Title` … `:::` collapsible `<details>` blocks |
 | `rehype-accessible-emojis` | wraps emoji in `<span role="img" aria-label="...">` |
-| `remark-breaks` | single newline → `<br>` (no trailing spaces needed) |
+| `remark-breaks` | single newline → `<br>` (posts only) |
 
 ---
 
@@ -161,11 +161,10 @@ Every heading (`##`, `###`, etc.) gets a clickable anchor link. Hover over any h
 
 ## Line Breaks
 
-`remark-breaks` is enabled, so a single newline in source becomes a `<br>`.
-This line follows from the one above with just one newline.
-And this one too.
+`remark-breaks` applies to **posts only**, not articles. In articles, a single newline in source is treated as a space (standard Markdown behaviour) — you need a blank line or two trailing spaces for a `<br>`.
 
-Without `remark-breaks`, you'd need two trailing spaces or a blank line for a break.
+This line and the next are separated by a single newline in source.
+In an article, they render as one continuous paragraph without a break.
 
 ---
 

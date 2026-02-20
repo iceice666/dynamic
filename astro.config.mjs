@@ -30,8 +30,18 @@ import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 import { remarkWordCount } from './src/utils/remarkWordCount.ts';
 import { remarkPostMeta } from './src/utils/remarkPostMeta.ts';
 import { remarkBanHeaders } from './src/utils/remarkBanHeaders.ts';
-import remarkBreaks from 'remark-breaks';
+import remarkBreaksRaw from 'remark-breaks';
 import { codeBlockTransformer } from './src/utils/codeBlockTransformer.ts';
+
+function remarkBreaks() {
+  const transform = remarkBreaksRaw();
+  return function (tree, file) {
+    const filePath = file.history?.[0] ?? '';
+    if (filePath.includes('/content/posts/')) {
+      transform(tree, file);
+    }
+  };
+}
 
 import sitemap from '@astrojs/sitemap';
 import { site } from './dynamic.config.ts';

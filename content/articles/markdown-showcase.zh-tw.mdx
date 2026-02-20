@@ -53,7 +53,7 @@ draft: false
 | `remark-spoiler` | `||劇透文字||` 行內劇透 |
 | `remarkCollapsible` | `:::\|> 標題` … `:::` 可折疊的 `<details>` 區塊 |
 | `rehype-accessible-emojis` | 為表情符號加上 `<span role="img" aria-label="...">` |
-| `remark-breaks` | 單個換行 → `<br>`（不需要行尾空格） |
+| `remark-breaks` | 單個換行 → `<br>`（僅限 Posts） |
 
 ---
 
@@ -149,11 +149,10 @@ Unicode 表情符號由 `rehype-accessible-emojis` 加上無障礙 `aria-label`�
 
 ## 換行
 
-已啟用 `remark-breaks`，所以原始碼中的單個換行會變成 `<br>`。
-這一行緊接在上一行之後，中間只有一個換行。
-這一行也是。
+`remark-breaks` 僅適用於 **Posts**，不適用於文章。在文章中，原始碼中的單個換行會被視為空格（標準 Markdown 行為）——你需要空白行或行尾兩個空格才能產生 `<br>`。
 
-沒有 `remark-breaks` 的話，你需要行尾兩個空格或空白行才能換行。
+這一行與下一行在原始碼中以單個換行分隔。
+在文章中，它們會渲染為連續的段落，不會換行。
 
 ---
 
