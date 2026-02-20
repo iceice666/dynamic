@@ -129,11 +129,15 @@ export const GET: APIRoute = async ({ url, locals }) => {
     }
 
     const data = await res.json();
-    // Return only what the widget needs
+    // Return only what the widget needs.
+    // Note: recent versions of Umami return plain numbers, while older versions
+    // wrapped them in an object like { value: 2 }. We accommodate both formats here.
     const result = {
-      pageviews: data.pageviews?.value ?? 0,
-      visitors: data.visitors?.value ?? 0,
-      visits: data.visits?.value ?? 0,
+      pageviews:
+        typeof data.pageviews === 'object' ? (data.pageviews?.value ?? 0) : (data.pageviews ?? 0),
+      visitors:
+        typeof data.visitors === 'object' ? (data.visitors?.value ?? 0) : (data.visitors ?? 0),
+      visits: typeof data.visits === 'object' ? (data.visits?.value ?? 0) : (data.visits ?? 0),
     };
 
     return new Response(JSON.stringify(result), {
