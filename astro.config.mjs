@@ -24,6 +24,7 @@ import rehypeFigure from 'rehype-figure';
 import rehypeUnwrapImages from 'rehype-unwrap-images';
 import { rehypeAccessibleEmojis } from 'rehype-accessible-emojis';
 import { remarkAdmonitions } from './src/utils/admonitions.ts';
+import { remarkCollapsible } from './src/utils/remarkCollapsible.ts';
 import { remarkSpoiler } from './src/utils/remarkSpoiler.ts';
 import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 import { remarkWordCount } from './src/utils/remarkWordCount.ts';
@@ -79,6 +80,7 @@ export default defineConfig({
       remarkMath,
       remarkDirective,
       remarkAdmonitions,
+      remarkCollapsible,
       remarkEmoji,
       remarkSpoiler,
       remarkContentExtractor,

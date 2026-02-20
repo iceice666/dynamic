@@ -50,6 +50,7 @@ draft: false
 | `remark-math` + `rehype-katex` | LaTeX 數學公式渲染 |
 | `remark-admonitions` | `:::note` / `:::tip` / `:::warning` / `:::danger` 區塊 |
 | `remark-spoiler` | `||劇透文字||` 行內劇透 |
+| `remark-collapsible` | `\|> 標題` … `---` 可折疊的 `<details>` 區塊 |
 | `rehype-accessible-emojis` | 為表情符號加上 `<span role="img" aria-label="...">` |
 | `remark-breaks` | 單個換行 → `<br>`（不需要行尾空格） |
 
@@ -152,3 +153,41 @@ Unicode 表情符號由 `rehype-accessible-emojis` 加上無障礙 `aria-label`�
 這一行也是。
 
 沒有 `remark-breaks` 的話，你需要行尾兩個空格或空白行才能換行。
+
+---
+
+## 可折疊區塊
+
+以 `|> 標題文字` 開始一個可折疊區塊，並用單獨一行的 `---`（前面須有空白行）來關閉。區塊內部支援完整的 markdown 語法。
+
+|> 基本範例
+
+這些內容預設隱藏。點擊標題展開查看。
+
+---
+
+|> 豐富內容——清單、程式碼、格式化
+
+區塊內部支援任何區塊 markdown：
+
+- 項目一
+- 項目二
+- 項目三
+
+```ts
+const greet = (name: string) => `你好，${name}！`;
+```
+
+:::tip
+提示區塊也可以放在可折疊區塊裡。
+:::
+
+---
+
+標題本身也支援行內 markdown：
+
+|> 標題含有 `行內程式碼` 與 **粗體文字**
+
+標題中的行內格式會正確渲染。
+
+---

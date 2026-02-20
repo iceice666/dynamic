@@ -102,6 +102,62 @@ html.dark .admonition-danger {
   background: oklch(20% 0.03 25);
 }
 
+/* Collapsible / details blocks */
+.collapsible {
+  margin: 1.5rem 0;
+  border: 1px solid oklch(85% 0 0);
+  border-radius: 0.5rem;
+  background: var(--color-muted-bg);
+}
+
+.collapsible > summary {
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+/* Hide default Safari/Firefox disclosure triangle */
+.collapsible > summary::-webkit-details-marker {
+  display: none;
+}
+
+.collapsible > summary::before {
+  content: '▶';
+  font-size: 0.7em;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.collapsible[open] > summary::before {
+  transform: rotate(90deg);
+}
+
+.collapsible-content {
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid oklch(85% 0 0);
+}
+
+.collapsible-content > :first-child {
+  margin-top: 0;
+}
+
+.collapsible-content > :last-child {
+  margin-bottom: 0;
+}
+
+html.dark .collapsible {
+  border-color: oklch(35% 0 0);
+}
+
+html.dark .collapsible-content {
+  border-top-color: oklch(35% 0 0);
+}
+
 /* Code block wrapper with language label + copy button */
 .code-block-wrapper {
   position: relative;

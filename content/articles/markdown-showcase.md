@@ -51,6 +51,7 @@ Smart punctuation is on: "curly quotes", 'apostrophes', and dashes -- like this 
 | `remark-math` + `rehype-katex` | LaTeX math rendering |
 | `remark-admonitions` | `:::note` / `:::tip` / `:::warning` / `:::danger` blocks |
 | `remark-spoiler` | `||spoiler text||` inline spoilers |
+| `remark-collapsible` | `\|> Title` … `---` collapsible `<details>` blocks |
 | `rehype-accessible-emojis` | wraps emoji in `<span role="img" aria-label="...">` |
 | `remark-breaks` | single newline → `<br>` (no trailing spaces needed) |
 
@@ -164,3 +165,41 @@ This line follows from the one above with just one newline.
 And this one too.
 
 Without `remark-breaks`, you'd need two trailing spaces or a blank line for a break.
+
+---
+
+## Collapsible Blocks
+
+Start a collapsible block with `|> Title text` and close it with `---` on its own line (preceded by a blank line). Content inside supports full markdown.
+
+|> Basic example
+
+This content is hidden by default. Click the summary to expand.
+
+---
+
+|> Rich content — lists, code, and formatting
+
+Supports any block markdown inside:
+
+- Item one
+- Item two
+- Item three
+
+```ts
+const greet = (name: string) => `Hello, ${name}!`;
+```
+
+:::tip
+Admonitions work inside collapsibles too.
+:::
+
+---
+
+The title itself supports inline markdown as well:
+
+|> Title with `inline code` and **bold text**
+
+Inline formatting in the summary renders correctly.
+
+---
