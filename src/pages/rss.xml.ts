@@ -5,7 +5,7 @@ import { parseArticleId, formatDate, entrySlug } from '../utils';
 
 export const prerender = true;
 
-export async function GET(context: any) {
+export async function GET(context: { site: URL }) {
   const postsRaw = await getCollection('posts');
   const articles = await getCollection('articles', ({ data }) => !data.draft);
 
