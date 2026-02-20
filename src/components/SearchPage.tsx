@@ -25,43 +25,12 @@ function formatDate(iso: string): string {
   return `${yyyy}/${mm}/${dd}`;
 }
 
-function buildCategoryCounts(index: SearchItem[]) {
-  const map = new Map<string, { name: string; count: number }>();
-  for (const item of index) {
-    if (!item.category) continue;
-    const existing = map.get(item.category);
-    if (existing) {
-      existing.count++;
-    } else {
-      map.set(item.category, { name: item.categoryName, count: 1 });
-    }
-  }
-  return Array.from(map.entries())
-    .map(([slug, { name, count }]) => ({ slug, name, count }))
-    .sort((a, b) => b.count - a.count);
-}
-
-function buildTagCounts(index: SearchItem[]) {
-  const map = new Map<string, number>();
-  for (const item of index) {
-    for (const tag of item.tags) {
-      map.set(tag, (map.get(tag) ?? 0) + 1);
-    }
-  }
-  return Array.from(map.entries())
-    .map(([tag, count]) => ({ tag, count }))
-    .sort((a, b) => b.count - a.count);
-}
-
-type Tab = 'categories' | 'tags';
-
 function SearchPage() {
   const { t } = useTranslation();
 
   const [query, setQuery] = useState('');
   const [index, setIndex] = useState<SearchItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<Tab>('categories');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Initialize from URL and load index on mount
@@ -108,12 +77,6 @@ function SearchPage() {
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-
-  // Derive category counts from index (language-agnostic)
-  const categoryCounts = buildCategoryCounts(index);
-
-  // Derive tag counts from index (language-agnostic)
-  const tagCounts = buildTagCounts(index);
 
   // Filter results
   const trimmed = query.trim();
@@ -179,71 +142,7 @@ function SearchPage() {
           </div>
         )
       ) : (
-        <div className="flex flex-col gap-4">
-          <p className="text-muted m-0 text-center text-sm">{t('search_tag_hint')}</p>
-
-          {/* Tab buttons */}
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setActiveTab('categories')}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                activeTab === 'categories'
-                  ? 'bg-accent text-white'
-                  : 'bg-muted-bg text-muted hover:text-foreground'
-              }`}
-            >
-              {t('page_categories_heading')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('tags')}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-150 ${
-                activeTab === 'tags'
-                  ? 'bg-accent text-white'
-                  : 'bg-muted-bg text-muted hover:text-foreground'
-              }`}
-            >
-              {t('page_tags_heading')}
-            </button>
-          </div>
-
-          {/* Tab content */}
-          {activeTab === 'categories' ? (
-            <div className="flex flex-col gap-2">
-              {categoryCounts.map(({ slug, name, count }) => (
-                <button
-                  key={slug}
-                  type="button"
-                  onClick={() => setQuery(`@${slug}`)}
-                  className="border-border bg-background hover:bg-muted-bg flex items-center justify-between rounded-lg border p-3 text-left transition-colors duration-150"
-                >
-                  <span className="text-foreground text-sm font-medium">{name}</span>
-                  <span className="text-muted text-xs">{count}</span>
-                </button>
-              ))}
-              {categoryCounts.length === 0 && (
-                <p className="text-muted text-center text-sm">No categories yet.</p>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-wrap gap-2">
-              {tagCounts.map(({ tag, count }) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setQuery(`#${tag}`)}
-                  className="bg-muted-bg text-muted hover:text-foreground hover:bg-accent/10 rounded-full px-3 py-1 text-xs transition-colors duration-150"
-                >
-                  #{tag} <span className="opacity-60">({count})</span>
-                </button>
-              ))}
-              {tagCounts.length === 0 && (
-                <p className="text-muted text-center text-sm">No tags yet.</p>
-              )}
-            </div>
-          )}
-        </div>
+        <p className="text-muted m-0 text-center text-sm">{t('search_tag_hint')}</p>
       )}
     </div>
   );

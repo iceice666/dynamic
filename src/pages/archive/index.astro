@@ -8,6 +8,34 @@ const { locale } = Astro.locals;
 
 const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
 
+// Compute category counts
+const categoryMap = new Map<string, { name: string; count: number }>();
+for (const entry of articlesRaw) {
+  const slug = entry.data.category;
+  const name = entry.data.categoryName;
+  if (!slug || !name) continue;
+  const existing = categoryMap.get(slug);
+  if (existing) {
+    existing.count++;
+  } else {
+    categoryMap.set(slug, { name, count: 1 });
+  }
+}
+const categoryCounts = Array.from(categoryMap.entries())
+  .map(([slug, { name, count }]) => ({ slug, name, count }))
+  .sort((a, b) => b.count - a.count);
+
+// Compute tag counts
+const tagMap = new Map<string, number>();
+for (const entry of articlesRaw) {
+  for (const tag of entry.data.tags ?? []) {
+    tagMap.set(tag, (tagMap.get(tag) ?? 0) + 1);
+  }
+}
+const tagCounts = Array.from(tagMap.entries())
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => b.count - a.count);
+
 const archiveEntries = await Promise.all(
   articlesRaw.map(async (entry) => {
     const { remarkPluginFrontmatter } = await render(entry);
@@ -43,6 +71,56 @@ const archiveYears = Array.from(archiveGroups.entries())
     <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">
       {t(locale, 'page_archive_heading')}
     </h1>
+
+    <div class="grid grid-cols-2 gap-6">
+      <!-- Categories -->
+      <section class="flex flex-col gap-3">
+        <h2 class="text-foreground m-0 text-lg font-bold">
+          {t(locale, 'page_categories_heading')}
+        </h2>
+        {
+          categoryCounts.length > 0 ? (
+            <ul class="m-0 flex list-none flex-col gap-2 p-0">
+              {categoryCounts.map(({ slug, name, count }) => (
+                <li>
+                  <a
+                    href={`/search?q=@${slug}`}
+                    class="border-border bg-background hover:bg-muted-bg flex items-center justify-between rounded-lg border px-4 py-3 no-underline transition-colors duration-150"
+                  >
+                    <span class="text-foreground text-sm font-medium">{name}</span>
+                    <span class="text-muted text-xs">{count}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="text-muted text-sm">No categories yet.</p>
+          )
+        }
+      </section>
+
+      <!-- Tags -->
+      <section class="flex flex-col gap-3">
+        <h2 class="text-foreground m-0 text-lg font-bold">{t(locale, 'page_tags_heading')}</h2>
+        {
+          tagCounts.length > 0 ? (
+            <div class="flex flex-wrap gap-2">
+              {tagCounts.map(({ tag, count }) => (
+                <a
+                  href={`/search?q=%23${tag}`}
+                  class="bg-muted-bg text-muted hover:text-foreground hover:bg-accent/10 rounded-full px-3 py-1 text-xs no-underline transition-colors duration-150"
+                >
+                  #{tag} <span class="opacity-60">({count})</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="text-muted text-sm">No tags yet.</p>
+          )
+        }
+      </section>
+    </div>
+
     {
       archiveYears.map(({ year, items }) => (
         <section class="flex flex-col gap-3">
