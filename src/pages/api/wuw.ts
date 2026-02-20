@@ -86,7 +86,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
     UMAMI_PASSWORD: password = '',
   } = locals.runtime.env;
 
-  const path = url.searchParams.get('path') ?? undefined;
+  // Strip query params from path — Umami stores paths without them
+  const rawPath = url.searchParams.get('path') ?? undefined;
+  const path = rawPath ? rawPath.split('?')[0] : undefined;
+
   if (!apiUrl || !websiteId) {
     console.error('[wuw] Umami not configured (missing apiUrl or websiteId)');
     return new Response(JSON.stringify({ error: 'Umami not configured' }), {
@@ -95,59 +98,88 @@ export const GET: APIRoute = async ({ url, locals }) => {
     });
   }
 
-  // Fetch stats from the beginning of time to now
   const startAt = 0;
   const endAt = Date.now();
-
-  const params = new URLSearchParams({
-    startAt: String(startAt),
-    endAt: String(endAt),
-    ...(path ? { url: path } : {}),
-  });
-
   const apiBase = apiUrl.replace(/\/+$/, '');
-  const statsUrl = `${apiBase}/api/websites/${websiteId}/stats?${params}`;
   const headers = await buildAuthHeaders(apiUrl, apiKey, username, password);
 
-  try {
-    let res = await fetch(statsUrl, { headers });
-    // If we got a 401 and are using a cached token, try refreshing once
+  async function fetchWithRetry(targetUrl: string): Promise<Response> {
+    let res = await fetch(targetUrl, { headers });
     if (res.status === 401 && cachedToken) {
       cachedToken = null;
       tokenExpiresAt = 0;
       const freshHeaders = await buildAuthHeaders(apiUrl, apiKey, username, password);
-      res = await fetch(statsUrl, { headers: freshHeaders });
+      res = await fetch(targetUrl, { headers: freshHeaders });
     }
+    return res;
+  }
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error(`[wuw] Upstream error body: ${errText}`);
-      return new Response(JSON.stringify({ error: 'Upstream error', status: res.status }), {
-        status: 502,
-        headers: { 'Content-Type': 'application/json' },
+  const cacheHeaders = {
+    'Content-Type': 'application/json',
+    'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
+  };
+
+  try {
+    if (path) {
+      // Per-URL pageviews: use the pageviews endpoint which reliably filters by URL.
+      // The stats endpoint's url filter is unreliable across Umami versions.
+      const params = new URLSearchParams({
+        startAt: String(startAt),
+        endAt: String(endAt),
+        unit: 'year',
+        timezone: 'UTC',
+        url: path,
+      });
+      const pageviewsUrl = `${apiBase}/api/websites/${websiteId}/pageviews?${params}`;
+      const res = await fetchWithRetry(pageviewsUrl);
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error(`[wuw] Upstream error body: ${errText}`);
+        return new Response(JSON.stringify({ error: 'Upstream error', status: res.status }), {
+          status: 502,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      const data = await res.json();
+      const total = (data.pageviews as { x: string; y: number }[]).reduce(
+        (sum, entry) => sum + entry.y,
+        0
+      );
+      return new Response(JSON.stringify({ pageviews: total, visitors: 0, visits: 0 }), {
+        status: 200,
+        headers: cacheHeaders,
+      });
+    } else {
+      // Site-wide stats (used by VisitCounter)
+      const params = new URLSearchParams({
+        startAt: String(startAt),
+        endAt: String(endAt),
+      });
+      const statsUrl = `${apiBase}/api/websites/${websiteId}/stats?${params}`;
+      const res = await fetchWithRetry(statsUrl);
+
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error(`[wuw] Upstream error body: ${errText}`);
+        return new Response(JSON.stringify({ error: 'Upstream error', status: res.status }), {
+          status: 502,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      const data = await res.json();
+      const result = {
+        pageviews: data.pageviews ?? 0,
+        visitors: data.visitors ?? 0,
+        visits: data.visits ?? 0,
+      };
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: cacheHeaders,
       });
     }
-
-    const data = await res.json();
-    // Return only what the widget needs.
-    // Note: recent versions of Umami return plain numbers, while older versions
-    // wrapped them in an object like { value: 2 }. We accommodate both formats here.
-    const result = {
-      pageviews:
-        typeof data.pageviews === 'object' ? (data.pageviews?.value ?? 0) : (data.pageviews ?? 0),
-      visitors:
-        typeof data.visitors === 'object' ? (data.visitors?.value ?? 0) : (data.visitors ?? 0),
-      visits: typeof data.visits === 'object' ? (data.visits?.value ?? 0) : (data.visits ?? 0),
-    };
-
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        // Cache for 5 minutes on the CDN edge
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=60',
-      },
-    });
   } catch (err) {
     console.error('[wuw] Fetch failed:', err);
     return new Response(JSON.stringify({ error: 'Fetch failed' }), {
