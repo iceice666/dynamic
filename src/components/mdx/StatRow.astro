@@ -1,0 +1,72 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+  icon?: string;
+}
+
+interface Props {
+  stats: Stat[];
+}
+
+const { stats } = Astro.props;
+---
+
+<div class="stat-row not-prose">
+  {
+    stats.map(({ value, label, icon }) => (
+      <div class="stat-card">
+        {icon && (
+          <span class="stat-icon" aria-hidden="true">
+            {icon}
+          </span>
+        )}
+        <span class="stat-value">{value}</span>
+        <span class="stat-label label-uppercase">{label}</span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .stat-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block: 1.25rem;
+  }
+
+  .stat-card {
+    flex: 1 1 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.625rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-background);
+    text-align: center;
+    transition: background 0.15s ease;
+  }
+
+  .stat-card:hover {
+    background: var(--color-muted-bg);
+  }
+
+  .stat-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    color: var(--color-muted);
+  }
+</style>

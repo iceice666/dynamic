@@ -1,0 +1,48 @@
+---
+title: About Me
+description: A little bit about who I am and what I do.
+category: meta
+categoryName: Meta
+tags: []
+publishedAt: 2026-02-16
+draft: false
+lang: en
+---
+
+import SkillGrid from '$/components/mdx/SkillGrid.astro';
+import StatRow from '$/components/mdx/StatRow.astro';
+
+# About Me
+
+Hey there! I'm **Ghost** — a developer, writer, and lifelong tinkerer. I love digging into how things work, then rebuilding them better.
+
+<StatRow stats={[
+  { icon: "⌨️", value: "5+", label: "Years coding" },
+  { icon: "🌐", value: "2", label: "Languages spoken" },
+  { icon: "📝", value: "∞", label: "Drafts in progress" },
+  { icon: "☕", value: "3/day", label: "Cups of coffee" },
+]} />
+
+## What I Do
+
+I build things for the web and write about what I learn along the way. My work spans systems programming, web development, and creative coding — often all three at once.
+
+<SkillGrid label="Languages" skills={["typescript", "rust", "python", "go", {"gnubash": "Bash"}]} />
+<SkillGrid label="Web" skills={["astro", "react", "tailwindcss", {"cloudflare": "Cloudflare Workers"}, "hono"]} />
+<SkillGrid label="Tools" skills={["neovim", "git", {"nixos": "Nix"}, "docker", "linux"]} />
+
+## This Site
+
+This blog is my corner of the internet — a place to share notes, tutorials, and the occasional hot take.
+
+:::note
+Built with [Astro 5](https://astro.build) and deployed to Cloudflare Pages. Optimized for speed, accessibility, and distraction-free reading.
+:::
+
+|> Behind the scenes
+The stack: Astro 5 (SSR on Cloudflare), React islands for interactivity, Tailwind v4 for styling, and a custom Markdown pipeline with remark/rehype plugins for admonitions, math, spoilers, and more.
+---
+
+## Get in Touch
+
+Feel free to reach out through any of the social links in the sidebar. I'm always happy to chat about code, collaboration, or anything in between.

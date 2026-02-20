@@ -4,7 +4,7 @@ import { defineCollection, z } from 'astro:content';
 const articles = defineCollection({
   loader: glob({
     base: './content/articles',
-    pattern: '**/*.md',
+    pattern: '**/*.{md,mdx}',
     // Preserve dots in filenames so that the {slug}.{lang}.md convention works.
     // Astro's default ID generation passes filenames through github-slugger which
     // removes dots, turning e.g. `example.zh-tw.md` into `examplezh-tw`.

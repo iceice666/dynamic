@@ -1,0 +1,97 @@
+---
+import * as si from 'simple-icons';
+
+type Skill = string | Record<string, string>;
+
+interface Props {
+  skills: Skill[];
+  label?: string;
+}
+
+const { skills, label } = Astro.props;
+
+type SimpleIcon = { path: string; hex: string; title: string };
+const siLib = si as Record<string, SimpleIcon | undefined>;
+
+function toSiKey(name: string): string {
+  const slug = name.replace(/[^a-zA-Z0-9]/g, '');
+  return 'si' + slug.charAt(0).toUpperCase() + slug.slice(1);
+}
+
+function resolveSkill(skill: Skill): { icon: SimpleIcon | null; label: string } {
+  if (typeof skill === 'string') {
+    const icon = siLib[toSiKey(skill)] ?? null;
+    return { icon, label: icon?.title ?? skill };
+  }
+  const [key, desc] = Object.entries(skill)[0];
+  const icon = siLib[toSiKey(key)] ?? null;
+  return { icon, label: desc };
+}
+---
+
+<div class="skill-grid not-prose">
+  {label && <span class="label-uppercase">{label}</span>}
+  <div class="badges">
+    {
+      skills.map((skill) => {
+        const { icon, label: name } = resolveSkill(skill);
+        return (
+          <span class="badge">
+            {icon && (
+              <svg
+                role="img"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                style={`fill: #${icon.hex}`}
+              >
+                <path d={icon.path} />
+              </svg>
+            )}
+            {name}
+          </span>
+        );
+      })
+    }
+  </div>
+</div>
+
+<style>
+  .skill-grid {
+    margin-block: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border: 1px solid oklch(from var(--color-accent) l c h / 40%);
+    background: oklch(from var(--color-accent) l c h / 8%);
+    color: var(--color-foreground);
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+
+  .badge:hover {
+    background: oklch(from var(--color-accent) l c h / 16%);
+  }
+
+  .badge svg {
+    width: 1.125em;
+    height: 1.125em;
+    flex-shrink: 0;
+  }
+</style>
