@@ -1,20 +1,24 @@
 import React from 'react';
 import { author } from '#/dynamic.config';
-import { useTranslation } from '$/i18n';
 import { socialHref, socialIcon } from '$/utils/social';
 import withStrictMode from '$/components/withStrictMode';
 
 function AuthorBio() {
-  const { t } = useTranslation();
-
   return (
-    <div className="flex flex-col gap-2 p-2">
-      <a
-        href="/articles/about-me"
-        className="text-muted hover:text-accent text-xs leading-[1.4] no-underline transition-colors duration-150"
-      >
-        {t('author_bio_heading')}
-      </a>
+    <div
+      className="flex cursor-pointer flex-col gap-2 p-2 transition-opacity duration-150 hover:opacity-80"
+      onClick={() => {
+        window.location.href = '/articles/about-me';
+      }}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          window.location.href = '/articles/about-me';
+        }
+      }}
+      aria-label="About me"
+    >
       <div className="flex items-center gap-3">
         <img
           className="border-border h-12 w-12 shrink-0 rounded-full border-2 object-cover"
@@ -40,6 +44,7 @@ function AuthorBio() {
               aria-label={link.kind}
               target={link.kind === 'email' ? undefined : '_blank'}
               rel={link.kind === 'email' ? undefined : 'noopener'}
+              onClick={(e) => e.stopPropagation()}
             >
               <Icon size={16} className="shrink-0" aria-hidden="true" />
             </a>

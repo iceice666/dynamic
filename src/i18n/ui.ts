@@ -10,6 +10,7 @@ export const ui = {
   en: {
     // Nav
     nav_feed: 'Feed',
+    nav_about: 'About',
     nav_friends: 'Friends',
     nav_archive: 'Archive',
     // Theme
@@ -89,6 +90,7 @@ export const ui = {
   'zh-tw': {
     // Nav
     nav_feed: '動態',
+    nav_about: '關於',
     nav_friends: '友站',
     nav_archive: '歸檔',
     // Theme

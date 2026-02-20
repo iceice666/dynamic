@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
-import { Archive, Home, Search, Users, type LucideIcon } from 'lucide-react';
+import { Archive, Home, Search, UserRound, Users, type LucideIcon } from 'lucide-react';
 import { type UIKey } from '$/i18n/ui';
 import { useTranslation } from '$/i18n';
 
@@ -12,6 +12,7 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { labelKey: 'nav_feed', href: '/', icon: Home },
+  { labelKey: 'nav_about', href: '/articles/about-me', icon: UserRound },
   { labelKey: 'nav_friends', href: '/friends', icon: Users },
   { labelKey: 'nav_archive', href: '/archive', icon: Archive },
   { labelKey: 'nav_search', href: '/search', icon: Search },
