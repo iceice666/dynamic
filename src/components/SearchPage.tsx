@@ -157,7 +157,10 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
         {item.categoryName && ` \u00b7 ${item.categoryName}`}
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
-        <a href={`/articles/${item.slug}`} className="link-accent">
+        <a
+          href={`/articles/${item.slug}${item.lang && item.lang !== 'en' ? `?lang=${item.lang}` : ''}`}
+          className="link-accent"
+        >
           {item.title}
         </a>
       </h2>
