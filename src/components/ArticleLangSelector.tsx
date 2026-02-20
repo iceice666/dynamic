@@ -27,7 +27,9 @@ function ArticleLangSelector({ available, currentLang }: Props) {
   useEffect(() => {
     if (!pendingLang) return;
     document.cookie = `${COOKIE_KEY}=${pendingLang};max-age=31536000;path=/;SameSite=Lax`;
-    navigate(location.href);
+    const url = new URL(location.href);
+    url.searchParams.delete('lang');
+    navigate(url.toString());
   }, [pendingLang]);
 
   useEffect(() => {
