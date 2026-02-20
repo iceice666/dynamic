@@ -25,11 +25,6 @@ function formatDate(iso: string): string {
   return `${yyyy}/${mm}/${dd}`;
 }
 
-function getInitialQuery(): string {
-  if (typeof window === 'undefined') return '';
-  return new URLSearchParams(window.location.search).get('q') ?? '';
-}
-
 function buildCategoryCounts(index: SearchItem[]) {
   const map = new Map<string, { name: string; count: number }>();
   for (const item of index) {
@@ -63,22 +58,29 @@ type Tab = 'categories' | 'tags';
 function SearchPage() {
   const { t } = useTranslation();
 
-  const [query, setQuery] = useState(getInitialQuery);
-  const [index, setIndex] = useState<SearchItem[]>(cachedIndex ?? []);
-  const [loading, setLoading] = useState(!cachedIndex);
+  const [query, setQuery] = useState('');
+  const [index, setIndex] = useState<SearchItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>('categories');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch index on mount
+  // Initialize from URL and load index on mount
   useEffect(() => {
-    if (cachedIndex) return;
-    fetch('/search-index.json')
-      .then((r) => r.json())
-      .then((data: SearchItem[]) => {
-        cachedIndex = data;
-        setIndex(data);
-        setLoading(false);
-      });
+    const q = new URLSearchParams(window.location.search).get('q') ?? '';
+    if (q) setQuery(q);
+
+    if (cachedIndex) {
+      setIndex(cachedIndex);
+      setLoading(false);
+    } else {
+      fetch('/search-index.json')
+        .then((r) => r.json())
+        .then((data: SearchItem[]) => {
+          cachedIndex = data;
+          setIndex(data);
+          setLoading(false);
+        });
+    }
   }, []);
 
   // Re-read ?q= after view transitions
