@@ -1,0 +1,310 @@
+---
+interface Props {
+  url: string;
+  title?: string;
+  desc?: string;
+}
+
+interface RepoData {
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  forks_count: number;
+  language: string | null;
+  owner: { login: string; avatar_url: string };
+}
+
+const LANG_COLORS: Record<string, string> = {
+  TypeScript: '#3178c6',
+  JavaScript: '#f1e05a',
+  Python: '#3572A5',
+  Rust: '#dea584',
+  Go: '#00ADD8',
+  Java: '#b07219',
+  Kotlin: '#A97BFF',
+  Swift: '#F05138',
+  'C++': '#f34b7d',
+  C: '#555555',
+  'C#': '#178600',
+  Ruby: '#701516',
+  PHP: '#4F5D95',
+  Dart: '#00B4AB',
+  Nix: '#7e7eff',
+  Shell: '#89e051',
+  HTML: '#e34c26',
+  CSS: '#563d7c',
+  Zig: '#ec915c',
+  Lua: '#000080',
+};
+
+function formatCount(n: number): string {
+  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
+  return String(n);
+}
+
+async function fetchGitHub(owner: string, repo: string): Promise<RepoData | null> {
+  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+    headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'dynamic-blog' },
+  });
+  if (!res.ok) return null;
+  const d = (await res.json()) as any;
+  return {
+    full_name: d.full_name,
+    description: d.description,
+    html_url: d.html_url,
+    stargazers_count: d.stargazers_count,
+    forks_count: d.forks_count,
+    language: d.language ?? null,
+    owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
+  };
+}
+
+async function fetchGitLab(host: string, owner: string, repo: string): Promise<RepoData | null> {
+  const encoded = encodeURIComponent(`${owner}/${repo}`);
+  const res = await fetch(`https://${host}/api/v4/projects/${encoded}`, {
+    headers: { 'User-Agent': 'dynamic-blog' },
+  });
+  if (!res.ok) return null;
+  const d = (await res.json()) as any;
+  let avatarUrl: string = d.avatar_url ?? '';
+  if (!avatarUrl && d.namespace?.avatar_url) {
+    const raw: string = d.namespace.avatar_url;
+    avatarUrl = raw.startsWith('http') ? raw : `https://${host}${raw}`;
+  }
+  return {
+    full_name: d.path_with_namespace,
+    description: d.description ?? null,
+    html_url: d.web_url,
+    stargazers_count: d.star_count,
+    forks_count: d.forks_count,
+    language: null, // requires a separate /languages API call; skip for simplicity
+    owner: { login: owner, avatar_url: avatarUrl },
+  };
+}
+
+// Covers Gitea, Forgejo, and Codeberg (all share the same API)
+async function fetchGitea(host: string, owner: string, repo: string): Promise<RepoData | null> {
+  const res = await fetch(`https://${host}/api/v1/repos/${owner}/${repo}`, {
+    headers: { 'User-Agent': 'dynamic-blog' },
+  });
+  if (!res.ok) return null;
+  const d = (await res.json()) as any;
+  return {
+    full_name: d.full_name,
+    description: d.description ?? null,
+    html_url: d.html_url,
+    stargazers_count: d.stars_count,
+    forks_count: d.forks_count,
+    language: d.language ?? null,
+    owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
+  };
+}
+
+const { url, title, desc } = Astro.props;
+
+let data: RepoData | null = null;
+let owner = '';
+let repo = '';
+
+try {
+  const parsed = new URL(url);
+  const parts = parsed.pathname.split('/').filter(Boolean);
+  owner = parts[0] ?? '';
+  repo = parts[1] ?? '';
+
+  if (owner && repo) {
+    const host = parsed.hostname;
+    if (host === 'github.com') {
+      data = await fetchGitHub(owner, repo);
+    } else if (host === 'gitlab.com' || host.startsWith('gitlab.')) {
+      data = await fetchGitLab(host, owner, repo);
+    } else {
+      // Gitea / Forgejo / Codeberg and other self-hosted Gitea-compatible forges
+      data = await fetchGitea(host, owner, repo);
+    }
+  }
+} catch {
+  // silently degrade
+}
+
+const displayTitle = title ?? (data ? data.full_name : owner && repo ? `${owner}/${repo}` : url);
+const displayDesc = desc ?? data?.description ?? null;
+const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-accent)') : null;
+---
+
+<a
+  class="repo-card card not-prose"
+  href={data?.html_url ?? url}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <div class="repo-header">
+    {
+      data?.owner.avatar_url && (
+        <img
+          class="repo-avatar"
+          src={data.owner.avatar_url}
+          alt={`${data.owner.login} avatar`}
+          width="20"
+          height="20"
+        />
+      )
+    }
+    <span class="repo-name">{displayTitle}</span>
+    <svg
+      class="repo-ext-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="13"
+      height="13"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M15 3h6v6"></path><path d="M10 14 21 3"></path><path
+        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+    </svg>
+  </div>
+
+  {displayDesc && <p class="repo-desc">{displayDesc}</p>}
+
+  {
+    data && (
+      <div class="repo-stats">
+        {data.language && (
+          <span class="repo-stat">
+            <span class="lang-dot" style={`background: ${langColor}`} aria-hidden="true" />
+            {data.language}
+          </span>
+        )}
+        <span class="repo-stat" aria-label={`${data.stargazers_count} stars`}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          {formatCount(data.stargazers_count)}
+        </span>
+        <span class="repo-stat" aria-label={`${data.forks_count} forks`}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="13"
+            height="13"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <>
+              <circle cx="12" cy="18" r="3" />
+              <circle cx="6" cy="6" r="3" />
+              <circle cx="18" cy="6" r="3" />
+              <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" />
+              <path d="M12 12v3" />
+            </>
+          </svg>
+          {formatCount(data.forks_count)}
+        </span>
+      </div>
+    )
+  }
+</a>
+
+<style>
+  .repo-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .repo-card:hover {
+    text-decoration: none;
+  }
+
+  .repo-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .repo-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .repo-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: opacity 0.15s ease;
+  }
+
+  .repo-card:hover .repo-name {
+    opacity: 0.8;
+  }
+
+  .repo-ext-icon {
+    color: var(--color-muted);
+    flex-shrink: 0;
+  }
+
+  .repo-desc {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .repo-stats {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    flex-wrap: wrap;
+  }
+
+  .repo-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+  }
+
+  .lang-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+</style>

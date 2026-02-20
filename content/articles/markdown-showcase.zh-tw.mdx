@@ -189,3 +189,23 @@ const greet = (name: string) => `你好，${name}！`;
 標題中的行內格式會正確渲染。
 
 :::
+
+---
+
+## Repo 卡片
+
+import RepoCard from '$/components/mdx/RepoCard.astro';
+
+以精美卡片展示 GitHub 儲存庫。在渲染時即時抓取資料（星星數、fork 數、主要語言）。
+
+**基本用法——自動抓取標題與描述：**
+
+<RepoCard url="https://github.com/withastro/astro" />
+
+**自訂標題與描述：**
+
+<RepoCard
+  url="https://github.com/withastro/astro"
+  title="Astro"
+  desc="為內容驅動網站打造的 web 框架，讓你用喜歡的 UI 元件快速建站。"
+/>

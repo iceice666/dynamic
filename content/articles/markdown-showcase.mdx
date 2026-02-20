@@ -201,3 +201,23 @@ Admonitions work inside collapsibles too.
 Inline formatting in the summary renders correctly.
 
 :::
+
+---
+
+## Repo Cards
+
+import RepoCard from '$/components/mdx/RepoCard.astro';
+
+Display a GitHub repository as a rich card. Fetches live data (stars, forks, language) at render time.
+
+**Basic — auto-fetched title and description:**
+
+<RepoCard url="https://github.com/withastro/astro" />
+
+**With overrides — custom title and description:**
+
+<RepoCard
+  url="https://github.com/withastro/astro"
+  title="Astro"
+  desc="The web framework for content-driven websites. Build fast sites with your favourite UI components."
+/>
