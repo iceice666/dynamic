@@ -1,7 +1,7 @@
 ---
 import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
-import { formatDate } from '$/utils';
+import { formatDate, formatCategory } from '$/utils';
 import { BookOpen, Clock } from 'lucide-react';
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
   slug: string;
   publishedAt: Date;
   tags: string[];
-  categoryName?: string;
+  category?: string;
   wordCount?: number;
   readingTime?: number;
   translationLang?: string;
@@ -22,7 +22,7 @@ const {
   slug,
   publishedAt,
   tags,
-  categoryName,
+  category,
   wordCount,
   readingTime,
   translationLang,
@@ -37,7 +37,7 @@ const articlePath = translationLang
 <article class="card">
   <div class="label-uppercase">
     {t(locale, 'article_label')}
-    {categoryName && ` · ${categoryName}`}
+    {category && ` · ${formatCategory(category)}`}
     {
       translationLang && (
         <span class="border-border ml-1.5 rounded border px-1 py-0.5 text-[0.6rem] font-semibold tracking-wider uppercase opacity-60">

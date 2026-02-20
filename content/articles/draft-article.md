@@ -2,7 +2,6 @@
 title: This is a Draft
 description: A draft article — not shown in listings or search, but still accessible by direct URL.
 category: docs
-categoryName: Docs
 tags: [draft, reference]
 publishedAt: 2026-02-20
 draft: true

@@ -3,6 +3,14 @@ export function entrySlug(id: string): string {
   return id.replace(/\.(mdx?)$/, '');
 }
 
+/** Format a category slug as a human-readable display name (e.g. `web-performance` → `Web Performance`) */
+export function formatCategory(slug: string): string {
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 /** Format a Date as `YYYY{sep}MM{sep}DD` */
 export function formatDate(date: Date): string {
   const yyyy = date.getFullYear();

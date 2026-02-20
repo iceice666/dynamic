@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCollection, render } from 'astro:content';
-import { parseArticleId } from '$/utils';
+import { parseArticleId, formatCategory } from '$/utils';
 
 export const GET: APIRoute = async () => {
   const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => {
@@ -13,7 +13,7 @@ export const GET: APIRoute = async () => {
       tags: entry.data.tags,
       publishedAt: entry.data.publishedAt.toISOString(),
       category: entry.data.category ?? '',
-      categoryName: entry.data.categoryName ?? '',
+      categoryName: entry.data.category ? formatCategory(entry.data.category) : '',
       lang: fileLang ?? entry.data.lang,
       body: entry.body ?? '',
     };

@@ -14,7 +14,6 @@ const articles = defineCollection({
     title: z.string().optional(),
     description: z.string().optional(),
     category: z.string().optional(),
-    categoryName: z.string().optional(),
     tags: z.array(z.string()).default([]),
     publishedAt: z.date(),
     draft: z.boolean().default(false),

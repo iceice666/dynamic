@@ -2,7 +2,6 @@
 title: Article Frontmatter Reference
 description: Every frontmatter field the article schema supports, with types and explanations.
 category: docs
-categoryName: Docs
 tags: [reference, frontmatter]
 publishedAt: 2026-02-20
 draft: false
@@ -20,7 +19,6 @@ All fields an article in `content/articles/` can declare. Only `publishedAt` is 
 title: My Article Title
 description: A one-sentence summary for cards and SEO meta tags.
 category: engineering
-categoryName: Engineering
 tags: [astro, typescript, tutorial]
 publishedAt: 2026-01-15
 draft: false
@@ -48,18 +46,10 @@ description: A brief summary of what this article covers.
 
 ### `category` — `string` (optional)
 
-A URL-safe slug used to group articles and generate category pages. Lowercase, hyphens OK.
+A URL-safe slug used to group articles and generate category pages. Lowercase, hyphens OK. The display name is auto-derived (e.g. `web-performance` → `Web Performance`).
 
 ```yaml
 category: web-performance
-```
-
-### `categoryName` — `string` (optional)
-
-The human-readable display name for the category, shown in the UI. Should correspond to `category`.
-
-```yaml
-categoryName: Web Performance
 ```
 
 ### `tags` — `string[]` (default: `[]`)

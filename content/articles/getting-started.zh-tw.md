@@ -2,7 +2,6 @@
 title: 開始使用
 description: 快速導覽這個部落格的內容系統——文章、短文、翻譯與 frontmatter。
 category: docs
-categoryName: Docs
 tags: [guide, meta]
 publishedAt: 2026-02-20
 draft: false
@@ -23,7 +22,6 @@ draft: false
 title: 我的文章
 description: 顯示在卡片和 SEO 的簡短摘要。
 category: engineering        # 用於 URL 的 slug
-categoryName: Engineering    # 顯示在介面上的名稱
 tags: [astro, tutorial]
 publishedAt: 2026-01-15
 draft: false

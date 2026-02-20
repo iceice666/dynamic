@@ -2,7 +2,6 @@
 title: Getting Started
 description: A quick tour of this blog's content system — articles, posts, translations, and frontmatter.
 category: docs
-categoryName: Docs
 tags: [guide, meta]
 publishedAt: 2026-02-20
 draft: false
@@ -24,7 +23,6 @@ Articles live in `content/articles/`. They are long-form, structured pieces with
 title: My Article
 description: A short summary shown in cards and SEO.
 category: engineering        # slug used in URLs
-categoryName: Engineering    # display name shown in UI
 tags: [astro, tutorial]
 publishedAt: 2026-01-15
 draft: false
