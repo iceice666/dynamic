@@ -1,5 +1,5 @@
 import React from 'react';
-import { author } from '../../../dynamic.config';
+import { author } from '#/dynamic.config';
 import { useTranslation } from '$/i18n';
 import { socialHref, socialIcon } from '$/utils/social';
 import withStrictMode from '$/components/withStrictMode';

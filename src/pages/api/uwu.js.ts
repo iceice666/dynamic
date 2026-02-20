@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { umami } from '../../../dynamic.config';
+import { umami } from '#/dynamic.config';
 
 export const GET: APIRoute = async ({ locals }) => {
   const apiUrl = locals.runtime.env.UMAMI_API_URL ?? '';

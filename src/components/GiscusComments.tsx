@@ -1,7 +1,7 @@
 import Giscus from '@giscus/react';
 import { useSyncExternalStore } from 'react';
 import { useLocale } from '$/i18n/useLocale';
-import { giscus } from '../../dynamic.config';
+import { giscus } from '#/dynamic.config';
 
 function subscribeTheme(callback: () => void): () => void {
   const observer = new MutationObserver(callback);

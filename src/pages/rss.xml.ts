@@ -1,6 +1,6 @@
 import rss from '@astrojs/rss';
 import { getCollection, render } from 'astro:content';
-import { site } from '../../dynamic.config';
+import { site } from '#/dynamic.config';
 import { parseArticleId, formatDate, entrySlug } from '../utils';
 
 export const prerender = true;

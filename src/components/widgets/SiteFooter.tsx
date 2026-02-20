@@ -1,5 +1,5 @@
 import { useTranslation } from '$/i18n';
-import { author } from '../../../dynamic.config';
+import { author } from '#/dynamic.config';
 import { setMysteryUnlocked } from '$/stores/mystery';
 import VisitCounter from './VisitCounter';
 import withStrictMode from '$/components/withStrictMode';
