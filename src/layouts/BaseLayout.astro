@@ -127,26 +127,27 @@ const {
         </div>
       </aside>
 
-      <!-- Center: Content -->
-      <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
-        <slot />
-        <footer class="mobile-footer">
-          <SiteFooter client:load />
-        </footer>
-      </main>
+      <!-- Center: Content + TOC -->
+      <div class="center-wrapper">
+        <main class="center-col" transition:animate={fade({ duration: '0.2s' })}>
+          <slot />
+          <footer class="mobile-footer">
+            <SiteFooter client:load />
+          </footer>
+        </main>
 
-      <!-- Right: TOC panel (visible at wide viewports) -->
-      <aside class="right-col">
-        <div class="right-col-inner">
-          {
-            toc && toc.length > 0 && (
-              <div class="p-4">
-                <TOCWidget headings={toc} />
+        {
+          toc && toc.length > 0 && (
+            <aside class="right-col">
+              <div class="right-col-inner">
+                <div class="p-4">
+                  <TOCWidget headings={toc} />
+                </div>
               </div>
-            )
-          }
-        </div>
-      </aside>
+            </aside>
+          )
+        }
+      </div>
     </div>
     <BottomNav currentPath={Astro.url.pathname} toc={toc} />
 
@@ -248,9 +249,16 @@ const {
     height: 100%;
   }
 
-  .center-col {
+  .center-wrapper {
     grid-area: center;
     min-width: 0;
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .center-col {
+    min-width: 0;
+    flex: 1 1 0;
     padding: 2rem 1.5rem;
     width: 100%;
     max-width: 75ch;
@@ -262,15 +270,9 @@ const {
   }
 
   @media (min-width: 1201px) {
-    .site-layout {
-      grid-template-columns: clamp(180px, 20vw, 280px) 1fr 240px;
-      grid-template-areas: 'left center right';
-    }
-
     .right-col {
       display: block;
-      grid-area: right;
-      border-left: 1px solid var(--color-border);
+      flex: 0 0 240px;
       position: sticky;
       top: 0;
       height: 100vh;
