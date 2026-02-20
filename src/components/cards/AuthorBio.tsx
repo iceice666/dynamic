@@ -6,7 +6,7 @@ import withStrictMode from '$/components/withStrictMode';
 function AuthorBio() {
   return (
     <div
-      className="flex cursor-pointer flex-col gap-2 px-4 py-2 transition-opacity duration-150 hover:opacity-80"
+      className="@container flex cursor-pointer flex-col gap-2 px-4 py-2 transition-opacity duration-150 hover:opacity-80"
       onClick={() => {
         window.location.href = '/articles/about-me';
       }}
@@ -19,7 +19,7 @@ function AuthorBio() {
       }}
       aria-label="About me"
     >
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col items-center gap-2 @[160px]:flex-row @[160px]:gap-3">
         <img
           className="border-border h-12 w-12 shrink-0 rounded-full border-2 object-cover"
           src={author.avatar}
@@ -28,7 +28,7 @@ function AuthorBio() {
           height="48"
           loading="eager"
         />
-        <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex min-w-0 flex-col gap-0.5 text-center @[160px]:text-left">
           <span className="text-foreground text-sm font-semibold">{author.name}</span>
           <span className="text-muted text-xs leading-[1.4]">{author.tagline}</span>
         </div>

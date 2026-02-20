@@ -1,6 +1,5 @@
 ---
 import LeftNavList from './LeftNavList';
-import TOCWidget from '$/components/toc/TOCWidget.astro';
 import AuthorBio from '$/components/cards/AuthorBio';
 import SiteFooter from '$/components/widgets/SiteFooter';
 
@@ -9,8 +8,7 @@ interface Props {
   toc?: { depth: number; slug: string; text: string }[];
 }
 
-const { currentPath, toc } = Astro.props;
-const hasToc = toc && toc.length > 0;
+const { currentPath } = Astro.props;
 ---
 
 <nav class="left-nav flex h-full flex-col gap-4 p-4">
@@ -18,8 +16,7 @@ const hasToc = toc && toc.length > 0;
     <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
 
-  {!hasToc && <div class="flex-1" />}
-  {hasToc && <div class="left-toc-spacer flex-1" />}
+  <div class="flex-1"></div>
 
   <hr class="border-border" />
 
@@ -29,19 +26,3 @@ const hasToc = toc && toc.length > 0;
 
   <SiteFooter client:load />
 </nav>
-
-<style>
-  .left-toc-spacer {
-    display: none;
-  }
-
-  @media (min-width: 1201px) {
-    .left-toc-wrapper {
-      display: none;
-    }
-
-    .left-toc-spacer {
-      display: block;
-    }
-  }
-</style>
