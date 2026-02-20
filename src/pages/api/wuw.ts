@@ -128,7 +128,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         endAt: String(endAt),
         unit: 'year',
         timezone: 'UTC',
-        url: path,
+        path: path,
       });
       const pageviewsUrl = `${apiBase}/api/websites/${websiteId}/pageviews?${params}`;
       const res = await fetchWithRetry(pageviewsUrl);
