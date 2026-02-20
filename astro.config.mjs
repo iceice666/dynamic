@@ -1,6 +1,7 @@
 import { defineConfig } from 'astro/config';
 import { execSync } from 'child_process';
 import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const gitHash = (() => {
   try {
@@ -59,7 +60,7 @@ export default defineConfig({
     define: {
       __GIT_HASH__: JSON.stringify(gitHash),
     },
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), visualizer({ emitFile: true, filename: 'stats.html' })],
     resolve: {
       dedupe: ['react', 'react-dom', 'react-dom/server'],
     },
