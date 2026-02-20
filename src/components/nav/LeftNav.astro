@@ -18,17 +18,6 @@ const hasToc = toc && toc.length > 0;
     <LeftNavList client:load transition:persist currentPath={currentPath} />
   </div>
 
-  {
-    hasToc && (
-      <div class="left-toc-wrapper flex min-h-0 flex-1 flex-col gap-4">
-        <hr class="border-border" />
-        <div class="min-h-0 flex-1 overflow-y-auto">
-          <TOCWidget headings={toc} />
-        </div>
-      </div>
-    )
-  }
-
   {!hasToc && <div class="flex-1" />}
   {hasToc && <div class="left-toc-spacer flex-1" />}
 

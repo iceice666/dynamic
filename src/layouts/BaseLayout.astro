@@ -10,6 +10,7 @@ import ThemeButton from '$/components/controls/ThemeButton';
 import LanguageToggle from '$/components/controls/LanguageToggle';
 import TOCWidget from '$/components/toc/TOCWidget.astro';
 import TOCObserver from '$/components/toc/TOCObserver';
+import TOCFabDrawer from '$/components/toc/TOCFabDrawer.astro';
 import SiteFooter from '$/components/widgets/SiteFooter';
 import Kuasanxiao from '$/components/widgets/Kuasanxiao.astro';
 import MysteryButton from '$/components/controls/MysteryButton';
@@ -169,7 +170,22 @@ const {
       <div class="fab-btn fab-btn-wrapper">
         <LanguageToggle client:load compact align="right" />
       </div>
+      {
+        toc && toc.length > 0 && (
+          <div class="fab-btn fab-btn-wrapper toc-fab-wrapper">
+            <button
+              id="toc-fab-btn"
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-background border border-border text-foreground hover:bg-muted/50 hover:text-accent transition-colors shadow-sm"
+              aria-label="Table of Contents"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" x2="21" y1="6" y2="6"></line><line x1="8" x2="21" y1="12" y2="12"></line><line x1="8" x2="21" y1="18" y2="18"></line><line x1="3" x2="3.01" y1="6" y2="6"></line><line x1="3" x2="3.01" y1="12" y2="12"></line><line x1="3" x2="3.01" y1="18" y2="18"></line></svg>
+            </button>
+          </div>
+        )
+      }
     </div>
+
+    {toc && toc.length > 0 && <TOCFabDrawer headings={toc} />}
 
     <Kuasanxiao />
 
@@ -306,13 +322,24 @@ const {
     }
 
     .floating-controls {
-      display: none;
+      left: 1.5rem;
+      right: auto;
     }
 
     .mobile-footer {
       display: block;
       margin-top: 2rem;
       padding-bottom: 1rem;
+    }
+  }
+
+  .toc-fab-wrapper {
+    display: none;
+  }
+
+  @media (max-width: 1200px) {
+    .toc-fab-wrapper {
+      display: block;
     }
   }
 </style>
