@@ -1,0 +1,166 @@
+---
+title: Markdown Showcase
+description: Every markdown feature this blog supports — GFM, math, admonitions, spoilers, code blocks, and more.
+category: docs
+categoryName: Docs
+tags: [markdown, reference]
+publishedAt: 2026-02-20
+draft: false
+lang: en
+---
+
+# Markdown Showcase
+
+A complete reference of every markdown feature available in this blog. Use this as a copy-paste source when writing articles.
+
+## GFM: GitHub Flavored Markdown
+
+### Inline Formatting
+
+**Bold**, _italic_, ~~strikethrough~~, `inline code`, and **_bold italic_**.
+
+Smart punctuation is on: "curly quotes", 'apostrophes', and dashes -- like this --- are auto-converted.
+
+### Links
+
+[Internal link to Getting Started](/articles/getting-started)
+
+[External link opens in a new tab](https://astro.build)
+
+### Images
+
+![Astro logo](https://astro.build/assets/press/astro-icon-light.png)
+
+### Blockquote
+
+> "The best documentation is the one you actually read."
+>
+> — Someone on the internet
+
+### Task List
+
+- [x] GFM support
+- [x] Syntax highlighting
+- [x] Math rendering
+- [ ] Teleportation
+
+### Table
+
+| Plugin | What it does |
+| --- | --- |
+| `remark-math` + `rehype-katex` | LaTeX math rendering |
+| `remark-admonitions` | `:::note` / `:::tip` / `:::warning` / `:::danger` blocks |
+| `remark-spoiler` | `||spoiler text||` inline spoilers |
+| `rehype-accessible-emojis` | wraps emoji in `<span role="img" aria-label="...">` |
+| `remark-breaks` | single newline → `<br>` (no trailing spaces needed) |
+
+---
+
+## Code Blocks
+
+Code fences use [Shiki](https://shiki.style) for syntax highlighting. The language label and a copy button are injected automatically.
+
+```ts
+export function greet(name: string): string {
+  return `Hello, ${name}!`;
+}
+```
+
+```python
+def fib(n: int) -> int:
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+```
+
+```bash
+pnpm dev        # start dev server
+pnpm build      # production build
+pnpm check      # typecheck + lint
+```
+
+```json
+{
+  "name": "dynamic",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build"
+  }
+}
+```
+
+---
+
+## Math
+
+Powered by `remark-math` + `rehype-katex`.
+
+Inline: $E = mc^2$ and $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$
+
+Block:
+
+$$
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+$$
+
+$$
+\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}
+$$
+
+---
+
+## Admonitions
+
+Four callout types, rendered with distinct styles:
+
+:::note
+A **note** provides helpful background context. Good for "by the way" information.
+:::
+
+:::tip
+A **tip** highlights a best practice or shortcut the reader might not know.
+:::
+
+:::warning
+A **warning** flags a gotcha or something that commonly causes mistakes.
+:::
+
+:::danger
+A **danger** callout is for critical risks — data loss, security issues, breaking changes.
+:::
+
+---
+
+## Spoilers
+
+Wrap text in `||double pipes||` to create an inline spoiler (click to reveal):
+
+The answer is ||42||, of course.
+
+Spoilers can contain longer phrases: ||The butler did it all along.||
+
+---
+
+## Emoji
+
+Shortcodes (via `remark-emoji`): :rocket: :sparkles: :tada: :warning:
+
+Unicode emoji wrapped with accessible `aria-label` by `rehype-accessible-emojis`: 😄 ✨ 🚀 🎉
+
+---
+
+## Heading Anchors
+
+Every heading (`##`, `###`, etc.) gets a clickable anchor link. Hover over any heading on this page to see the :link: symbol appear. You can link directly to sections like [#math](#math) or [#admonitions](#admonitions).
+
+---
+
+## Line Breaks
+
+`remark-breaks` is enabled, so a single newline in source becomes a `<br>`.
+This line follows from the one above with just one newline.
+And this one too.
+
+Without `remark-breaks`, you'd need two trailing spaces or a blank line for a break.

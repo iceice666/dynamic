@@ -93,10 +93,10 @@ UMAMI_PASSWORD=""      # for self-hosted auth
 ## Project Structure
 
 ```text
-├── content/              # Markdown content collections
-│   ├── articles/         # Long-form articles
-│   │   └── about-me.md/  # About me page
-│   └── posts/            # Short-form posts/notes
+├── content/              # Markdown content (live feature reference)
+│   ├── articles/         # Long-form articles with full frontmatter support
+│   │   └── about-me.md   # Builtin About Me page
+│   └── posts/            # Short-form notes (minimal frontmatter)
 ├── src/
 │   ├── components/       # React and Astro components
 │   ├── layouts/          # Page layouts (Base, Article, etc.)
@@ -111,46 +111,19 @@ UMAMI_PASSWORD=""      # for self-hosted auth
 
 ## Content Management
 
-Content lives in `content/`.
+Content lives in `content/`. The files there serve as a **live reference** — each one demonstrates a real feature of the content system:
 
-- **Articles**: Long-form content in `content/articles/`.
-- **Posts**: Short updates or notes in `content/posts/`.
+| File | Demonstrates |
+| :--- | :--- |
+| `articles/getting-started.md` + `.zh-tw.md` | Translation pair, standard article frontmatter |
+| `articles/markdown-showcase.md` + `.zh-tw.md` | Every markdown feature (GFM, math, admonitions, spoilers, …) |
+| `articles/article-frontmatter.md` | All article schema fields with types and explanations |
+| `articles/draft-article.md` | `draft: true` behavior |
+| `posts/minimal.md` | Post with no frontmatter (date + tags auto-inferred) |
+| `posts/hashtag-tags.md` | Tags extracted from trailing `#tag #tag` line |
+| `posts/with-frontmatter.md` | Explicit `publishedAt` + `tags` in post frontmatter |
 
-### Article Frontmatter
-
-```yaml
----
-title: "My Amazing Post"       # Optional (auto-extracted from H1 if missing)
-description: "A summary..."    # Optional (auto-extracted from first paragraph)
-publishedAt: 2026-02-14        # Required
-tags: ["astro", "react"]       # Optional
-category: "Tech"               # Optional
-lang: "en"                     # "en" or "zh-tw" for default language
-draft: false                   # Set to true to hide in production
----
-```
-
-### Post Frontmatter
-
-Posts are minimal — all frontmatter is optional:
-
-```yaml
----
-publishedAt: 2026-02-14        # Optional (auto-read from git first-commit date)
-tags: ["astro", "react"]       # Optional (auto-extracted from trailing #tag lines)
----
-```
-
-If `publishedAt` is omitted, the date of the file's first git commit is used. If `tags` is omitted, the last line of the post body is checked — if it matches the pattern `#word #word ...`, those words become the tags and the line is removed from rendered output.
-
-### Internationalization (i18n)
-
-To translate an article, create a file with the corresponding language code extension:
-
-- `hello-world.md` (Default language)
-- `hello-world.zh-tw.md` (Traditional Chinese translation)
-
-The system automatically links translations based on the filename.
+For the full content reference, read those files directly or visit `/articles/getting-started` on the running site.
 
 ## Deployment
 
