@@ -4,7 +4,8 @@ import { t } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
-import { entrySlug } from '$/utils';
+import { entrySlug, formatDate } from '$/utils';
+import { Calendar } from 'lucide-react';
 
 const id = Astro.params.id;
 const posts = await getCollection('posts');
@@ -17,13 +18,13 @@ if (!entry) {
 
 const { Content, remarkPluginFrontmatter } = await render(entry);
 const { locale } = Astro.locals;
+const publishedAt: Date =
+  entry.data.publishedAt ?? remarkPluginFrontmatter?.publishedAt ?? new Date();
 ---
 
 <BaseLayout title={t(locale, 'post_label')}>
   <article class="prose prose-lg max-w-none">
-    <div
-      class="not-prose text-muted mb-4 text-[0.6875rem] font-semibold tracking-[0.08em] uppercase"
-    >
+    <div class="not-prose text-muted mb-4 text-[0.6875rem] font-semibold tracking-widest uppercase">
       {t(locale, 'post_label')}
     </div>
     <Content />
@@ -35,6 +36,10 @@ const { locale } = Astro.locals;
           </a>
         ))
       }
+      <span class="text-muted flex items-center gap-1 text-xs">
+        <Calendar size={12} aria-hidden="true" />
+        <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
+      </span>
       <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
   </article>

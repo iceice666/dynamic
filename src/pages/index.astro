@@ -75,7 +75,7 @@ const feed = [...articles, ...posts].sort(
           (() => {
             const PostContent = item.Content;
             return (
-              <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>
+              <PostCard publishedAt={item.publishedAt} tags={item.data.tags} slug={item.slug}>
                 <PostContent />
               </PostCard>
             );
