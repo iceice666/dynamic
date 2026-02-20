@@ -35,7 +35,7 @@ const articles = await Promise.all(
 const postsRaw = await getCollection('posts');
 const posts = await Promise.all(
   postsRaw.map(async (entry) => {
-    const { remarkPluginFrontmatter } = await render(entry);
+    const { remarkPluginFrontmatter, Content } = await render(entry);
     return {
       type: 'post' as const,
       slug: parseArticleId(entry.id).slug,
@@ -44,7 +44,7 @@ const posts = await Promise.all(
         ...entry.data,
         tags: entry.data.tags ?? remarkPluginFrontmatter?.tags ?? [],
       },
-      body: entry.body ?? '',
+      Content,
     };
   })
 );
@@ -72,9 +72,14 @@ const feed = [...articles, ...posts].sort(
             translationLang={item.translationLang}
           />
         ) : (
-          <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>
-            <p>{item.body}</p>
-          </PostCard>
+          (() => {
+            const PostContent = item.Content;
+            return (
+              <PostCard publishedAt={item.publishedAt} tags={item.data.tags}>
+                <PostContent />
+              </PostCard>
+            );
+          })()
         )
       )
     }

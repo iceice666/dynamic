@@ -12,6 +12,9 @@ import type { Root, Heading, Paragraph } from 'mdast';
  */
 export const remarkContentExtractor: Plugin<[], Root> = () => {
   const transformer: Transformer<Root> = (tree, file) => {
+    const filePath = file.history[0];
+    if (filePath?.includes('/content/posts/')) return;
+
     const frontmatter = file.data.astro?.frontmatter;
     if (!frontmatter) return;
 

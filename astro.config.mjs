@@ -27,6 +27,8 @@ import { remarkSpoiler } from './src/utils/remarkSpoiler.ts';
 import { remarkContentExtractor } from './src/utils/remarkContentExtractor.ts';
 import { remarkWordCount } from './src/utils/remarkWordCount.ts';
 import { remarkPostMeta } from './src/utils/remarkPostMeta.ts';
+import { remarkBanHeaders } from './src/utils/remarkBanHeaders.ts';
+import remarkBreaks from 'remark-breaks';
 import { codeBlockTransformer } from './src/utils/codeBlockTransformer.ts';
 
 import sitemap from '@astrojs/sitemap';
@@ -40,9 +42,14 @@ export default defineConfig({
   integrations: [
     react({
       babel: {
-        plugins: [['babel-plugin-react-compiler', {
-          sources: (filename) => !filename.includes('GiscusComments'),
-        }]],
+        plugins: [
+          [
+            'babel-plugin-react-compiler',
+            {
+              sources: (filename) => !filename.includes('GiscusComments'),
+            },
+          ],
+        ],
       },
     }),
     mdx(),
@@ -75,6 +82,8 @@ export default defineConfig({
       remarkContentExtractor,
       remarkPostMeta,
       remarkWordCount,
+      remarkBreaks,
+      remarkBanHeaders,
     ],
     rehypePlugins: [
       rehypeSlug,
