@@ -1,4 +1,6 @@
 ---
+import { marked } from 'marked';
+
 interface Props {
   url: string;
   title?: string;
@@ -130,14 +132,21 @@ try {
 
 const displayTitle = title ?? (data ? data.full_name : owner && repo ? `${owner}/${repo}` : url);
 const displayDesc = desc ?? data?.description ?? null;
+const renderer = new marked.Renderer();
+renderer.link = ({ href, text }) =>
+  `<a class="desc-link" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${text}</a>`;
+const displayDescHtml = displayDesc ? await marked.parseInline(displayDesc, { renderer }) : null;
 const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-accent)') : null;
 ---
 
-<a
+<div
   class="repo-card card not-prose"
-  href={data?.html_url ?? url}
-  target="_blank"
-  rel="noopener noreferrer"
+  role="link"
+  tabindex="0"
+  data-href={data?.html_url ?? url}
+  onclick="window.open(this.dataset.href, '_blank', 'noopener,noreferrer')"
+  onkeydown="if(event.key==='Enter'||event.key===' ')window.open(this.dataset.href,'_blank','noopener,noreferrer')"
+  aria-label={`Open ${displayTitle} repository`}
 >
   <div class="repo-header">
     {
@@ -170,7 +179,7 @@ const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-a
     </svg>
   </div>
 
-  {displayDesc && <p class="repo-desc">{displayDesc}</p>}
+  {displayDescHtml && <p class="repo-desc" set:html={displayDescHtml} />}
 
   {
     data && (
@@ -224,19 +233,15 @@ const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-a
       </div>
     )
   }
-</a>
+</div>
 
 <style>
   .repo-card {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    text-decoration: none;
     color: inherit;
-  }
-
-  .repo-card:hover {
-    text-decoration: none;
+    cursor: pointer;
   }
 
   .repo-header {
@@ -272,6 +277,12 @@ const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-a
   .repo-ext-icon {
     color: var(--color-muted);
     flex-shrink: 0;
+  }
+
+  :global(.desc-link) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   .repo-desc {
