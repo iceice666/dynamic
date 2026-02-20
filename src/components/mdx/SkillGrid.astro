@@ -25,7 +25,8 @@ function resolveSkill(skill: Skill): { icon: SimpleIcon | null; label: string } 
   }
   const [key, desc] = Object.entries(skill)[0];
   const icon = siLib[toSiKey(key)] ?? null;
-  return { icon, label: desc };
+  const label = icon ? desc : `${key}: ${desc}`;
+  return { icon, label };
 }
 ---
 
