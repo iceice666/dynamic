@@ -19,7 +19,7 @@ export function formatCount(n: number, locale: string = 'en'): string {
  */
 export async function fetchUmamiStats(path?: string): Promise<UmamiStats | null> {
   try {
-    const apiPath = path ? `/api/wuw?path=${encodeURIComponent(path)}` : '/api/wuw';
+    const apiPath = path ? `/api/wuw/?path=${encodeURIComponent(path)}` : '/api/wuw/';
     const res = await fetch(apiPath);
     if (!res.ok) throw new Error('non-ok');
     const data: UmamiStats = await res.json();
