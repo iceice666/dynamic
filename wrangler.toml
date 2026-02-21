@@ -5,6 +5,7 @@ workers_dev = true
 
 [assets]
 directory = "dist"
+binding = "ASSETS"
 
 [observability]
 enabled = true
