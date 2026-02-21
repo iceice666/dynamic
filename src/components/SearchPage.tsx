@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import withStrictMode from '$/components/withStrictMode';
 import { useTranslation } from '$/i18n';
@@ -152,13 +152,24 @@ function SearchPage() {
               {results.length} {t('search_results_count')} &ldquo;{trimmed}&rdquo;
             </p>
             <div className="flex flex-col gap-4">
-              {results.map((item) =>
-                item.type === 'article' ? (
-                  <ArticleResult key={`article-${item.slug}`} item={item} setQuery={setQuery} />
-                ) : (
-                  <PostResult key={`post-${item.slug}`} item={item} setQuery={setQuery} />
-                )
-              )}
+              {Object.values(
+                results.reduce((acc, item) => {
+                  if (item.type === 'post') {
+                    acc[`post-${item.slug}`] = [item];
+                  } else {
+                    const key = `article-${item.slug}`;
+                    if (!acc[key]) acc[key] = [];
+                    acc[key].push(item);
+                  }
+                  return acc;
+                }, {} as Record<string, SearchItem[]>)
+              ).map((group) => {
+                const first = group[0]!;
+                if (first.type === 'post') {
+                  return <PostResult key={`post-${first.slug}`} item={first} setQuery={setQuery} />;
+                }
+                return <ArticleResultGroup key={`article-${first.slug}`} group={group} setQuery={setQuery} />;
+              })}
             </div>
           </>
         ) : (
@@ -176,30 +187,47 @@ function SearchPage() {
   );
 }
 
-function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
-  const { t } = useTranslation();
+function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery: (q: string) => void }) {
+  const { t, locale } = useTranslation();
+  const [showTranslations, setShowTranslations] = useState(false);
+
+  // Fallback to 'en' or the first available item if exact lang not found
+  const primaryItem =
+    group.find((item) => (item.lang || 'en') === locale) ||
+    group.find((item) => (item.lang || 'en') === 'en') ||
+    group[0]!;
+
+  const otherTranslations = group.filter((item) => item !== primaryItem);
+
   return (
-    <article className="card">
-      <div className="label-uppercase">
-        {t('article_label')}
-        {item.categoryName && ` \u00b7 ${item.categoryName}`}
+    <article className="card flex flex-col gap-2">
+      <div className="label-uppercase flex items-center gap-1.5 flex-wrap">
+        <span>
+          {t('article_label')}
+          {primaryItem.categoryName && ` \u00b7 ${primaryItem.categoryName}`}
+        </span>
+        {primaryItem.lang && primaryItem.lang !== 'en' && (
+          <span className="border-border rounded border px-1 py-0.5 text-[0.6rem] font-semibold tracking-wider uppercase opacity-60">
+            {primaryItem.lang}
+          </span>
+        )}
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
         <a
-          href={`/articles/${item.slug}${item.lang && item.lang !== 'en' ? `?lang=${item.lang}` : ''}`}
+          href={`/articles/${primaryItem.slug}${primaryItem.lang && primaryItem.lang !== 'en' ? `?lang=${primaryItem.lang}` : ''}`}
           className="link-accent"
         >
-          {item.title}
+          {primaryItem.title}
         </a>
       </h2>
-      {item.description && (
+      {primaryItem.description && (
         <p className="excerpt text-muted m-0 overflow-hidden text-sm leading-normal">
-          {item.description}
+          {primaryItem.description}
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">
-          {item.tags.map((tag) => (
+          {primaryItem.tags.map((tag) => (
             <button
               key={tag}
               type="button"
@@ -211,21 +239,67 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
           ))}
         </div>
         <div className="flex-1" />
-        <time className="text-muted text-xs" dateTime={item.publishedAt}>
-          {formatDate(item.publishedAt)}
+        <time className="text-muted text-xs" dateTime={primaryItem.publishedAt}>
+          {formatDate(primaryItem.publishedAt)}
         </time>
       </div>
+
+      {otherTranslations.length > 0 && (
+        <div className="mt-2 border-t border-border/50 pt-2">
+          <button
+            type="button"
+            onClick={() => setShowTranslations(!showTranslations)}
+            className="text-muted flex items-center gap-1 text-xs hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-transform ${showTranslations ? 'rotate-180' : ''}`}
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+            {otherTranslations.length} {showTranslations ? 'Hide' : 'Other'} translation{otherTranslations.length > 1 ? 's' : ''}
+          </button>
+          
+          {showTranslations && (
+            <div className="mt-2 flex flex-col gap-2 pl-4 border-l-2 border-border/50">
+              {otherTranslations.map((trans) => (
+                <div key={trans.lang} className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    {trans.lang && trans.lang !== 'en' && (
+                      <span className="border-border rounded border px-1 py-px text-[0.55rem] font-semibold tracking-wider uppercase opacity-60">
+                        {trans.lang}
+                      </span>
+                    )}
+                    <a
+                      href={`/articles/${trans.slug}${trans.lang && trans.lang !== 'en' ? `?lang=${trans.lang}` : ''}`}
+                      className="link-accent text-sm font-medium"
+                    >
+                      {trans.title}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </article>
   );
 }
 
 function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   const { t } = useTranslation();
-  const previewMarkdown = useMemo(() => getPostPreviewMarkdown(item.body), [item.body]);
-  const previewHtml = useMemo(() => {
-    const out = marked.parse(previewMarkdown, { breaks: true });
-    return typeof out === 'string' ? out : null;
-  }, [previewMarkdown]);
+  const previewMarkdown = getPostPreviewMarkdown(item.body);
+  const out = marked.parse(previewMarkdown, { breaks: true });
+  const previewHtml = typeof out === 'string' ? out : null;
 
   return (
     <article className="card">
