@@ -145,7 +145,7 @@ const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-a
   tabindex="0"
   data-href={data?.html_url ?? url}
   onclick="window.open(this.dataset.href, '_blank', 'noopener,noreferrer')"
-  onkeydown="if(event.key==='Enter'||event.key===' ')window.open(this.dataset.href,'_blank','noopener,noreferrer')"
+  onkeydown="if(arguments[0].key==='Enter'||arguments[0].key===' ')window.open(this.dataset.href,'_blank','noopener,noreferrer')"
   aria-label={`Open ${displayTitle} repository`}
 >
   <div class="repo-header">
