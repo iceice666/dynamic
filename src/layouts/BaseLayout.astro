@@ -131,17 +131,13 @@ const { locale } = Astro.locals;
           </footer>
         </main>
 
-        {
-          toc && toc.length > 0 && (
-            <aside class="right-col">
-              <div class="right-col-inner">
-                <div class="p-4">
-                  <TOCWidget headings={toc} />
-                </div>
-              </div>
-            </aside>
-          )
-        }
+        <aside class="right-col">
+          <div class="right-col-inner">
+            <div class="p-4">
+              {toc && toc.length > 0 && <TOCWidget headings={toc} />}
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
     <BottomNav currentPath={Astro.url.pathname} toc={toc} />
