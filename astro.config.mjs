@@ -74,10 +74,10 @@ export default defineConfig({
     plugins: [tailwindcss(), visualizer({ emitFile: true, filename: 'stats.html' })],
     resolve: {
       alias: { '#': new URL('.', import.meta.url).pathname },
-      dedupe: ['react', 'react-dom', 'react-dom/server'],
+      dedupe: ['react', 'react-dom', 'react-dom/server', 'react/compiler-runtime'],
     },
     optimizeDeps: {
-      include: ['react', 'react-dom'],
+      include: ['react', 'react-dom', 'react/compiler-runtime'],
     },
   },
   i18n: {
