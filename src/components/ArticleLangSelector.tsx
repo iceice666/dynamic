@@ -3,8 +3,6 @@ import { navigate } from 'astro:transitions/client';
 import { Languages, ChevronDown } from 'lucide-react';
 import withStrictMode from '$/components/withStrictMode';
 
-const COOKIE_KEY = 'dynamic:article-lang';
-
 const LANG_LABELS: Record<string, string> = {
   en: 'English',
   'zh-tw': '中文',
@@ -26,9 +24,8 @@ function ArticleLangSelector({ available, currentLang }: Props) {
 
   useEffect(() => {
     if (!pendingLang) return;
-    document.cookie = `${COOKIE_KEY}=${pendingLang};max-age=31536000;path=/;SameSite=Lax`;
     const url = new URL(location.href);
-    url.searchParams.delete('lang');
+    url.searchParams.set('lang', pendingLang);
     navigate(url.toString());
   }, [pendingLang]);
 

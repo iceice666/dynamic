@@ -2,7 +2,7 @@
 import BaseLayout from '$/layouts/BaseLayout.astro';
 import AuthorBio from '$/components/cards/AuthorBio';
 import ArticleLangSelector from '$/components/ArticleLangSelector';
-import { t } from '$/i18n';
+import { t, getLocaleLink } from '$/i18n';
 import { locales } from '$/i18n/ui';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
@@ -12,7 +12,7 @@ import { Calendar, BookOpen, Clock } from 'lucide-react';
 import type { CollectionEntry } from 'astro:content';
 
 const slug = Astro.params.slug;
-const { locale, articleLocale } = Astro.locals;
+const { locale } = Astro.locals;
 
 const all = await getCollection('articles', ({ data }) => !data.draft);
 
@@ -34,10 +34,10 @@ const effectiveLang = (a: CollectionEntry<'articles'>): string =>
 const group = all.filter((a) => parseArticleId(a.id).slug === slug);
 if (group.length === 0) return Astro.redirect('/404');
 
-// ?lang= query param overrides the cookie-based articleLocale for this render
+// ?lang= query param overrides the URL locale for this render
 const urlLang = Astro.url.searchParams.get('lang');
 const preferredLang =
-  urlLang && (locales as readonly string[]).includes(urlLang) ? urlLang : articleLocale;
+  urlLang && (locales as readonly string[]).includes(urlLang) ? urlLang : locale;
 
 // Pick best variant for article locale (independent of UI locale), with fallbacks
 const entry =
@@ -67,7 +67,7 @@ const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
         {
           entry.data.tags.map((tag: string) => (
             <a
-              href={`/search?q=%23${tag}`}
+              href={`${getLocaleLink('/search', locale)}?q=%23${tag}`}
               class="text-accent text-xs no-underline hover:opacity-75"
             >
               #{tag}

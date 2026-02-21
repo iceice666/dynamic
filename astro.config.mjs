@@ -45,11 +45,22 @@ function remarkBreaks() {
 
 import sitemap from '@astrojs/sitemap';
 import { site } from './dynamic.config.ts';
+import { i18n, filterSitemapByDefaultLocale } from 'astro-i18n-aut/integration';
+
+const defaultLocale = 'en';
+const locales = {
+  en: 'en',
+  'zh-tw': 'zh-tw',
+};
 
 export default defineConfig({
   output: 'server',
   srcDir: './src',
   site: site.url,
+  trailingSlash: 'always',
+  build: {
+    format: 'directory',
+  },
   adapter: cloudflare({ imageService: 'compile' }),
   integrations: [
     react({
@@ -65,7 +76,20 @@ export default defineConfig({
       },
     }),
     mdx(),
-    sitemap(),
+    i18n({
+      locales,
+      defaultLocale,
+      exclude: [
+        'pages/api/**/*',
+        'pages/rss.xml.ts',
+        'pages/search-index.json.ts',
+        'pages/posts/**/*',
+      ],
+    }),
+    sitemap({
+      i18n: { locales, defaultLocale },
+      filter: filterSitemapByDefaultLocale({ defaultLocale }),
+    }),
   ],
   vite: {
     define: {
@@ -79,11 +103,6 @@ export default defineConfig({
     optimizeDeps: {
       include: ['react', 'react-dom', 'react/compiler-runtime'],
     },
-  },
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'zh-tw'],
-    routing: { prefixDefaultLocale: false },
   },
   markdown: {
     remarkPlugins: [

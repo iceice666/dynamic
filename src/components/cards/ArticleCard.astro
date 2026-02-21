@@ -1,5 +1,5 @@
 ---
-import { t } from '$/i18n';
+import { t, getLocaleLink, type Locale } from '$/i18n';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import { formatDate, formatCategory } from '$/utils';
 import { BookOpen, Clock } from 'lucide-react';
@@ -29,9 +29,9 @@ const {
 } = Astro.props;
 const { locale } = Astro.locals;
 
-const articlePath = translationLang
-  ? `/articles/${slug}?lang=${translationLang}`
-  : `/articles/${slug}`;
+// We dynamically route the link to the targeted UI locale that matches the article's translation.
+const targetLocale = translationLang && translationLang === 'zh-tw' ? 'zh-tw' : 'en';
+const articlePath = getLocaleLink(`/articles/${slug}`, targetLocale as Locale);
 ---
 
 <article class="card">
@@ -81,7 +81,7 @@ const articlePath = translationLang
     <div class="flex flex-wrap gap-1.5">
       {
         tags.map((tag) => (
-          <a href={`/search?q=%23${tag}`} class="tag-link">
+          <a href={`${getLocaleLink('/search', locale)}?q=%23${tag}`} class="tag-link">
             #{tag}
           </a>
         ))

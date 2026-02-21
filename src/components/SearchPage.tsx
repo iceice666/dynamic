@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { marked } from 'marked';
 import withStrictMode from '$/components/withStrictMode';
-import { useTranslation } from '$/i18n';
+import { useTranslation, getLocaleLink, type Locale } from '$/i18n';
 
 interface SearchItem {
   type: 'article' | 'post';
@@ -153,22 +153,31 @@ function SearchPage() {
             </p>
             <div className="flex flex-col gap-4">
               {Object.values(
-                results.reduce((acc, item) => {
-                  if (item.type === 'post') {
-                    acc[`post-${item.slug}`] = [item];
-                  } else {
-                    const key = `article-${item.slug}`;
-                    if (!acc[key]) acc[key] = [];
-                    acc[key].push(item);
-                  }
-                  return acc;
-                }, {} as Record<string, SearchItem[]>)
+                results.reduce(
+                  (acc, item) => {
+                    if (item.type === 'post') {
+                      acc[`post-${item.slug}`] = [item];
+                    } else {
+                      const key = `article-${item.slug}`;
+                      if (!acc[key]) acc[key] = [];
+                      acc[key].push(item);
+                    }
+                    return acc;
+                  },
+                  {} as Record<string, SearchItem[]>
+                )
               ).map((group) => {
                 const first = group[0]!;
                 if (first.type === 'post') {
                   return <PostResult key={`post-${first.slug}`} item={first} setQuery={setQuery} />;
                 }
-                return <ArticleResultGroup key={`article-${first.slug}`} group={group} setQuery={setQuery} />;
+                return (
+                  <ArticleResultGroup
+                    key={`article-${first.slug}`}
+                    group={group}
+                    setQuery={setQuery}
+                  />
+                );
               })}
             </div>
           </>
@@ -187,7 +196,13 @@ function SearchPage() {
   );
 }
 
-function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery: (q: string) => void }) {
+function ArticleResultGroup({
+  group,
+  setQuery,
+}: {
+  group: SearchItem[];
+  setQuery: (q: string) => void;
+}) {
   const { t, locale } = useTranslation();
   const [showTranslations, setShowTranslations] = useState(false);
 
@@ -201,7 +216,7 @@ function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery
 
   return (
     <article className="card flex flex-col gap-2">
-      <div className="label-uppercase flex items-center gap-1.5 flex-wrap">
+      <div className="label-uppercase flex flex-wrap items-center gap-1.5">
         <span>
           {t('article_label')}
           {primaryItem.categoryName && ` \u00b7 ${primaryItem.categoryName}`}
@@ -214,7 +229,10 @@ function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery
       </div>
       <h2 className="m-0 text-[1.0625rem] leading-[1.3] font-bold">
         <a
-          href={`/articles/${primaryItem.slug}${primaryItem.lang && primaryItem.lang !== 'en' ? `?lang=${primaryItem.lang}` : ''}`}
+          href={getLocaleLink(
+            `/articles/${primaryItem.slug}`,
+            (primaryItem.lang === 'zh-tw' ? 'zh-tw' : 'en') as Locale
+          )}
           className="link-accent"
         >
           {primaryItem.title}
@@ -245,11 +263,11 @@ function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery
       </div>
 
       {otherTranslations.length > 0 && (
-        <div className="mt-2 border-t border-border/50 pt-2">
+        <div className="border-border/50 mt-2 border-t pt-2">
           <button
             type="button"
             onClick={() => setShowTranslations(!showTranslations)}
-            className="text-muted flex items-center gap-1 text-xs hover:text-foreground transition-colors cursor-pointer bg-transparent border-none p-0"
+            className="text-muted hover:text-foreground flex cursor-pointer items-center gap-1 border-none bg-transparent p-0 text-xs transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -265,11 +283,12 @@ function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery
             >
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
-            {otherTranslations.length} {showTranslations ? 'Hide' : 'Other'} translation{otherTranslations.length > 1 ? 's' : ''}
+            {otherTranslations.length} {showTranslations ? 'Hide' : 'Other'} translation
+            {otherTranslations.length > 1 ? 's' : ''}
           </button>
-          
+
           {showTranslations && (
-            <div className="mt-2 flex flex-col gap-2 pl-4 border-l-2 border-border/50">
+            <div className="border-border/50 mt-2 flex flex-col gap-2 border-l-2 pl-4">
               {otherTranslations.map((trans) => (
                 <div key={trans.lang} className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-2">
@@ -279,7 +298,10 @@ function ArticleResultGroup({ group, setQuery }: { group: SearchItem[]; setQuery
                       </span>
                     )}
                     <a
-                      href={`/articles/${trans.slug}${trans.lang && trans.lang !== 'en' ? `?lang=${trans.lang}` : ''}`}
+                      href={getLocaleLink(
+                        `/articles/${trans.slug}`,
+                        (trans.lang === 'zh-tw' ? 'zh-tw' : 'en') as Locale
+                      )}
                       className="link-accent text-sm font-medium"
                     >
                       {trans.title}
@@ -301,9 +323,18 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
   const out = marked.parse(previewMarkdown, { breaks: true });
   const previewHtml = typeof out === 'string' ? out : null;
 
+  const postPath = `/posts/${item.slug}/`;
+
   return (
-    <article className="card">
-      <div className="label-uppercase">{t('post_label')}</div>
+    <article className="card relative">
+      <a
+        href={postPath}
+        className="absolute inset-0 rounded-[inherit]"
+        aria-label={t('post_label')}
+      ></a>
+      <div className="label-uppercase flex flex-wrap items-center gap-1.5">
+        <span>{t('post_label')}</span>
+      </div>
       {previewHtml ? (
         <div
           className="prose prose-sm text-foreground max-w-none"

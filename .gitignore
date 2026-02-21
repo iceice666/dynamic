@@ -21,3 +21,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# astro-i18n-aut
+astro_tmp_pages_*

@@ -28,6 +28,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.17.2",
+    "astro-i18n-aut": "^0.7.3",
     "canvas-confetti": "^1.9.4",
     "katex": "^0.16.28",
     "lucide-react": "^0.564.0",

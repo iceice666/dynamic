@@ -14,7 +14,7 @@ Built with cutting-edge web technologies:
 
 ## Features
 
-- 🌍 **Bilingual i18n**: Built-in support for English and Traditional Chinese (other languages welcome PR), with auto-detection and reactive language switching.
+- 🌍 **Bilingual i18n**: Built-in support for English and Traditional Chinese (other languages welcome PR) using `astro-i18n-aut` for seamless URL-based subpath routing (e.g., `/zh-tw/`).
 - 🎨 **Dynamic Theming**:
   - OKLCH-based design tokens for smooth color mixing.
   - Dark/Light/System modes.
@@ -65,13 +65,13 @@ The project is configured via `dynamic.config.ts` in the root directory.
 
 ### dynamic.config.ts
 
-| Section | Description |
-| :--- | :--- |
-| **Site** | Metadata like `url`, `title`, and `description` used for SEO, RSS, and the Sitemap. |
-| **Author** | Your profile details: `name`, `tagline`, `avatar`, and `socials`. |
-| **Friends** | List of friends/links to display on the `/friends` page. |
-| **Giscus** | GitHub Discussions comments config. Set `repo: ''` to disable. |
-| **Umami** | Analytics configuration (see below). |
+| Section     | Description                                                                         |
+| :---------- | :---------------------------------------------------------------------------------- |
+| **Site**    | Metadata like `url`, `title`, and `description` used for SEO, RSS, and the Sitemap. |
+| **Author**  | Your profile details: `name`, `tagline`, `avatar`, and `socials`.                   |
+| **Friends** | List of friends/links to display on the `/friends` page.                            |
+| **Giscus**  | GitHub Discussions comments config. Set `repo: ''` to disable.                      |
+| **Umami**   | Analytics configuration (see below).                                                |
 
 ### Environment Variables (Umami Analytics)
 
@@ -113,15 +113,15 @@ UMAMI_PASSWORD=""      # for self-hosted auth
 
 Content lives in `content/`. The files there serve as a **live reference** — each one demonstrates a real feature of the content system:
 
-| File | Demonstrates |
-| :--- | :--- |
-| `articles/getting-started.md` + `.zh-tw.md` | Translation pair, standard article frontmatter |
+| File                                          | Demonstrates                                                 |
+| :-------------------------------------------- | :----------------------------------------------------------- |
+| `articles/getting-started.md` + `.zh-tw.md`   | Translation pair, standard article frontmatter               |
 | `articles/markdown-showcase.md` + `.zh-tw.md` | Every markdown feature (GFM, math, admonitions, spoilers, …) |
-| `articles/article-frontmatter.md` | All article schema fields with types and explanations |
-| `articles/draft-article.md` | `draft: true` behavior |
-| `posts/minimal.md` | Post with no frontmatter (date + tags auto-inferred) |
-| `posts/hashtag-tags.md` | Tags extracted from trailing `#tag #tag` line |
-| `posts/with-frontmatter.md` | Explicit `publishedAt` + `tags` in post frontmatter |
+| `articles/article-frontmatter.md`             | All article schema fields with types and explanations        |
+| `articles/draft-article.md`                   | `draft: true` behavior                                       |
+| `posts/minimal.md`                            | Post with no frontmatter (date + tags auto-inferred)         |
+| `posts/hashtag-tags.md`                       | Tags extracted from trailing `#tag #tag` line                |
+| `posts/with-frontmatter.md`                   | Explicit `publishedAt` + `tags` in post frontmatter          |
 
 For the full content reference, read those files directly or visit `/articles/getting-started` on the running site.
 
@@ -151,11 +151,11 @@ npx wrangler deploy
 
 ## Commands
 
-| Command | Description |
-| :--- | :--- |
-| `pnpm dev` | Start the development server |
-| `pnpm build` | Build the project for production (`dist/`) |
-| `pnpm preview` | Preview the production build locally |
-| `pnpm check` | Run type-checking, linting, and formatting checks |
-| `pnpm lint:fix` | Auto-fix ESLint issues |
-| `pnpm format` | Format code with Prettier |
+| Command         | Description                                       |
+| :-------------- | :------------------------------------------------ |
+| `pnpm dev`      | Start the development server                      |
+| `pnpm build`    | Build the project for production (`dist/`)        |
+| `pnpm preview`  | Preview the production build locally              |
+| `pnpm check`    | Run type-checking, linting, and formatting checks |
+| `pnpm lint:fix` | Auto-fix ESLint issues                            |
+| `pnpm format`   | Format code with Prettier                         |

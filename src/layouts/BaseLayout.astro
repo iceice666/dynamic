@@ -28,10 +28,16 @@ const {
   UMAMI_API_URL: apiUrl = '',
   UMAMI_SCRIPT_URL: scriptUrl,
 } = Astro.locals.runtime.env;
+const { locale } = Astro.locals;
 ---
 
 <!doctype html>
-<html lang={contentLang || 'en'} transition:animate="none">
+<html
+  lang={contentLang || (locale === 'zh-tw' ? 'zh-TW' : 'en')}
+  data-lang={locale}
+  data-content-lang={contentLang || ''}
+  transition:animate="none"
+>
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
@@ -64,11 +70,6 @@ const {
         return document;
       }
 
-      function getCookie(name) {
-        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
-        return match ? decodeURIComponent(match[1]) : null;
-      }
-
       function applyThemeSettings(target) {
         const targetDocument = resolveTargetDocument(target);
         const root = targetDocument.documentElement;
@@ -96,13 +97,6 @@ const {
           });
         } else {
           root.classList.remove('rainbow-active');
-        }
-
-        // Cookie takes precedence (server source of truth); localStorage as fallback
-        const lang = getCookie('dynamic:lang') || localStorage.getItem('dynamic:lang') || 'en';
-        root.dataset.lang = lang;
-        if (!root.getAttribute('data-content-lang')) {
-          root.lang = lang === 'zh-tw' ? 'zh-TW' : 'en';
         }
       }
 

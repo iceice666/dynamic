@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Menu, Search, Users, X, type LucideIcon } from 'lucide-react';
 import { type UIKey } from '$/i18n/ui';
-import { useTranslation } from '$/i18n';
+import { useTranslation, getLocaleLink } from '$/i18n';
 import ThemeButtonTouch from '$/components/controls/ThemeButtonTouch';
 import LanguageToggleTouch from '$/components/controls/LanguageToggleTouch';
 import BottomNavTOC, { type TocHeading } from '$/components/toc/BottomNavTOC';
@@ -30,12 +30,15 @@ function isActivePath(pathname: string, href: string): boolean {
   const path = normalizePath(pathname);
   const target = normalizePath(href);
   if (target === '/') return path === '/';
+  if (target.endsWith('/')) {
+    return path === target || path.startsWith(target);
+  }
   return path === target || path.startsWith(`${target}/`);
 }
 
-function findActiveHref(pathname: string): string {
-  const found = NAV_ITEMS.find((item) => isActivePath(pathname, item.href));
-  return found?.href ?? NAV_ITEMS[0]?.href ?? '/';
+function findActiveHref(pathname: string, items: NavItem[]): string {
+  const found = items.find((item) => isActivePath(pathname, item.href));
+  return found?.href ?? items[0]?.href ?? '/';
 }
 
 // type TocHeading imported from BottomNavTOC
@@ -79,14 +82,27 @@ function updateIndicatorPosition({
 }
 
 function BottomNavList({ currentPath, toc }: BottomNavListProps) {
-  const { t } = useTranslation();
-  const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath));
+  const { t, locale } = useTranslation();
+
+  const localizedItems = React.useMemo(
+    () =>
+      NAV_ITEMS.map((item) => ({
+        ...item,
+        href: getLocaleLink(item.href, locale),
+      })),
+    [locale]
+  );
+
+  const [activeHref, setActiveHref] = useState(() => findActiveHref(currentPath, localizedItems));
   const [panelOpen, setPanelOpen] = useState(false);
   const pendingHrefRef = useRef<string | null>(null);
 
   const barRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
   const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+
+  const localizedItemsRef = useRef(localizedItems);
+  localizedItemsRef.current = localizedItems;
 
   const indicatorTransition =
     'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease';
@@ -109,7 +125,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
     const handleBeforePreparation = (event: Event) => {
       const to = (event as CustomEvent & { to?: URL }).to;
       if (to) {
-        pendingHrefRef.current = findActiveHref(to.pathname);
+        pendingHrefRef.current = findActiveHref(to.pathname, localizedItemsRef.current);
       }
     };
 
@@ -131,7 +147,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
     };
 
     const handlePageLoad = () => {
-      const nextHref = findActiveHref(window.location.pathname);
+      const nextHref = findActiveHref(window.location.pathname, localizedItemsRef.current);
       setActiveHref(nextHref);
       requestAnimationFrame(() =>
         updateIndicatorPosition({
@@ -293,7 +309,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
         />
 
         {/* Nav items */}
-        {NAV_ITEMS.map((item) => {
+        {localizedItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeHref === item.href;
 

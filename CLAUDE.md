@@ -60,7 +60,6 @@ pnpm format     # Auto-format with Prettier
     │   ├── controls/        # ThemeButton, LanguageToggle
     │   ├── widgets/         # VisitCounter, ArticleViewCount (Umami-backed)
     │   ├── GiscusComments.tsx
-    │   ├── I18nText.astro   # Dual-span i18n text utility
     │   ├── SearchPage.tsx   # Client-side full-text search
     │   └── withStrictMode.tsx  # HOC: wraps React components in <StrictMode>
     ├── content.config.ts    # Astro content collection schemas (articles + posts)
@@ -95,7 +94,7 @@ pnpm format     # Auto-format with Prettier
 React components (`.tsx`) run client-side. All are wrapped with `withStrictMode()` HOC before mounting. Key islands:
 - `ThemeButton` — dark/light/system toggle + accent hue slider + rainbow mode; persists to `localStorage` under `dynamic:theme`, `dynamic:accent-hue`, `dynamic:rainbow-mode`, `dynamic:rainbow-speed`
 - `TOCObserver` — IntersectionObserver-based TOC active-heading highlighting
-- `LanguageToggle` — switches locale, updates `localStorage` + `document.documentElement.dataset.lang`
+- `LanguageToggle` — switches locale by navigating to the corresponding localized URL subpath
 - `SearchPage` — fetches `/search-index.json` (cached module-level), supports `#tag` and `@category` syntax
 - `VisitCounter` / `ArticleViewCount` — fetch `/api/wuw` (Umami proxy)
 - `GiscusComments` — GitHub Discussions; disabled if `giscus.repo` is empty in `dynamic.config.ts`
@@ -103,11 +102,11 @@ React components (`.tsx`) run client-side. All are wrapped with `withStrictMode(
 ### i18n
 
 - Locales: `en` (default, no URL prefix) and `zh-tw` (prefix `/zh-tw/`).
-- Configured in `astro.config.mjs` via Astro's built-in `i18n` option.
+- Configured in `astro.config.mjs` via `astro-i18n-aut` for URL-based subpath routing.
 - Static translations live in `src/i18n/ui.ts`. Access them:
-  - **Astro components:** `t(key)` returns `{ en, 'zh-tw' }` for dual-span rendering via `<I18nText>`.
-  - **React islands:** `useTranslation()` hook reads `document.documentElement.dataset.lang` reactively.
-  - **aria-labels:** `i18nAriaLabel(key)` returns `{ 'aria-label', 'data-aria-en', 'data-aria-zh-tw' }`.
+  - **t() function:** `t(locale, key)` returns the translated string.
+  - **React islands:** `useTranslation()` hook provides `t` and `locale` initialized from the URL.
+  - **Links:** Use `getLocaleLink(path, locale)` to generate correctly prefixed URLs.
 
 ### Content
 

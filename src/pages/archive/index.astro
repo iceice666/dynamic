@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
-import { t } from '$/i18n';
+import { t, getLocaleLink, type Locale } from '$/i18n';
 import { getCollection, render } from 'astro:content';
 import { parseArticleId, formatDate, formatCategory } from '$/utils';
 
@@ -84,7 +84,7 @@ const archiveYears = Array.from(archiveGroups.entries())
               {categoryCounts.map(({ slug, name, count }) => (
                 <li>
                   <a
-                    href={`/search?q=@${slug}`}
+                    href={`${getLocaleLink('/search', locale)}?q=@${slug}`}
                     class="border-border bg-background hover:bg-muted-bg flex items-center justify-between rounded-lg border px-4 py-3 no-underline transition-colors duration-150"
                   >
                     <span class="text-foreground text-sm font-medium">{name}</span>
@@ -107,7 +107,7 @@ const archiveYears = Array.from(archiveGroups.entries())
             <div class="flex flex-wrap gap-2">
               {tagCounts.map(({ tag, count }) => (
                 <a
-                  href={`/search?q=%23${tag}`}
+                  href={`${getLocaleLink('/search', locale)}?q=%23${tag}`}
                   class="bg-muted-bg text-muted hover:text-foreground hover:bg-accent/10 rounded-full px-3 py-1 text-xs no-underline transition-colors duration-150"
                 >
                   #{tag} <span class="opacity-60">({count})</span>
@@ -139,7 +139,10 @@ const archiveYears = Array.from(archiveGroups.entries())
             {items.map((entry) => (
               <li>
                 <a
-                  href={`/articles/${entry.slug}${entry.translationLang !== 'en' ? `?lang=${entry.translationLang}` : ''}`}
+                  href={getLocaleLink(
+                    `/articles/${entry.slug}`,
+                    (entry.translationLang === 'zh-tw' ? 'zh-tw' : 'en') as Locale
+                  )}
                   class="border-border bg-background hover:bg-muted-bg flex items-center gap-3 rounded-lg border px-4 py-3 no-underline transition-colors duration-150"
                 >
                   <time
