@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { marked } from 'marked';
 import withStrictMode from '$/components/withStrictMode';
 import { useTranslation } from '$/i18n';
 
@@ -23,6 +24,33 @@ function formatDate(iso: string): string {
   const mm = String(d.getMonth() + 1).padStart(2, '0');
   const dd = String(d.getDate()).padStart(2, '0');
   return `${yyyy}/${mm}/${dd}`;
+}
+
+function stripTrailingHashtagTagLine(body: string): string {
+  const withoutTrailingWhitespace = body.replace(/\s+$/g, '');
+  const lines = withoutTrailingWhitespace.split(/\r?\n/);
+
+  let lastIndex = lines.length - 1;
+  while (lastIndex >= 0 && lines[lastIndex]!.trim() === '') lastIndex--;
+  if (lastIndex < 0) return '';
+
+  const lastLine = lines[lastIndex]!.trim();
+  if (!/^(#\w+\s*)+$/.test(lastLine)) return lines.join('\n');
+
+  lines.splice(lastIndex, 1);
+  while (lines.length > 0 && lines[lines.length - 1]!.trim() === '') lines.pop();
+  return lines.join('\n');
+}
+
+function getPostPreviewMarkdown(body: string): string {
+  const cleaned = stripTrailingHashtagTagLine(body).trim();
+  if (!cleaned) return '';
+
+  const blankLineMatch = cleaned.match(/\r?\n\s*\r?\n/);
+  let preview = blankLineMatch?.index != null ? cleaned.slice(0, blankLineMatch.index) : cleaned;
+
+  if (preview.length > 500) preview = `${preview.slice(0, 500).trimEnd()}...`;
+  return preview;
 }
 
 function SearchPage() {
@@ -193,12 +221,23 @@ function ArticleResult({ item, setQuery }: { item: SearchItem; setQuery: (q: str
 
 function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   const { t } = useTranslation();
+  const previewMarkdown = useMemo(() => getPostPreviewMarkdown(item.body), [item.body]);
+  const previewHtml = useMemo(() => {
+    const out = marked.parse(previewMarkdown, { breaks: true });
+    return typeof out === 'string' ? out : null;
+  }, [previewMarkdown]);
+
   return (
     <article className="card">
       <div className="label-uppercase">{t('post_label')}</div>
-      <div className="text-foreground max-w-none text-sm">
-        {item.body.length >= 500 ? item.body.slice(0, 500) + '...' : item.body}
-      </div>
+      {previewHtml ? (
+        <div
+          className="prose prose-sm text-foreground max-w-none"
+          dangerouslySetInnerHTML={{ __html: previewHtml }}
+        />
+      ) : (
+        <div className="text-foreground max-w-none text-sm">{previewMarkdown}</div>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">
           {item.tags.map((tag) => (
