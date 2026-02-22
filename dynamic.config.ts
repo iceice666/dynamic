@@ -141,4 +141,3 @@ export const site = {
   /** The site description, used for RSS/Sitemap */
   description: 'A dynamic blog built with Astro',
 };
-

@@ -14,7 +14,7 @@ import TOCFabDrawer from '$/components/toc/TOCFabDrawer.astro';
 import SiteFooter from '$/components/widgets/SiteFooter';
 import Kuasanxiao from '$/components/widgets/Kuasanxiao.astro';
 import MysteryButton from '$/components/controls/MysteryButton';
-import { umami } from '#/dynamic.config';
+import { umami, author } from '#/dynamic.config';
 
 interface Props {
   title: string;
@@ -42,9 +42,10 @@ const { locale } = Astro.locals;
     <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href={author.avatar} />
+    <link rel="icon" href={author.avatar} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={author.tagline} />
     <title>{title}</title>
 
     {
