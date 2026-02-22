@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { marked } from 'marked';
-import withStrictMode from '$/components/withStrictMode';
 import { useTranslation, getLocaleLink, type Locale } from '$/i18n';
+import { formatDate } from '$/utils';
+import withStrictMode from '$/components/withStrictMode';
 
 interface SearchItem {
   type: 'article' | 'post';
@@ -14,44 +14,10 @@ interface SearchItem {
   categoryName: string;
   lang: string;
   body: string;
+  previewHtml: string;
 }
 
 let cachedIndex: SearchItem[] | null = null;
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${yyyy}/${mm}/${dd}`;
-}
-
-function stripTrailingHashtagTagLine(body: string): string {
-  const withoutTrailingWhitespace = body.replace(/\s+$/g, '');
-  const lines = withoutTrailingWhitespace.split(/\r?\n/);
-
-  let lastIndex = lines.length - 1;
-  while (lastIndex >= 0 && lines[lastIndex]!.trim() === '') lastIndex--;
-  if (lastIndex < 0) return '';
-
-  const lastLine = lines[lastIndex]!.trim();
-  if (!/^(#\w+\s*)+$/.test(lastLine)) return lines.join('\n');
-
-  lines.splice(lastIndex, 1);
-  while (lines.length > 0 && lines[lines.length - 1]!.trim() === '') lines.pop();
-  return lines.join('\n');
-}
-
-function getPostPreviewMarkdown(body: string): string {
-  const cleaned = stripTrailingHashtagTagLine(body).trim();
-  if (!cleaned) return '';
-
-  const blankLineMatch = cleaned.match(/\r?\n\s*\r?\n/);
-  let preview = blankLineMatch?.index != null ? cleaned.slice(0, blankLineMatch.index) : cleaned;
-
-  if (preview.length > 500) preview = `${preview.slice(0, 500).trimEnd()}...`;
-  return preview;
-}
 
 function SearchPage() {
   const { t } = useTranslation();
@@ -258,7 +224,7 @@ function ArticleResultGroup({
         </div>
         <div className="flex-1" />
         <time className="text-muted text-xs" dateTime={primaryItem.publishedAt}>
-          {formatDate(primaryItem.publishedAt)}
+          {formatDate(new Date(primaryItem.publishedAt))}
         </time>
       </div>
 
@@ -319,9 +285,7 @@ function ArticleResultGroup({
 
 function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string) => void }) {
   const { t } = useTranslation();
-  const previewMarkdown = getPostPreviewMarkdown(item.body);
-  const out = marked.parse(previewMarkdown, { breaks: true });
-  const previewHtml = typeof out === 'string' ? out : null;
+  const previewHtml = item.previewHtml;
 
   const postPath = `/posts/${item.slug}/`;
 
@@ -341,7 +305,7 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
           dangerouslySetInnerHTML={{ __html: previewHtml }}
         />
       ) : (
-        <div className="text-foreground max-w-none text-sm">{previewMarkdown}</div>
+        <div className="text-foreground max-w-none text-sm">{item.body.slice(0, 200)}...</div>
       )}
       <div className="flex flex-wrap items-center gap-2">
         <div className="flex flex-wrap gap-1.5">
@@ -358,7 +322,7 @@ function PostResult({ item, setQuery }: { item: SearchItem; setQuery: (q: string
         </div>
         <div className="flex-1" />
         <time className="text-muted text-xs" dateTime={item.publishedAt}>
-          {formatDate(item.publishedAt)}
+          {formatDate(new Date(item.publishedAt))}
         </time>
       </div>
     </article>

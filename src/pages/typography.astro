@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '$/layouts/BaseLayout.astro';
+
+if (import.meta.env.PROD) {
+  return new Response(null, { status: 404 });
+}
 ---
 
 <BaseLayout title="Typography System">

@@ -10,7 +10,7 @@ const gitHash = (() => {
     return 'unknown';
   }
 })();
-import react from '@astrojs/react';
+import preact from '@astrojs/preact';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
 import remarkMath from 'remark-math';
@@ -63,17 +63,8 @@ export default defineConfig({
   },
   adapter: cloudflare({ imageService: 'compile' }),
   integrations: [
-    react({
-      babel: {
-        plugins: [
-          [
-            'babel-plugin-react-compiler',
-            {
-              sources: (filename) => !filename.includes('GiscusComments'),
-            },
-          ],
-        ],
-      },
+    preact({
+      compat: true,
     }),
     mdx(),
     i18n({
@@ -84,11 +75,13 @@ export default defineConfig({
         'pages/rss.xml.ts',
         'pages/search-index.json.ts',
         'pages/posts/**/*',
+        'pages/typography.astro',
       ],
     }),
     sitemap({
       i18n: { locales, defaultLocale },
-      filter: filterSitemapByDefaultLocale({ defaultLocale }),
+      filter: (page) =>
+        filterSitemapByDefaultLocale({ defaultLocale })(page) && !page.includes('/typography'),
     }),
   ],
   vite: {
@@ -97,11 +90,16 @@ export default defineConfig({
     },
     plugins: [tailwindcss(), visualizer({ emitFile: true, filename: 'stats.html' })],
     resolve: {
-      alias: { '#': new URL('.', import.meta.url).pathname },
-      dedupe: ['react', 'react-dom', 'react-dom/server', 'react/compiler-runtime'],
+      alias: {
+        '#': new URL('.', import.meta.url).pathname,
+        react: 'preact/compat',
+        'react-dom': 'preact/compat',
+        'react-dom/test-utils': 'preact/test-utils',
+        'react/jsx-runtime': 'preact/jsx-runtime',
+      },
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react/compiler-runtime'],
+      include: ['react', 'react-dom'],
     },
   },
   markdown: {

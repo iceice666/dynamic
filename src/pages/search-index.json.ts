@@ -1,6 +1,8 @@
 import type { APIRoute } from 'astro';
 import { getCollection, render } from 'astro:content';
 import { parseArticleId, formatCategory } from '$/utils';
+import { marked } from 'marked';
+import { getPostPreviewMarkdown } from '$/utils/search';
 
 export const GET: APIRoute = async () => {
   const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => {
@@ -23,6 +25,9 @@ export const GET: APIRoute = async () => {
   const posts = await Promise.all(
     postsRaw.map(async (entry) => {
       const { remarkPluginFrontmatter } = await render(entry);
+      const previewMarkdown = getPostPreviewMarkdown(entry.body ?? '');
+      const previewHtml = await marked.parse(previewMarkdown, { breaks: true });
+
       return {
         type: 'post' as const,
         slug: parseArticleId(entry.id).slug,
@@ -37,6 +42,7 @@ export const GET: APIRoute = async () => {
         category: '',
         categoryName: '',
         body: entry.body ?? '',
+        previewHtml: typeof previewHtml === 'string' ? previewHtml : '',
       };
     })
   );
