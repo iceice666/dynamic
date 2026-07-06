@@ -41,7 +41,7 @@ const { locale } = Astro.locals;
   <head>
     <ClientRouter />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/png" href={author.avatar} />
     <link rel="icon" href={author.avatar} />
     <meta name="generator" content={Astro.generator} />
@@ -325,7 +325,7 @@ const { locale } = Astro.locals;
     .site-layout {
       grid-template-columns: 1fr;
       grid-template-areas: 'center';
-      padding-bottom: 64px;
+      padding-bottom: calc(64px + env(safe-area-inset-bottom));
     }
 
     .left-col {
@@ -335,6 +335,8 @@ const { locale } = Astro.locals;
     .floating-controls {
       left: 1.5rem;
       right: auto;
+      /* Sit above the fixed bottom nav instead of underneath it */
+      bottom: calc(56px + env(safe-area-inset-bottom) + 1rem);
     }
 
     .fab-btn-wrapper {

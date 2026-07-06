@@ -66,10 +66,7 @@ const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
       <div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
         {
           entry.data.tags.map((tag: string) => (
-            <a
-              href={`${getLocaleLink('/search', locale)}?q=%23${tag}`}
-              class="text-accent text-xs no-underline hover:opacity-75"
-            >
+            <a href={`${getLocaleLink('/search', locale)}?q=%23${tag}`} class="tag-link">
               #{tag}
             </a>
           ))

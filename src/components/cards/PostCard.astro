@@ -1,7 +1,8 @@
 ---
 import { t, getLocaleLink } from '$/i18n';
-import { formatDate } from '$/utils';
+import { formatDate, formatRelativeDate } from '$/utils';
 import ArticleViewCount from '$/components/widgets/ArticleViewCount';
+import { author } from '#/dynamic.config';
 
 interface Props {
   publishedAt: Date;
@@ -17,8 +18,29 @@ const postPath = `/posts/${slug}/`;
 <article class="card relative">
   <a href={postPath} class="absolute inset-0 rounded-[inherit]" aria-label={t(locale, 'post_label')}
   ></a>
-  <div class="label-uppercase">
-    {t(locale, 'post_label')}
+
+  <div class="flex items-center gap-3">
+    <img
+      src={author.avatar}
+      alt=""
+      width="40"
+      height="40"
+      loading="lazy"
+      class="border-border h-10 w-10 shrink-0 rounded-full border"
+    />
+    <div class="flex min-w-0 flex-col">
+      <span class="text-foreground truncate text-sm leading-tight font-semibold">{author.name}</span
+      >
+      <time
+        class="text-muted text-xs"
+        datetime={publishedAt.toISOString()}
+        title={formatDate(publishedAt)}
+      >
+        {formatRelativeDate(publishedAt, t(locale, 'date_format'))}
+      </time>
+    </div>
+    <div class="flex-1"></div>
+    <span class="label-uppercase">{t(locale, 'post_label')}</span>
   </div>
 
   <div class="prose prose-sm text-foreground max-w-none">
@@ -36,9 +58,5 @@ const postPath = `/posts/${slug}/`;
       }
     </div>
     <ArticleViewCount client:idle path={postPath} />
-    <div class="flex-1"></div>
-    <time class="text-muted text-xs" datetime={publishedAt.toISOString()}
-      >{formatDate(publishedAt)}</time
-    >
   </div>
 </article>

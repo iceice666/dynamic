@@ -20,6 +20,27 @@ export function formatDate(date: Date): string {
 }
 
 /**
+ * Format a Date relative to now ("5 minutes ago", "3 天前").
+ * Falls back to the absolute `formatDate` beyond 7 days or for future dates.
+ * `localeTag` is a BCP 47 tag (use `t(locale, 'date_format')`).
+ */
+export function formatRelativeDate(date: Date, localeTag: string): string {
+  const diffSec = Math.round((Date.now() - date.getTime()) / 1000);
+  if (diffSec < 0) return formatDate(date);
+  if (diffSec < 45) {
+    return new Intl.RelativeTimeFormat(localeTag, { numeric: 'auto' }).format(0, 'second');
+  }
+  const rtf = new Intl.RelativeTimeFormat(localeTag, { numeric: 'always' });
+  const diffMin = Math.round(diffSec / 60);
+  if (diffMin < 60) return rtf.format(-diffMin, 'minute');
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return rtf.format(-diffHr, 'hour');
+  const diffDay = Math.round(diffHr / 24);
+  if (diffDay < 7) return rtf.format(-diffDay, 'day');
+  return formatDate(date);
+}
+
+/**
  * Parse a content collection entry ID into its base slug and optional lang suffix.
  *
  * Convention:

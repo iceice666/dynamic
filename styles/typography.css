@@ -8,8 +8,10 @@
   font-family: var(--font-mono);
 }
 
-/* Flip Tailwind Typography prose variables for dark mode */
-html.dark .prose {
+/* Map Tailwind Typography prose variables onto the site's design tokens.
+   The tokens themselves flip under html.dark, so one block covers both modes
+   (and light mode gets accent links/quote borders too). */
+.prose {
   --tw-prose-body: var(--color-foreground);
   --tw-prose-headings: var(--color-foreground);
   --tw-prose-lead: var(--color-muted);
@@ -32,4 +34,16 @@ html.dark .prose {
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *))::before,
 .prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *))::after {
   content: '' !important;
+}
+
+/* Inline code as a subtle chip (block code inside <pre> keeps Shiki's styling) */
+.prose :where(code):not(:where([class~='not-prose'], [class~='not-prose'] *, pre *)) {
+  background: var(--color-muted-bg);
+  border-radius: 0.3rem;
+  padding: 0.15em 0.4em;
+}
+
+/* Breathing room when jumping to a heading from the TOC or an anchor link */
+.prose :where(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 1.5rem;
 }

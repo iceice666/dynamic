@@ -5,7 +5,7 @@ import ArticleViewCount from '$/components/widgets/ArticleViewCount';
 import GiscusComments from '$/components/GiscusComments';
 import { getCollection, render } from 'astro:content';
 import { entrySlug, formatDate } from '$/utils';
-import { Calendar } from 'lucide-react';
+import { author } from '#/dynamic.config';
 
 const id = Astro.params.id;
 const posts = await getCollection('posts');
@@ -24,22 +24,34 @@ const publishedAt: Date =
 
 <BaseLayout title={t(locale, 'post_label')}>
   <article class="prose prose-lg max-w-none">
-    <div class="not-prose text-muted mb-4 text-[0.6875rem] font-semibold tracking-widest uppercase">
-      {t(locale, 'post_label')}
+    <div class="not-prose mb-6 flex items-center gap-3">
+      <img
+        src={author.avatar}
+        alt=""
+        width="44"
+        height="44"
+        class="border-border h-11 w-11 shrink-0 rounded-full border"
+      />
+      <div class="flex min-w-0 flex-col">
+        <span class="text-foreground truncate text-sm leading-tight font-semibold"
+          >{author.name}</span
+        >
+        <time class="text-muted text-xs" datetime={publishedAt.toISOString()}
+          >{formatDate(publishedAt)}</time
+        >
+      </div>
+      <div class="flex-1"></div>
+      <span class="label-uppercase">{t(locale, 'post_label')}</span>
     </div>
     <Content />
     <div class="not-prose mt-4 flex flex-wrap items-center gap-x-3 gap-y-1.5">
       {
         (entry.data.tags ?? remarkPluginFrontmatter?.tags ?? []).map((tag: string) => (
-          <a href={`/search?q=%23${tag}`} class="text-accent text-xs no-underline hover:opacity-75">
+          <a href={`/search?q=%23${tag}`} class="tag-link">
             #{tag}
           </a>
         ))
       }
-      <span class="text-muted flex items-center gap-1 text-xs">
-        <Calendar size={12} aria-hidden="true" />
-        <time datetime={publishedAt.toISOString()}>{formatDate(publishedAt)}</time>
-      </span>
       <ArticleViewCount client:idle path={Astro.url.pathname} />
     </div>
   </article>

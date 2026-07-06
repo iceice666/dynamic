@@ -58,30 +58,32 @@ const feed = [...articles, ...posts].sort(
   <div class="flex flex-col gap-4">
     <h1 class="text-foreground m-0 mb-2 text-2xl font-bold">{t(locale, 'nav_feed')}</h1>
     {
-      feed.map((item) =>
-        item.type === 'article' ? (
-          <ArticleCard
-            title={item.data.title}
-            description={item.data.description}
-            slug={item.slug}
-            publishedAt={item.publishedAt}
-            tags={item.data.tags}
-            category={item.data.category}
-            wordCount={item.wordCount}
-            readingTime={item.readingTime}
-            translationLang={item.translationLang}
-          />
-        ) : (
-          (() => {
-            const PostContent = item.Content;
-            return (
-              <PostCard publishedAt={item.publishedAt} tags={item.data.tags} slug={item.slug}>
-                <PostContent />
-              </PostCard>
-            );
-          })()
-        )
-      )
+      feed.map((item, index) => (
+        <div class="feed-item" style={`--feed-index: ${index}`}>
+          {item.type === 'article' ? (
+            <ArticleCard
+              title={item.data.title}
+              description={item.data.description}
+              slug={item.slug}
+              publishedAt={item.publishedAt}
+              tags={item.data.tags}
+              category={item.data.category}
+              wordCount={item.wordCount}
+              readingTime={item.readingTime}
+              translationLang={item.translationLang}
+            />
+          ) : (
+            (() => {
+              const PostContent = item.Content;
+              return (
+                <PostCard publishedAt={item.publishedAt} tags={item.data.tags} slug={item.slug}>
+                  <PostContent />
+                </PostCard>
+              );
+            })()
+          )}
+        </div>
+      ))
     }
   </div>
 </BaseLayout>

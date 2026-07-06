@@ -5,6 +5,12 @@
 @import './article.css';
 @plugin '@tailwindcss/typography';
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--color-background);
@@ -13,4 +19,14 @@ body {
     background-color 0.2s ease,
     color 0.2s ease;
   overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: oklch(from var(--color-accent) l c h / 25%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }

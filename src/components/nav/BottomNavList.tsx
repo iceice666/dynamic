@@ -251,7 +251,7 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
       <div
         style={{
           position: 'fixed',
-          bottom: 56,
+          bottom: 'calc(56px + env(safe-area-inset-bottom))',
           left: 0,
           right: 0,
           zIndex: 11,
@@ -327,10 +327,12 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                alignSelf: 'stretch',
                 padding: '0.5rem',
                 color: isActive ? 'var(--color-foreground)' : 'var(--color-muted)',
                 textDecoration: 'none',
                 transition: 'color 0.15s ease',
+                WebkitTapHighlightColor: 'transparent',
               }}
             >
               <Icon size={20} aria-hidden="true" />
@@ -350,12 +352,14 @@ function BottomNavList({ currentPath, toc }: BottomNavListProps) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            alignSelf: 'stretch',
             padding: '0.5rem',
             color: panelOpen ? 'var(--color-foreground)' : 'var(--color-muted)',
             background: 'transparent',
             border: 'none',
             cursor: 'pointer',
             transition: 'color 0.15s ease',
+            WebkitTapHighlightColor: 'transparent',
           }}
         >
           {panelOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}

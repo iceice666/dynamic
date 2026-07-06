@@ -1,7 +1,45 @@
 /* Reusable component patterns extracted from repeated class strings */
 
 .card {
-  @apply border-border bg-background hover:bg-muted-bg flex flex-col gap-2 rounded-lg border p-4 transition-colors duration-150;
+  @apply border-border bg-background flex flex-col gap-2 rounded-lg border p-4;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.card:hover {
+  background: color-mix(in oklab, var(--color-muted-bg) 60%, var(--color-background));
+  border-color: color-mix(in oklab, var(--color-accent) 35%, var(--color-border));
+  box-shadow: 0 2px 12px oklch(0% 0 0 / 6%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card:active {
+    transform: scale(0.985);
+  }
+}
+
+/* Feed entrance: subtle staggered fade-up, capped so long feeds don't lag */
+@media (prefers-reduced-motion: no-preference) {
+  .feed-item {
+    animation: feed-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+    animation-delay: min(calc(var(--feed-index, 0) * 40ms), 280ms);
+  }
+}
+
+@keyframes feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Links inside a card's overlay-linked content must stack above the stretched link */
+.card .prose a {
+  position: relative;
+  z-index: 10;
 }
 
 .label-uppercase {
@@ -9,7 +47,15 @@
 }
 
 .tag-link {
-  @apply text-accent text-xs no-underline transition-opacity duration-150 hover:opacity-75;
+  @apply text-accent text-xs no-underline;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent) 10%, transparent);
+  transition: background-color 0.15s ease;
+}
+
+.tag-link:hover {
+  background: color-mix(in oklab, var(--color-accent) 20%, transparent);
 }
 
 .link-accent {
@@ -151,4 +197,15 @@
   position: relative;
   width: 100% !important;
   height: 100% !important;
+}
+
+/* Bottom nav tap feedback (global: scoped styles don't pierce the React island) */
+.bottom-nav a svg,
+.bottom-nav button svg {
+  transition: transform 0.15s ease;
+}
+
+.bottom-nav a:active svg,
+.bottom-nav button:active svg {
+  transform: scale(0.85);
 }
