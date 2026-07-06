@@ -101,6 +101,12 @@ export default defineConfig({
     optimizeDeps: {
       include: ['react', 'react-dom'],
     },
+    ssr: {
+      // Externalized SSR deps bypass the react → preact/compat alias in dev,
+      // so react-consuming libraries would load real React and crash
+      // preact-render-to-string.
+      noExternal: ['lucide-react', '@nanostores/react', '@giscus/react'],
+    },
   },
   markdown: {
     remarkPlugins: [
