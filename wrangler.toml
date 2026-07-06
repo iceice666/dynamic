@@ -9,3 +9,8 @@ binding = "ASSETS"
 
 [observability]
 enabled = true
+
+# Draft storage for the GitHub-powered admin editor (src/pages/admin).
+[[kv_namespaces]]
+binding = "DRAFTS"
+id = "ad24531ef54043d4aab47482370c011d"

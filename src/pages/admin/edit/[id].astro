@@ -1,0 +1,26 @@
+---
+import AdminLayout from '$/layouts/AdminLayout.astro';
+import { getOwnerSession } from '$/utils/adminAuth';
+import { getDraft } from '$/utils/drafts';
+import PostEditor from '$/components/admin/PostEditor';
+
+const session = await getOwnerSession(Astro);
+if (!session) {
+  return Astro.redirect('/api/auth/github/login/');
+}
+
+const { id } = Astro.params;
+const draft = await getDraft(Astro.locals.runtime.env.DRAFTS, id!);
+if (!draft) {
+  return Astro.redirect('/admin/');
+}
+---
+
+<AdminLayout title={`Edit — ${draft.title || 'Untitled'}`}>
+  <main class="mx-auto max-w-3xl px-4 py-10">
+    <a href="/admin/" class="link-accent text-muted mb-6 inline-block text-sm"
+      >&larr; Back to drafts</a
+    >
+    <PostEditor client:load draft={draft} />
+  </main>
+</AdminLayout>

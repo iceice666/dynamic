@@ -105,6 +105,9 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^5.20260706.1
+        version: 5.20260706.1
       '@eslint/js':
         specifier: ^9.39.2
         version: 9.39.2
@@ -453,6 +456,9 @@ packages:
 
   '@cloudflare/workers-types@4.20260217.0':
     resolution: {integrity: sha512-R5s8h/zj91g6HSB/qndpXGS5Xc8t8Ik3BwY6qwe7XXV6r3Gey1gdthFSK4A2IrPQEmTsc7wEXbs9KpBLNttlqg==}
+
+  '@cloudflare/workers-types@5.20260706.1':
+    resolution: {integrity: sha512-PdGrKyJMmKjrZs6xPN/LYN2zpKo9bgn8Iq3JLYho1/76t0HEfUYnssgUljqFxQYPzH4SZ8wsIThaGHmW5GZkLg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -5042,6 +5048,8 @@ snapshots:
     optional: true
 
   '@cloudflare/workers-types@4.20260217.0': {}
+
+  '@cloudflare/workers-types@5.20260706.1': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
