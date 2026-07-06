@@ -18,13 +18,19 @@
   class KuasanxiaoHandler {
     private sequence: string[] = [];
     private maxSequenceLength = KUASANXIAO_CODE.length;
+    private boundOnKeydown: (e: KeyboardEvent) => void;
 
     constructor() {
+      this.boundOnKeydown = this.onKeydown.bind(this);
       this.init();
     }
 
     init() {
-      document.addEventListener('keydown', this.onKeydown.bind(this));
+      document.addEventListener('keydown', this.boundOnKeydown);
+    }
+
+    destroy() {
+      document.removeEventListener('keydown', this.boundOnKeydown);
     }
 
     onKeydown(e: KeyboardEvent) {
@@ -54,11 +60,13 @@
     }
   }
 
+  let handler: KuasanxiaoHandler | null = null;
+
   // Initialize on page load and after view transitions
   function initKuasanxiao() {
-    new KuasanxiaoHandler();
+    handler?.destroy();
+    handler = new KuasanxiaoHandler();
   }
 
-  initKuasanxiao();
   document.addEventListener('astro:page-load', initKuasanxiao);
 </script>

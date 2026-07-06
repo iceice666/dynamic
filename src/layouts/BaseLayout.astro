@@ -1,5 +1,6 @@
 ---
 import { ClientRouter, fade } from 'astro:transitions';
+import { env } from 'cloudflare:workers';
 import '../../styles/global.css';
 import 'katex/dist/katex.min.css';
 import '@fontsource-variable/noto-sans-tc';
@@ -27,7 +28,13 @@ const {
   UMAMI_WEBSITE_ID: websiteId = '',
   UMAMI_API_URL: apiUrl = '',
   UMAMI_SCRIPT_URL: scriptUrl,
-} = Astro.locals.runtime.env;
+} = env;
+const trackingScriptSrc =
+  websiteId && (scriptUrl || apiUrl)
+    ? umami.scriptProxy
+      ? '/api/uwu.js'
+      : (scriptUrl ?? `${apiUrl}/script.js`)
+    : '';
 const { locale } = Astro.locals;
 ---
 
@@ -49,12 +56,12 @@ const { locale } = Astro.locals;
     <title>{title}</title>
 
     {
-      websiteId && (
+      trackingScriptSrc && (
         <script
           is:inline
           defer
-          src={umami.scriptProxy ? '/api/uwu.js' : (scriptUrl ?? `${apiUrl}/script.js`)}
-          data-host-url={umami.scriptProxy ? apiUrl : undefined}
+          src={trackingScriptSrc}
+          data-host-url={umami.scriptProxy && apiUrl ? apiUrl : undefined}
           data-website-id={websiteId}
         />
       )
@@ -153,7 +160,10 @@ const { locale } = Astro.locals;
     }
 
     <!-- Floating FABs: Theme & Language (desktop only) -->
-    <div class="floating-controls" transition:persist>
+    <div
+      class:list={['floating-controls', { 'floating-controls-has-toc': toc && toc.length > 0 }]}
+      transition:persist
+    >
       <MysteryButton client:load compact align="right" className="fab-btn" />
       <div class="fab-btn fab-btn-wrapper">
         <ThemeButton client:load compact align="right" />
@@ -161,8 +171,11 @@ const { locale } = Astro.locals;
       <div class="fab-btn fab-btn-wrapper">
         <LanguageToggle client:load compact align="right" />
       </div>
-      {
-        toc && toc.length > 0 && (
+    </div>
+
+    {
+      toc && toc.length > 0 && (
+        <div class="floating-controls toc-floating-controls">
           <div class="fab-btn fab-btn-wrapper toc-fab-wrapper">
             <button
               id="toc-fab-btn"
@@ -192,9 +205,9 @@ const { locale } = Astro.locals;
               </svg>
             </button>
           </div>
-        )
-      }
-    </div>
+        </div>
+      )
+    }
 
     {toc && toc.length > 0 && <TOCFabDrawer headings={toc} />}
 
@@ -227,7 +240,6 @@ const { locale } = Astro.locals;
         });
       }
 
-      initCopyButtons();
       document.addEventListener('astro:page-load', initCopyButtons);
     </script>
 
@@ -247,7 +259,6 @@ const { locale } = Astro.locals;
         });
       }
 
-      initSpoilers();
       document.addEventListener('astro:page-load', initSpoilers);
     </script>
   </body>
@@ -317,6 +328,14 @@ const { locale } = Astro.locals;
     gap: 0.5rem;
   }
 
+  .floating-controls-has-toc {
+    bottom: calc(1.5rem + 3rem);
+  }
+
+  .toc-floating-controls {
+    transition: none;
+  }
+
   .mobile-footer {
     display: none;
   }
@@ -337,6 +356,10 @@ const { locale } = Astro.locals;
       right: auto;
       /* Sit above the fixed bottom nav instead of underneath it */
       bottom: calc(56px + env(safe-area-inset-bottom) + 1rem);
+    }
+
+    .floating-controls-has-toc {
+      bottom: calc(56px + env(safe-area-inset-bottom) + 4rem);
     }
 
     .fab-btn-wrapper {

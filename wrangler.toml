@@ -1,5 +1,5 @@
 name = "dynamic"
-main = "dist/_worker.js"
+main = "@astrojs/cloudflare/entrypoints/server"
 compatibility_date = "2026-02-16"
 workers_dev = true
 
@@ -14,3 +14,12 @@ enabled = true
 [[kv_namespaces]]
 binding = "DRAFTS"
 id = "ad24531ef54043d4aab47482370c011d"
+
+[env.preview]
+name = "dynamic-preview"
+
+# Dedicated preview draft storage. Replace this placeholder with the id from:
+# pnpm wrangler kv namespace create DRAFTS --env preview
+[[env.preview.kv_namespaces]]
+binding = "DRAFTS"
+id = "00000000000000000000000000000000"

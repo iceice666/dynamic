@@ -4,22 +4,28 @@ import { parseArticleId, formatCategory } from '$/utils';
 import { marked } from 'marked';
 import { getPostPreviewMarkdown } from '$/utils/search';
 
+export const prerender = true;
+
 export const GET: APIRoute = async () => {
-  const articles = (await getCollection('articles', ({ data }) => !data.draft)).map((entry) => {
-    const { slug, lang: fileLang } = parseArticleId(entry.id);
-    return {
-      type: 'article' as const,
-      slug,
-      title: entry.data.title,
-      description: entry.data.description ?? '',
-      tags: entry.data.tags,
-      publishedAt: entry.data.publishedAt.toISOString(),
-      category: entry.data.category ?? '',
-      categoryName: entry.data.category ? formatCategory(entry.data.category) : '',
-      lang: fileLang ?? entry.data.lang,
-      body: entry.body ?? '',
-    };
-  });
+  const articlesRaw = await getCollection('articles', ({ data }) => !data.draft);
+  const articles = await Promise.all(
+    articlesRaw.map(async (entry) => {
+      const { remarkPluginFrontmatter } = await render(entry);
+      const { slug, lang: fileLang } = parseArticleId(entry.id);
+      return {
+        type: 'article' as const,
+        slug,
+        title: entry.data.title ?? remarkPluginFrontmatter?.extractedTitle ?? slug,
+        description: entry.data.description ?? remarkPluginFrontmatter?.extractedDescription ?? '',
+        tags: entry.data.tags,
+        publishedAt: entry.data.publishedAt.toISOString(),
+        category: entry.data.category ?? '',
+        categoryName: entry.data.category ? formatCategory(entry.data.category) : '',
+        lang: fileLang ?? entry.data.lang,
+        body: entry.body ?? '',
+      };
+    })
+  );
 
   const postsRaw = await getCollection('posts');
   const posts = await Promise.all(

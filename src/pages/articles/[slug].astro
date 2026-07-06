@@ -108,7 +108,7 @@ const availableLangs = group.map((a) => ({ lang: effectiveLang(a) }));
     <Content />
   </article>
 
-  <GiscusComments client:only="react" />
+  <GiscusComments client:only="preact" />
 
   <div class="mt-8 hidden max-sm:block">
     <AuthorBio client:load />

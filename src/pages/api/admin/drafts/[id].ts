@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { getOwnerSession } from '$/utils/adminAuth';
 import { getDraft, saveDraft, deleteDraft, type Draft } from '$/utils/drafts';
 
@@ -9,7 +10,7 @@ export const GET: APIRoute = async (context) => {
   const session = await getOwnerSession(context);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
-  const draft = await getDraft(context.locals.runtime.env.DRAFTS, context.params.id!);
+  const draft = await getDraft(env.DRAFTS, context.params.id!);
   if (!draft) return json({ error: 'Not found' }, 404);
   return json(draft);
 };
@@ -18,11 +19,11 @@ export const PUT: APIRoute = async (context) => {
   const session = await getOwnerSession(context);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
-  const kv = context.locals.runtime.env.DRAFTS;
+  const kv = env.DRAFTS;
   const existing = await getDraft(kv, context.params.id!);
   if (!existing) return json({ error: 'Not found' }, 404);
 
-  const body = await context.request.json();
+  const body = (await context.request.json()) as Record<string, unknown>;
   const updated: Draft = {
     ...existing,
     title: String(body.title ?? ''),
@@ -41,6 +42,6 @@ export const DELETE: APIRoute = async (context) => {
   const session = await getOwnerSession(context);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
-  await deleteDraft(context.locals.runtime.env.DRAFTS, context.params.id!);
+  await deleteDraft(env.DRAFTS, context.params.id!);
   return new Response(null, { status: 204 });
 };

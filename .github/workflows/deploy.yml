@@ -5,6 +5,7 @@ on:
     branches:
       - publish
   pull_request:
+    types: [opened, synchronize, reopened, closed]
 
 jobs:
   deploy-production:
@@ -12,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -19,7 +22,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -29,7 +32,7 @@ jobs:
         run: pnpm build
 
       - name: Create .assetsignore
-        run: echo '_worker.js' > dist/.assetsignore
+        run: echo '_worker.js' > dist/client/.assetsignore
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
@@ -39,10 +42,12 @@ jobs:
           command: deploy
 
   deploy-preview:
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: github.event_name == 'pull_request' && github.event.action != 'closed' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -50,7 +55,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
 
       - name: Install dependencies
@@ -58,13 +63,26 @@ jobs:
 
       - name: Build
         run: pnpm build
+        env:
+          CLOUDFLARE_ENV: preview
 
       - name: Create .assetsignore
-        run: echo '_worker.js' > dist/.assetsignore
+        run: echo '_worker.js' > dist/client/.assetsignore
 
       - name: Deploy preview to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --name dynamic-pr-${{ github.event.pull_request.number }}
+          command: deploy --env preview --name dynamic-pr-${{ github.event.pull_request.number }}
+
+  cleanup-preview:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete preview Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: delete --name dynamic-pr-${{ github.event.pull_request.number }} --force

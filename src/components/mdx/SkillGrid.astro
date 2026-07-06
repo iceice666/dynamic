@@ -1,5 +1,21 @@
 ---
-import * as si from 'simple-icons';
+import {
+  siAstro,
+  siCloudflare,
+  siDocker,
+  siGit,
+  siGnubash,
+  siGo,
+  siHono,
+  siLinux,
+  siNeovim,
+  siNixos,
+  siPython,
+  siReact,
+  siRust,
+  siTailwindcss,
+  siTypescript,
+} from 'simple-icons';
 
 type Skill = string | Record<string, string>;
 
@@ -11,20 +27,36 @@ interface Props {
 const { skills, label } = Astro.props;
 
 type SimpleIcon = { path: string; hex: string; title: string };
-const siLib = si as Record<string, SimpleIcon | undefined>;
+const ICON_MAP: Record<string, SimpleIcon> = {
+  astro: siAstro,
+  cloudflare: siCloudflare,
+  docker: siDocker,
+  git: siGit,
+  gnubash: siGnubash,
+  go: siGo,
+  hono: siHono,
+  linux: siLinux,
+  neovim: siNeovim,
+  nixos: siNixos,
+  python: siPython,
+  react: siReact,
+  rust: siRust,
+  tailwindcss: siTailwindcss,
+  typescript: siTypescript,
+};
 
-function toSiKey(name: string): string {
-  const slug = name.replace(/[^a-zA-Z0-9]/g, '');
-  return 'si' + slug.charAt(0).toUpperCase() + slug.slice(1);
+function lookupIcon(name: string): SimpleIcon | null {
+  const key = name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  return ICON_MAP[key] ?? null;
 }
 
 function resolveSkill(skill: Skill): { icon: SimpleIcon | null; label: string } {
   if (typeof skill === 'string') {
-    const icon = siLib[toSiKey(skill)] ?? null;
+    const icon = lookupIcon(skill);
     return { icon, label: icon?.title ?? skill };
   }
   const [key, desc] = Object.entries(skill)[0];
-  const icon = siLib[toSiKey(key)] ?? null;
+  const icon = lookupIcon(key);
   const label = icon ? desc : `${key}: ${desc}`;
   return { icon, label };
 }

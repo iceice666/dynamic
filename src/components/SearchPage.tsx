@@ -37,8 +37,8 @@ function SearchPage() {
       setLoading(false);
     } else {
       fetch('/search-index.json')
-        .then((r) => r.json())
-        .then((data: SearchItem[]) => {
+        .then((r) => r.json() as Promise<SearchItem[]>)
+        .then((data) => {
           cachedIndex = data;
           setIndex(data);
           setLoading(false);

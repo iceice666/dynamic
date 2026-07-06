@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { umami } from '#/dynamic.config';
 
-export const GET: APIRoute = async ({ locals }) => {
-  const apiUrl = locals.runtime.env.UMAMI_API_URL ?? '';
-  const scriptUrl = locals.runtime.env.UMAMI_SCRIPT_URL;
+export const GET: APIRoute = async () => {
+  const apiUrl = env.UMAMI_API_URL ?? '';
+  const scriptUrl = env.UMAMI_SCRIPT_URL;
 
   if (!umami.scriptProxy || !apiUrl) {
     return new Response('Not found', { status: 404 });

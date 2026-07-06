@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { ui, type Locale, type UIKey } from './ui';
 
 export function useLocale(): Locale {
-  const [locale, setLocale] = useState<Locale>('en');
+  const [locale, setLocale] = useState<Locale>(() => {
+    if (typeof document === 'undefined') return 'en';
+    return document.documentElement.dataset.lang === 'zh-tw' ? 'zh-tw' : 'en';
+  });
 
   useEffect(() => {
     function update() {

@@ -1,13 +1,14 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { signSession, SESSION_COOKIE, SESSION_MAX_AGE } from '$/utils/session';
 
-export const GET: APIRoute = async ({ url, cookies, redirect, locals }) => {
+export const GET: APIRoute = async ({ url, cookies, redirect }) => {
   const {
     GITHUB_CLIENT_ID: clientId,
     GITHUB_CLIENT_SECRET: clientSecret,
     GITHUB_OWNER_ID: ownerId,
     SESSION_SECRET: sessionSecret,
-  } = locals.runtime.env;
+  } = env;
 
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');

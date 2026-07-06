@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { getOwnerSession } from '$/utils/adminAuth';
 import { getDraft, deleteDraft, type Draft } from '$/utils/drafts';
 import { commitFile } from '$/utils/githubContent';
@@ -24,17 +25,13 @@ export const POST: APIRoute = async (context) => {
   const session = await getOwnerSession(context);
   if (!session) return json({ error: 'Unauthorized' }, 401);
 
-  const { id } = await context.request.json();
-  const kv = context.locals.runtime.env.DRAFTS;
+  const { id } = (await context.request.json()) as { id?: unknown };
+  const kv = env.DRAFTS;
   const draft = await getDraft(kv, String(id ?? ''));
   if (!draft) return json({ error: 'Draft not found' }, 404);
   if (!draft.title.trim()) return json({ error: 'Title is required to publish' }, 400);
 
-  const {
-    GITHUB_TOKEN: token,
-    GITHUB_REPO: repo,
-    GITHUB_BRANCH: branch,
-  } = context.locals.runtime.env;
+  const { GITHUB_TOKEN: token, GITHUB_REPO: repo, GITHUB_BRANCH: branch } = env;
   if (!token || !repo || !branch) {
     return json({ error: 'GitHub publishing is not configured' }, 503);
   }

@@ -1,6 +1,4 @@
 ---
-import { marked } from 'marked';
-
 interface Props {
   url: string;
   title?: string;
@@ -40,67 +38,141 @@ const LANG_COLORS: Record<string, string> = {
   Lua: '#000080',
 };
 
+const CACHE_TTL_MS = 60 * 60 * 1000;
+
+type RepoCacheEntry = { data: RepoData | null; ts: number };
+type RepoCacheGlobal = typeof globalThis & {
+  __dynamicRepoCardCache?: Map<string, RepoCacheEntry>;
+};
+
+const repoCache = ((globalThis as RepoCacheGlobal).__dynamicRepoCardCache ??= new Map<
+  string,
+  RepoCacheEntry
+>());
+
+const HTML_ESCAPE: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+};
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPE[char] ?? char);
+}
+
+function safeExternalHref(href: string): string | null {
+  try {
+    const url = new URL(href);
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+function renderDescription(description: string): string {
+  const linkPattern = /\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let html = '';
+  let lastIndex = 0;
+
+  for (const match of description.matchAll(linkPattern)) {
+    const matchIndex = match.index ?? 0;
+    html += escapeHtml(description.slice(lastIndex, matchIndex));
+
+    const [rawMarkdown, rawLabel, rawHref] = match;
+    const href = safeExternalHref(rawHref);
+    html += href
+      ? `<a class="desc-link" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${escapeHtml(rawLabel)}</a>`
+      : escapeHtml(rawMarkdown);
+
+    lastIndex = matchIndex + rawMarkdown.length;
+  }
+
+  html += escapeHtml(description.slice(lastIndex));
+  return html;
+}
+
+async function getCachedRepo(
+  key: string,
+  fetcher: () => Promise<RepoData | null>
+): Promise<RepoData | null> {
+  const now = Date.now();
+  const cached = repoCache.get(key);
+  if (cached && now - cached.ts < CACHE_TTL_MS) return cached.data;
+
+  const data = await fetcher();
+  repoCache.set(key, { data, ts: now });
+  return data;
+}
+
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return String(n);
 }
 
 async function fetchGitHub(owner: string, repo: string): Promise<RepoData | null> {
-  const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-    headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'dynamic-blog' },
+  return getCachedRepo(`github.com/${owner}/${repo}`, async () => {
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
+      headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'dynamic-blog' },
+    });
+    if (!res.ok) return null;
+    const d = (await res.json()) as any;
+    return {
+      full_name: d.full_name,
+      description: d.description,
+      html_url: d.html_url,
+      stargazers_count: d.stargazers_count,
+      forks_count: d.forks_count,
+      language: d.language ?? null,
+      owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
+    };
   });
-  if (!res.ok) return null;
-  const d = (await res.json()) as any;
-  return {
-    full_name: d.full_name,
-    description: d.description,
-    html_url: d.html_url,
-    stargazers_count: d.stargazers_count,
-    forks_count: d.forks_count,
-    language: d.language ?? null,
-    owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
-  };
 }
 
 async function fetchGitLab(host: string, owner: string, repo: string): Promise<RepoData | null> {
-  const encoded = encodeURIComponent(`${owner}/${repo}`);
-  const res = await fetch(`https://${host}/api/v4/projects/${encoded}`, {
-    headers: { 'User-Agent': 'dynamic-blog' },
+  return getCachedRepo(`${host}/${owner}/${repo}`, async () => {
+    const encoded = encodeURIComponent(`${owner}/${repo}`);
+    const res = await fetch(`https://${host}/api/v4/projects/${encoded}`, {
+      headers: { 'User-Agent': 'dynamic-blog' },
+    });
+    if (!res.ok) return null;
+    const d = (await res.json()) as any;
+    let avatarUrl: string = d.avatar_url ?? '';
+    if (!avatarUrl && d.namespace?.avatar_url) {
+      const raw: string = d.namespace.avatar_url;
+      avatarUrl = raw.startsWith('http') ? raw : `https://${host}${raw}`;
+    }
+    return {
+      full_name: d.path_with_namespace,
+      description: d.description ?? null,
+      html_url: d.web_url,
+      stargazers_count: d.star_count,
+      forks_count: d.forks_count,
+      language: null, // requires a separate /languages API call; skip for simplicity
+      owner: { login: owner, avatar_url: avatarUrl },
+    };
   });
-  if (!res.ok) return null;
-  const d = (await res.json()) as any;
-  let avatarUrl: string = d.avatar_url ?? '';
-  if (!avatarUrl && d.namespace?.avatar_url) {
-    const raw: string = d.namespace.avatar_url;
-    avatarUrl = raw.startsWith('http') ? raw : `https://${host}${raw}`;
-  }
-  return {
-    full_name: d.path_with_namespace,
-    description: d.description ?? null,
-    html_url: d.web_url,
-    stargazers_count: d.star_count,
-    forks_count: d.forks_count,
-    language: null, // requires a separate /languages API call; skip for simplicity
-    owner: { login: owner, avatar_url: avatarUrl },
-  };
 }
 
 // Covers Gitea, Forgejo, and Codeberg (all share the same API)
 async function fetchGitea(host: string, owner: string, repo: string): Promise<RepoData | null> {
-  const res = await fetch(`https://${host}/api/v1/repos/${owner}/${repo}`, {
-    headers: { 'User-Agent': 'dynamic-blog' },
+  return getCachedRepo(`${host}/${owner}/${repo}`, async () => {
+    const res = await fetch(`https://${host}/api/v1/repos/${owner}/${repo}`, {
+      headers: { 'User-Agent': 'dynamic-blog' },
+    });
+    if (!res.ok) return null;
+    const d = (await res.json()) as any;
+    return {
+      full_name: d.full_name,
+      description: d.description ?? null,
+      html_url: d.html_url,
+      stargazers_count: d.stars_count,
+      forks_count: d.forks_count,
+      language: d.language ?? null,
+      owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
+    };
   });
-  if (!res.ok) return null;
-  const d = (await res.json()) as any;
-  return {
-    full_name: d.full_name,
-    description: d.description ?? null,
-    html_url: d.html_url,
-    stargazers_count: d.stars_count,
-    forks_count: d.forks_count,
-    language: d.language ?? null,
-    owner: { login: d.owner.login, avatar_url: d.owner.avatar_url },
-  };
 }
 
 const { url, title, desc } = Astro.props;
@@ -132,10 +204,7 @@ try {
 
 const displayTitle = title ?? (data ? data.full_name : owner && repo ? `${owner}/${repo}` : url);
 const displayDesc = desc ?? data?.description ?? null;
-const renderer = new marked.Renderer();
-renderer.link = ({ href, text }) =>
-  `<a class="desc-link" href="${href}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${text}</a>`;
-const displayDescHtml = displayDesc ? await marked.parseInline(displayDesc, { renderer }) : null;
+const displayDescHtml = displayDesc ? renderDescription(displayDesc) : null;
 const langColor = data?.language ? (LANG_COLORS[data.language] ?? 'var(--color-accent)') : null;
 ---
 

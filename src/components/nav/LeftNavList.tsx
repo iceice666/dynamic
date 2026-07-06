@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import withStrictMode from '$/components/withStrictMode';
 import { Archive, Home, Search, UserRound, Users, type LucideIcon } from 'lucide-react';
 import { type UIKey } from '$/i18n/ui';
-import { useTranslation, getLocaleLink } from '$/i18n';
+import { useTranslation, getLocaleLink, locales } from '$/i18n';
 
 type NavItem = {
   labelKey: UIKey;
@@ -28,9 +28,20 @@ function normalizePath(path: string): string {
   return normalized || '/';
 }
 
+function stripLocalePrefix(path: string): string {
+  const normalized = normalizePath(path);
+  for (const locale of locales) {
+    if (locale === 'en') continue;
+    const prefix = `/${locale}`;
+    if (normalized === prefix) return '/';
+    if (normalized.startsWith(`${prefix}/`)) return normalized.slice(prefix.length) || '/';
+  }
+  return normalized;
+}
+
 function isActivePath(pathname: string, href: string): boolean {
-  const path = normalizePath(pathname);
-  const target = normalizePath(href);
+  const path = stripLocalePrefix(pathname);
+  const target = stripLocalePrefix(href);
   if (target === '/') return path === '/';
   if (target.endsWith('/')) {
     return path === target || path.startsWith(target);

@@ -1,4 +1,5 @@
 ---
+import { env } from 'cloudflare:workers';
 import AdminLayout from '$/layouts/AdminLayout.astro';
 import { getOwnerSession } from '$/utils/adminAuth';
 import { listDrafts } from '$/utils/drafts';
@@ -9,7 +10,7 @@ if (!session) {
   return Astro.redirect('/api/auth/github/login/');
 }
 
-const drafts = await listDrafts(Astro.locals.runtime.env.DRAFTS);
+const drafts = await listDrafts(env.DRAFTS);
 ---
 
 <AdminLayout title="Admin — Drafts">
@@ -18,7 +19,14 @@ const drafts = await listDrafts(Astro.locals.runtime.env.DRAFTS);
       <h1 class="text-2xl font-semibold">Drafts</h1>
       <div class="flex items-center gap-3 text-sm">
         <span class="text-muted">Signed in as {session.login}</span>
-        <a href="/api/auth/logout/" class="link-accent">Sign out</a>
+        <form method="POST" action="/api/auth/logout/">
+          <button
+            type="submit"
+            class="link-accent cursor-pointer border-0 bg-transparent p-0 text-sm"
+          >
+            Sign out
+          </button>
+        </form>
       </div>
     </div>
 

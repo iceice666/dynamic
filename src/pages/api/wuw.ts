@@ -1,8 +1,11 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
 // --- Token cache (in-memory, per-process) ---
 let cachedToken: string | null = null;
 let tokenExpiresAt = 0; // epoch ms
+const UMAMI_PATH_PATTERN = /^\/[a-zA-Z0-9\-/_]*$/;
+const MAX_UMAMI_PATH_LENGTH = 200;
 
 /**
  * Obtain a JWT token from Umami's login endpoint.
@@ -40,8 +43,8 @@ async function getAuthToken(
       return null;
     }
 
-    const data = await res.json();
-    cachedToken = data.token;
+    const data = (await res.json()) as { token?: string };
+    cachedToken = data.token ?? null;
     // Umami JWT tokens typically expire in 24 hours; cache for 23 hours
     tokenExpiresAt = Date.now() + 23 * 60 * 60 * 1000;
     return cachedToken;
@@ -77,18 +80,25 @@ async function buildAuthHeaders(
   return headers;
 }
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url }) => {
   const {
     UMAMI_API_URL: apiUrl = '',
     UMAMI_WEBSITE_ID: websiteId = '',
     UMAMI_API_KEY: apiKey = '',
     UMAMI_USERNAME: username = '',
     UMAMI_PASSWORD: password = '',
-  } = locals.runtime.env;
+  } = env;
 
-  // Strip query params from path — Umami stores paths without them
+  // Strip query params from path — Umami stores paths without them.
   const rawPath = url.searchParams.get('path') ?? undefined;
   const path = rawPath ? rawPath.split('?')[0] : undefined;
+
+  if (path && (path.length > MAX_UMAMI_PATH_LENGTH || !UMAMI_PATH_PATTERN.test(path))) {
+    return new Response(JSON.stringify({ error: 'Invalid path' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
   if (!apiUrl || !websiteId) {
     console.error('[wuw] Umami not configured (missing apiUrl or websiteId)');
@@ -142,11 +152,8 @@ export const GET: APIRoute = async ({ url, locals }) => {
         });
       }
 
-      const data = await res.json();
-      const total = (data.pageviews as { x: string; y: number }[]).reduce(
-        (sum, entry) => sum + entry.y,
-        0
-      );
+      const data = (await res.json()) as { pageviews?: { x: string; y: number }[] };
+      const total = (data.pageviews ?? []).reduce((sum, entry) => sum + entry.y, 0);
       return new Response(JSON.stringify({ pageviews: total, visitors: 0, visits: 0 }), {
         status: 200,
         headers: cacheHeaders,
@@ -169,7 +176,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         });
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as { pageviews?: number; visitors?: number; visits?: number };
       const result = {
         pageviews: data.pageviews ?? 0,
         visitors: data.visitors ?? 0,

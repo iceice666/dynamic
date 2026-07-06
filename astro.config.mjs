@@ -10,6 +10,7 @@ const gitHash = (() => {
     return 'unknown';
   }
 })();
+const shouldAnalyzeBundle = process.env.STATS_VISUALIZER === '1';
 import preact from '@astrojs/preact';
 import mdx from '@astrojs/mdx';
 import cloudflare from '@astrojs/cloudflare';
@@ -88,7 +89,10 @@ export default defineConfig({
     define: {
       __GIT_HASH__: JSON.stringify(gitHash),
     },
-    plugins: [tailwindcss(), visualizer({ emitFile: true, filename: 'stats.html' })],
+    plugins: [
+      tailwindcss(),
+      ...(shouldAnalyzeBundle ? [visualizer({ emitFile: true, filename: 'stats.html' })] : []),
+    ],
     resolve: {
       alias: {
         '#': new URL('.', import.meta.url).pathname,
@@ -97,9 +101,6 @@ export default defineConfig({
         'react-dom/test-utils': 'preact/test-utils',
         'react/jsx-runtime': 'preact/jsx-runtime',
       },
-    },
-    optimizeDeps: {
-      include: ['react', 'react-dom'],
     },
     ssr: {
       // Externalized SSR deps bypass the react → preact/compat alias in dev,

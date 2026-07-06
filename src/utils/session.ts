@@ -51,16 +51,16 @@ export async function verifySession(
   const [body, sig] = value.split('.');
   if (!body || !sig) return null;
 
-  const key = await hmacKey(secret);
-  const valid = await crypto.subtle.verify(
-    'HMAC',
-    key,
-    fromBase64Url(sig),
-    new TextEncoder().encode(body)
-  );
-  if (!valid) return null;
-
   try {
+    const key = await hmacKey(secret);
+    const valid = await crypto.subtle.verify(
+      'HMAC',
+      key,
+      fromBase64Url(sig),
+      new TextEncoder().encode(body)
+    );
+    if (!valid) return null;
+
     const payload = JSON.parse(new TextDecoder().decode(fromBase64Url(body))) as SessionPayload & {
       exp: number;
     };
