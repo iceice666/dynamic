@@ -57,13 +57,7 @@ const { locale } = Astro.locals;
 
     {
       trackingScriptSrc && (
-        <script
-          is:inline
-          defer
-          src={trackingScriptSrc}
-          data-host-url={umami.scriptProxy && apiUrl ? apiUrl : undefined}
-          data-website-id={websiteId}
-        />
+        <script is:inline defer src={trackingScriptSrc} data-website-id={websiteId} />
       )
     }
 

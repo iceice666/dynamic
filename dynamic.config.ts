@@ -18,7 +18,7 @@ export const giscus = {
 // See .env.example for more information.
 export const umami = {
   /**
-   * Proxy the Umami tracking script through `/api/uwu.js` on your own domain.
+   * Proxy the Umami tracking script and `/api/send` through this site.
    * Helps avoid ad-blockers that block direct requests to analytics domains.
    * Requires UMAMI_API_URL env var set.
    */
